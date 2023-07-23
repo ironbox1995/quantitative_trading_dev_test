@@ -1,0 +1,1 @@
+F:\env_often_used\Scripts\python.exe F:\quantitative_trading\quant_formal\trade\script\data_test_script.py

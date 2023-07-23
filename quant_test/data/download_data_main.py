@@ -1,0 +1,32 @@
+# -*- coding: utf-8 -*-
+# from get_historical_data_QMT import *
+from get_index_data_from_tushare import *
+from get_stock_data_from_tushare import *
+
+
+def update_data_main():
+    tushare_index_path = r"F:\quantitative_trading\quant_formal\data\historical\tushare_index_data\000001.SH.csv"
+    if os.path.exists(tushare_index_path):
+        latest_date = pd.read_csv(tushare_index_path, encoding='gbk').tail(1)['交易日期'].values[0]
+        latest_date = parse_update_start_time(latest_date)
+    else:
+        latest_date = "20070101"
+
+    print("开始下载tusharek线数据。")
+    get_tushare_historical_kline_data_main(tushare_index_path)
+    print("tusharek线数据下载完成。")
+
+    print("开始下载tushare指数数据。")
+    get_historical_index_data_main(tushare_index_path)
+    print("tushare指数数据下载完成。")
+
+    # try:
+    #     print("开始下载并更新财务数据。")
+    #     download_historical_financial_data(start_time=latest_date)
+    #     reformat_historical_financial_data(start_time=latest_date)
+    # except Exception as e:
+    #     print("更新财务数据失败。请检查是否打开miniQMT客户端。", e)
+
+
+if __name__ == "__main__":
+    update_data_main()
