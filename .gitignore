@@ -57,3 +57,4 @@ Thumbs.db
 *.pt
 strategy/__pycache__/
 /quant_test/backtest/result_record/策略执行日志.txt
+F:\quantitative_trading_dev_test\代码备份
