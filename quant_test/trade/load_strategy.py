@@ -22,7 +22,7 @@ def load_strategy_result(cash_amount):
 
 def split_last_line(strategy_name):
     # Read the CSV file
-    df = pd.read_csv(r"F:\quantitative_trading\quant_formal\backtest\latest_selection\最新选股_{}_{}_选{}_{}.csv"
+    df = pd.read_csv(r"F:\quantitative_trading_dev_test\quant_test\backtest\latest_selection\最新选股_{}_{}_选{}_{}.csv"
             .format(strategy_name, period_type, select_stock_num, pick_time_mtd), encoding='gbk', parse_dates=['交易日期'])
 
     buy_stock_code_li = []

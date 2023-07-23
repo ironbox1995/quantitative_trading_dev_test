@@ -23,7 +23,7 @@ date_start = '2007-01-01'  # 回测开始时间
 date_end = get_current_date()  # 回测结束时间
 
 # ===读取所有股票代码的列表
-path = r'F:\quantitative_trading\quant_formal\data\historical\tushare_stock_data'
+path = r'F:\quantitative_trading_dev_test\quant_test\data\historical\tushare_stock_data'
 stock_code_list = get_stock_code_list_in_one_dir(path)
 stock_code_list = [code for code in stock_code_list if 'BJ' not in code]  # 排除北京证券交易所
 # rule_out = ['301202.SZ', '301292.SZ', '301395.SZ', '301429.SZ', '301486.SZ', '301488.SZ', '688433.SH']  # 排除有问题的数据
@@ -32,7 +32,7 @@ stock_code_list = [code for code in stock_code_list if code not in rule_out]
 
 # ===循环读取并且合并
 # 导入上证指数，保证指数数据和股票数据在同一天结束，不然会出现问题。
-index_data = import_index_data(r'F:\quantitative_trading\quant_formal\data\historical\tushare_index_data\000001.SH.csv',
+index_data = import_index_data(r'F:\quantitative_trading_dev_test\quant_test\data\historical\tushare_index_data\000001.SH.csv',
                                back_trader_start=date_start, back_trader_end=date_end)
 
 
@@ -113,11 +113,11 @@ def parallel_data_processor(multiple_process=True):
     all_stock_data.reset_index(inplace=True, drop=True)
 
     # 检查数据是否正确
-    all_stock_data.to_csv(r"F:\quantitative_trading\quant_formal\data\historical\processed_data\all_data_{}.csv".format(period_type), encoding='gbk')
+    all_stock_data.to_csv(r"F:\quantitative_trading_dev_test\quant_test\data\historical\processed_data\all_data_{}.csv".format(period_type), encoding='gbk')
 
     # 将数据存储到pickle文件
     all_stock_data.to_pickle(
-        r'F:\quantitative_trading\quant_formal\data\historical\processed_data\all_stock_data_' + period_type + '.pkl')
+        r'F:\quantitative_trading_dev_test\quant_test\data\historical\processed_data\all_stock_data_' + period_type + '.pkl')
 
 
 if __name__ == '__main__':

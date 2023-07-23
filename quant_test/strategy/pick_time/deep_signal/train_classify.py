@@ -127,7 +127,7 @@ if __name__ == "__main__":
     date_start = '2010-01-01'
     date_end = '2023-03-31'
     pick_time_mtd = "无择时"
-    curve_path = r"F:\quantitative_trading\quant_formal\backtest\result_record\select_stock_{}_{}_选{}_{}-{}_{}.csv"\
+    curve_path = r"F:\quantitative_trading_dev_test\quant_test\backtest\result_record\select_stock_{}_{}_选{}_{}-{}_{}.csv"\
         .format(strategy_name, period_type, select_stock_num, date_start, date_end, pick_time_mtd)
     X_train, y_train, X_test, y_test = data_split(curve_path, date_start, date_end, CLASSIFY=True)
     train_lstm_classify_model(curve_path, X_train, y_train)

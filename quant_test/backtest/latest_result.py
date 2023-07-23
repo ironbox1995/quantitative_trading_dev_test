@@ -22,7 +22,7 @@ def back_test_latest_result(strategy_name, date_start, date_end, select_stock_nu
 
     # 导入指数数据
     index_data = import_index_data(
-        r"F:\quantitative_trading\quant_formal\data\historical\tushare_index_data\000001.SH.csv"
+        r"F:\quantitative_trading_dev_test\quant_test\data\historical\tushare_index_data\000001.SH.csv"
         , back_trader_start=date_start, back_trader_end=date_end)
 
     # 创造空的事件周期表，用于填充不选股的周期
@@ -31,7 +31,7 @@ def back_test_latest_result(strategy_name, date_start, date_end, select_stock_nu
     # ===导入数据
     # 从pickle文件中读取整理好的所有股票数据
     df = pd.read_pickle(
-        r'F:\quantitative_trading\quant_formal\data\historical\processed_data\all_stock_data_%s.pkl' % period_type)
+        r'F:\quantitative_trading_dev_test\quant_test\data\historical\processed_data\all_stock_data_%s.pkl' % period_type)
     # ===删除下个交易日不交易、开盘涨停的股票，因为这些股票在下个交易日开盘时不能买入。
     df = df[df['下日_是否交易'] == 1]
     df = df[df['下日_开盘涨停'] == False]
@@ -90,7 +90,7 @@ def back_test_latest_result(strategy_name, date_start, date_end, select_stock_nu
         latest_selection['最新择时信号'] = latest_signal
 
     latest_selection.to_csv(
-        r"F:\quantitative_trading\quant_formal\backtest\latest_selection\最新选股_{}_{}_选{}_{}.csv"
+        r"F:\quantitative_trading_dev_test\quant_test\backtest\latest_selection\最新选股_{}_{}_选{}_{}.csv"
             .format(strategy_name, period_type, select_stock_num, pick_time_mtd), encoding='gbk')
 
 

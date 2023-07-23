@@ -55,7 +55,7 @@ def update_and_save_stock_data(pro, start_date, end_date):
         try:
             one_index_data_tushare = get_index_data_from_tushare(pro, index_code, start_date, end_date)
             # 构建存储文件路径
-            path = 'F:/quantitative_trading/quant_formal/data/historical/tushare_index_data/' + index_code + '.csv'
+            path = 'F:/quantitative_trading_dev_test/quant_test/data/historical/tushare_index_data/' + index_code + '.csv'
             # 保存数据
             save_data(path, "指数日K线", index_code, one_index_data_tushare)
             time.sleep(0.2)
@@ -84,5 +84,5 @@ def get_historical_index_data_main(index_path):
 
 
 if __name__ == "__main__":
-    index_path = r"F:\quantitative_trading\quant_formal\data\historical\tushare_index_data\000001.SH.csv"
+    index_path = r"F:\quantitative_trading_dev_test\quant_test\data\historical\tushare_index_data\000001.SH.csv"
     get_historical_index_data_main(index_path)

@@ -58,11 +58,11 @@ def find_best_pick_time_para(para=(1, 3)):
 
     # 导入指数数据
     index_data = import_index_data(
-        r"F:\quantitative_trading\quant_formal\data\historical\tushare_index_data\000001.SH.csv"
+        r"F:\quantitative_trading_dev_test\quant_test\data\historical\tushare_index_data\000001.SH.csv"
         , back_trader_start=date_start, back_trader_end=date_end)
 
     select_stock = pd.read_csv(
-        r"F:\quantitative_trading\quant_formal\backtest\result_record\select_stock_{}_{}_选{}_{}-{}_{}.csv"
+        r"F:\quantitative_trading_dev_test\quant_test\backtest\result_record\select_stock_{}_{}_选{}_{}-{}_{}.csv"
             .format(strategy_name, period_type, select_stock_num, date_start, date_end, pick_time_mtd),
         encoding='gbk', parse_dates=['交易日期'])
 
@@ -88,7 +88,7 @@ def find_best_pick_time_para(para=(1, 3)):
     equity['equity_curve'] = (equity['涨跌幅'] + 1).cumprod()
     equity['benchmark'] = (equity['指数涨跌幅'] + 1).cumprod()
 
-    # equity.to_csv(r"F:\quantitative_trading\quant_formal\backtest\result_record\equity_{}_{}_选{}_{}-{}_{}.csv"
+    # equity.to_csv(r"F:\quantitative_trading_dev_test\quant_test\backtest\result_record\equity_{}_{}_选{}_{}-{}_{}.csv"
     #               .format(strategy_name, period_type, select_stock_num, date_start, date_end, pick_time_mtd),
     #               encoding='gbk')
 

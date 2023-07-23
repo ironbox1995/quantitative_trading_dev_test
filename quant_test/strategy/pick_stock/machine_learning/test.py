@@ -40,7 +40,7 @@ def DL_regress_model_tester(start_date, end_date, data_type, X_test, y_test,
 
     # X_train, y_train, X_test, y_test = build_regression_data_set(start_date, end_date, data_type)
     output_size = 1
-    model_path = "F:\quantitative_trading\quant_formal\strategy\pick_stock\machine_learning\model\FCN_regress_model_{}_{}-{}.pt".format(data_type, start_date, end_date)
+    model_path = "F:\quantitative_trading_dev_test\quant_test\strategy\pick_stock\machine_learning\model\FCN_regress_model_{}_{}-{}.pt".format(data_type, start_date, end_date)
 
     input_size = X_test.shape[1]
     model = FCN(input_size, hidden_size, output_size, num_hidden_layers)
@@ -64,7 +64,7 @@ def DL_classify_model_tester(start_date, end_date, data_type, X_test, y_test,
 
     X_train, y_train, X_test, y_test = build_classify_data_set(start_date, end_date, data_type)
     output_size = len(np.unique(y_test))
-    model_path = "F:\quantitative_trading\quant_formal\strategy\pick_stock\machine_learning\model\FCN_classify_model_{}_{}-{}.pt".format(data_type, start_date, end_date)
+    model_path = "F:\quantitative_trading_dev_test\quant_test\strategy\pick_stock\machine_learning\model\FCN_classify_model_{}_{}-{}.pt".format(data_type, start_date, end_date)
 
     input_size = X_test.shape[1]
     model = FCN(input_size, hidden_size, output_size, num_hidden_layers)

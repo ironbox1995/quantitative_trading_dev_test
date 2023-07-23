@@ -85,7 +85,7 @@ if __name__ == "__main__":
     train_start_date = "2022-12-01"
     train_end_date = "2022-12-31"
 
-    data_path = r"F:\quantitative_trading\quant_formal\data\historical\processed_data\all_stock_data_{}.pkl".format(
+    data_path = r"F:\quantitative_trading_dev_test\quant_test\data\historical\processed_data\all_stock_data_{}.pkl".format(
         data_type)
     df = pd.read_pickle(data_path)
     df = df[(df['交易日期'] >= pd.to_datetime(train_start_date)) & (df['交易日期'] <= pd.to_datetime(train_end_date))]

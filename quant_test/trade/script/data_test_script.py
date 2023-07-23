@@ -18,8 +18,8 @@ def execute_multiple_files(file_paths):
 
 # 周六执行这个
 if __name__ == "__main__":
-    file_paths = ['F:\\quantitative_trading\\quant_formal\\data\\download_data_main.py'
-        , 'F:\\quantitative_trading\\quant_formal\\data\\data_processing_main.py'
-        , 'F:\\quantitative_trading\\quant_formal\\backtest\\backtest_pick_stock.py'
-        , 'F:\\quantitative_trading\\quant_formal\\backtest\\latest_result.py']
+    file_paths = ['F:\\quantitative_trading_dev_test\\quant_test\\data\\download_data_main.py'
+        , 'F:\\quantitative_trading_dev_test\\quant_test\\data\\data_processing_main.py'
+        , 'F:\\quantitative_trading_dev_test\\quant_test\\backtest\\backtest_pick_stock.py'
+        , 'F:\\quantitative_trading_dev_test\\quant_test\\backtest\\latest_result.py']
     execute_multiple_files(file_paths)

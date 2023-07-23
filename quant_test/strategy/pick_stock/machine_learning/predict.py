@@ -46,12 +46,12 @@ def ML_model_predictor(pick_stock_df, period_type, model_type):
 #
 #         if "regress" == model_type:
 #             X_predict = build_regression_prediction_data_set(pick_stock_df_interval)
-#             model_path = "F:\quantitative_trading\quant_formal\strategy\pick_stock\machine_learning\model\FCN_regress_model_{}_{}-{}.pt".format(
+#             model_path = "F:\quantitative_trading_dev_test\quant_test\strategy\pick_stock\machine_learning\model\FCN_regress_model_{}_{}-{}.pt".format(
 #                 data_type, time_pair[0], time_pair[1])
 #             output_size = 1
 #         else:
 #             X_predict = build_classify_prediction_data_set(pick_stock_df_interval)
-#             model_path = "F:\quantitative_trading\quant_formal\strategy\pick_stock\machine_learning\model\FCN_classify_model_{}_{}-{}.pt".format(
+#             model_path = "F:\quantitative_trading_dev_test\quant_test\strategy\pick_stock\machine_learning\model\FCN_classify_model_{}_{}-{}.pt".format(
 #                 data_type, time_pair[0], time_pair[1])
 #             output_size = 2
 #
@@ -82,7 +82,7 @@ def DL_model_regress_predictor(pick_stock_df, data_type, hidden_size=fcn_hidden_
             continue
 
         X_predict = build_regression_prediction_data_set(pick_stock_df_interval)
-        model_path = "F:\quantitative_trading\quant_formal\strategy\pick_stock\machine_learning\model\FCN_regress_model_{}_{}-{}.pt".format(
+        model_path = "F:\quantitative_trading_dev_test\quant_test\strategy\pick_stock\machine_learning\model\FCN_regress_model_{}_{}-{}.pt".format(
             data_type, time_pair[0], time_pair[1])
         output_size = 1
 
@@ -108,7 +108,7 @@ def DL_model_classify_predictor(pick_stock_df, data_type, hidden_size=fcn_hidden
             continue
 
         X_predict = build_classify_prediction_data_set(pick_stock_df_interval)
-        model_path = "F:\quantitative_trading\quant_formal\strategy\pick_stock\machine_learning\model\FCN_classify_model_{}_{}-{}.pt".format(
+        model_path = "F:\quantitative_trading_dev_test\quant_test\strategy\pick_stock\machine_learning\model\FCN_classify_model_{}_{}-{}.pt".format(
             data_type, time_pair[0], time_pair[1])
         output_size = 2
 

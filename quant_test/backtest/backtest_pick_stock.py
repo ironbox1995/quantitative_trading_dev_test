@@ -37,7 +37,7 @@ def back_test_main(strategy_name, date_start, date_end, select_stock_num, period
 
     # 导入指数数据
     index_data = import_index_data(
-        r"F:\quantitative_trading\quant_formal\data\historical\tushare_index_data\000001.SH.csv"
+        r"F:\quantitative_trading_dev_test\quant_test\data\historical\tushare_index_data\000001.SH.csv"
         , back_trader_start=date_start, back_trader_end=date_end)
 
     # 创造空的事件周期表，用于填充不选股的周期
@@ -46,7 +46,7 @@ def back_test_main(strategy_name, date_start, date_end, select_stock_num, period
     # ===导入数据
     # 从pickle文件中读取整理好的所有股票数据
     df = pd.read_pickle(
-        r'F:\quantitative_trading\quant_formal\data\historical\processed_data\all_stock_data_%s.pkl' % period_type)
+        r'F:\quantitative_trading_dev_test\quant_test\data\historical\processed_data\all_stock_data_%s.pkl' % period_type)
     df.dropna(subset=['下周期每天涨跌幅'], inplace=True)
     # ===删除下个交易日不交易、开盘涨停的股票，因为这些股票在下个交易日开盘时不能买入。
     df = df[df['下日_是否交易'] == 1]
@@ -106,7 +106,7 @@ def back_test_main(strategy_name, date_start, date_end, select_stock_num, period
         select_stock = curve_pick_time(select_stock, pick_time_mtd)
 
     select_stock.to_csv(
-        r"F:\quantitative_trading\quant_formal\backtest\result_record\select_stock_{}_{}_选{}_{}-{}_{}.csv"
+        r"F:\quantitative_trading_dev_test\quant_test\backtest\result_record\select_stock_{}_{}_选{}_{}-{}_{}.csv"
         .format(strategy_name, period_type, select_stock_num, date_start, date_end, pick_time_mtd), encoding='gbk')
 
     # ===计算选中股票每天的资金曲线
@@ -124,13 +124,13 @@ def back_test_main(strategy_name, date_start, date_end, select_stock_num, period
     equity['equity_curve'] = (equity['涨跌幅'] + 1).cumprod()
     equity['benchmark'] = (equity['指数涨跌幅'] + 1).cumprod()
 
-    equity.to_csv(r"F:\quantitative_trading\quant_formal\backtest\result_record\equity_{}_{}_选{}_{}-{}_{}.csv"
+    equity.to_csv(r"F:\quantitative_trading_dev_test\quant_test\backtest\result_record\equity_{}_{}_选{}_{}-{}_{}.csv"
                   .format(strategy_name, period_type, select_stock_num, date_start, date_end, pick_time_mtd),
                   encoding='gbk')
 
     # ===计算策略评价指标
     rtn, year_return, month_return = strategy_evaluate(equity, select_stock)
-    with open(r"F:\quantitative_trading\quant_formal\backtest\result_record\策略执行日志.txt".format(strategy_name), 'a',
+    with open(r"F:\quantitative_trading_dev_test\quant_test\backtest\result_record\策略执行日志.txt".format(strategy_name), 'a',
               encoding='utf-8') as f:
         print("=" * 30, file=f)
         print(serial_number, file=f)

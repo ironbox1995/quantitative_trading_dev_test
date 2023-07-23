@@ -71,7 +71,7 @@ def draw_equity_curve_mat(df, data_dict, strategy_name, period_type, select_stoc
         ax_r.set_ylabel(key, fontsize=font_size)
         ax_r.legend(loc=1, fontsize=font_size)
         ax_r.tick_params(labelsize=font_size)
-    plt.savefig(r'F:\quantitative_trading\quant_formal\backtest\curve_picture\backtest_{}_{}_选{}_{}_{}.jpg'.format(strategy_name, period_type, select_stock_num, pick_time_mtd, serial_number))
+    plt.savefig(r'F:\quantitative_trading_dev_test\quant_test\backtest\curve_picture\backtest_{}_{}_选{}_{}_{}.jpg'.format(strategy_name, period_type, select_stock_num, pick_time_mtd, serial_number))
     if show_pic:
         plt.show()
     plt.clf()
