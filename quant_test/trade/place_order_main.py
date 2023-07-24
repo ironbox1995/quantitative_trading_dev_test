@@ -27,7 +27,7 @@ https://mp.weixin.qq.com/s/vrv-PniBGxEerJ44AV0jcw
 """
 
 
-def run_strategy_buy(file_path):
+def run_strategy_buy():
 
     with open(file_path, 'w') as file:
         sys.stdout = file
@@ -97,10 +97,7 @@ def run_strategy_buy(file_path):
     sys.stdout = sys.__stdout__
 
 
-def run_strategy_sell(file_path):
-
-    with open(file_path, 'w') as file:
-        sys.stdout = file
+def run_strategy_sell():
 
     # ========== 初始化交易接口 ==========
     path = 'F:\\中航证券QMT实盘-交易端\\userdata_mini'  # 极简版QMT的路径
@@ -143,15 +140,12 @@ def run_strategy_sell(file_path):
     account_res = xt_trader.query_stock_asset(user)
     print("周五平仓后现金量：{}".format(account_res.cash))
 
-    # 恢复 sys.stdout 到原来的标准输出流
-    sys.stdout = sys.__stdout__
-
 
 if __name__ == "__main__":
     file_path = "实盘日志.txt"
 
     # 周一早上执行这个
-    run_strategy_buy(file_path)
+    run_strategy_buy()
 
     # 周五下午执行这个
-    run_strategy_sell(file_path)
+    run_strategy_sell()
