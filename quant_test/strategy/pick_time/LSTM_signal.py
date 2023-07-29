@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from deep_signal.model import *
+from strategy.pick_time.deep_signal.model_setup import *
 
 
 def create_predict_data(lst):

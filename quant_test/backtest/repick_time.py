@@ -1,5 +1,5 @@
-from MA_signal import *
-from LSTM_signal import *
+from strategy.pick_time.MA_signal import *
+from strategy.pick_time.LSTM_signal import *
 
 
 def pick_time(select_stock, pick_time_mtd):
