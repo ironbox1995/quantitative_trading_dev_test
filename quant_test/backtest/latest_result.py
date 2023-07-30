@@ -85,6 +85,7 @@ def back_test_latest_result(strategy_name, date_start, date_end, select_stock_nu
     # 根据资金曲线择时
     if pick_time_mtd == "" or pick_time_mtd == "无择时":
         pick_time_mtd = "无择时"
+        latest_selection['最新择时信号'] = 1  # 即使无择时也要输出一个信号，便于正确读取。
     else:
         select_stock, latest_signal = pick_time(select_stock, pick_time_mtd)
         latest_selection['最新择时信号'] = latest_signal
