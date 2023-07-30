@@ -3,9 +3,9 @@
 from data.processing.Functions import *
 from get_strategy_function import get_strategy_function
 from backtest.repick_time import *
-from backtest.utils import *
 from back_test_config import *
 import warnings
+from utils_global.dingding_message import *
 
 warnings.filterwarnings('ignore')
 
@@ -20,13 +20,13 @@ def back_test_latest_result(strategy_name, date_start, date_end, select_stock_nu
     c_rate = 1 / 10000  # 手续费 这里与之前不同
     t_rate = 1 / 1000  # 印花税
 
-    # 导入指数数据
-    index_data = import_index_data(
-        r"F:\quantitative_trading_dev_test\quant_test\data\historical\tushare_index_data\000001.SH.csv"
-        , back_trader_start=date_start, back_trader_end=date_end)
-
-    # 创造空的事件周期表，用于填充不选股的周期
-    # empty_df = create_empty_data(index_data, period_type)
+    # # 导入指数数据
+    # index_data = import_index_data(
+    #     r"F:\quantitative_trading_dev_test\quant_test\data\historical\tushare_index_data\000001.SH.csv"
+    #     , back_trader_start=date_start, back_trader_end=date_end)
+    #
+    # # 创造空的事件周期表，用于填充不选股的周期
+    # # empty_df = create_empty_data(index_data, period_type)
 
     # ===导入数据
     # 从pickle文件中读取整理好的所有股票数据
@@ -99,4 +99,12 @@ if __name__ == "__main__":
     for strategy_name in strategy_li:
         for period_type in period_type_li:
             for select_stock_num in select_stock_num_li:
-                back_test_latest_result(strategy_name, date_start, date_end, select_stock_num, period_type, pick_time_mtd)
+                try:
+                    back_test_latest_result(strategy_name, date_start, date_end, select_stock_num, period_type, pick_time_mtd)
+                except Exception as e:
+                    msg = "交易播报：策略{}结果输出失败：period_type:{}, select_stock_num:{}".format(strategy_name, period_type,
+                                                                                select_stock_num)
+                    print(msg)
+                    send_dingding(msg)
+                    print(e)
+    send_dingding("交易播报：执行 最新结果输出 成功！")

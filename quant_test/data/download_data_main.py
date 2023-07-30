@@ -2,6 +2,7 @@
 # from get_historical_data_QMT import *
 from get_index_data_from_tushare import *
 from get_stock_data_from_tushare import *
+from utils_global.dingding_message import *
 
 
 def update_data_main():
@@ -29,4 +30,9 @@ def update_data_main():
 
 
 if __name__ == "__main__":
-    update_data_main()
+    try:
+        update_data_main()
+        send_dingding("交易播报：执行 数据获取 成功！")
+    except Exception as e:
+        send_dingding("交易播报：执行 数据获取 失败，后续流程已阻断，请查看后台了解详细原因。")
+        print(e)

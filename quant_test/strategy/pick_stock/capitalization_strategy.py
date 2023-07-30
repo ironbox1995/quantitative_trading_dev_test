@@ -90,7 +90,7 @@ def low_price_pct_strategy(pick_from_df, select_stock_num):
     return session_id, df
 
 
-def low_price_small_cap_strategy(pick_from_df, select_stock_num=200):
+def junk_stock_strategy(pick_from_df, select_stock_num=200):
     """
     垃圾股策略：低价股 + 小市值选股
     :param pick_from_df:
@@ -107,3 +107,26 @@ def low_price_small_cap_strategy(pick_from_df, select_stock_num=200):
                       & (pick_from_df['收盘价'] >= 2)]
 
     return session_id, df
+
+
+def low_price_small_cap_strategy(pick_from_df, select_stock_num):
+    """
+    低价小市值策略
+    低价因子+小市值因子
+    :param pick_from_df:
+    :param select_stock_num:
+    :return:
+    """
+    session_id = 100015
+
+    pick_from_df = pick_from_df[pick_from_df['收盘价'] >= 2]
+    # 低价股 + 小市值选股：混合排名
+    pick_from_df['价格排名'] = pick_from_df.groupby('交易日期')['收盘价'].rank(ascending=True, pct=False, method='first')
+    pick_from_df['市值排名'] = pick_from_df.groupby('交易日期')['总市值 （万元）'].rank(ascending=True, pct=False, method='first')
+
+    # 选股
+    pick_from_df['因子'] = pick_from_df['价格排名'] + pick_from_df['市值排名']
+    pick_from_df['排名'] = pick_from_df.groupby('交易日期')['因子'].rank()
+    pick_from_df = pick_from_df[pick_from_df['排名'] <= select_stock_num]
+
+    return session_id, pick_from_df

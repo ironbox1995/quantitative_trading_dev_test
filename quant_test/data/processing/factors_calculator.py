@@ -21,7 +21,6 @@ def daily_factor_calculator(df, index_data):
 
     df['开盘买入涨跌幅'] = df['收盘价'] / df['开盘价'] - 1  # 为之后开盘买入做好准备
 
-
     # =计算交易天数
     df['上市至今交易天数'] = df.index + 1
 

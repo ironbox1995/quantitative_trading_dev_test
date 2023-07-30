@@ -7,15 +7,15 @@ author: 邢不行
 根据选股数据，进行选股
 我粗略想了想，如果不考虑均仓买入后剩余的资金的量的话，根本就不需要考虑总共有多少钱。所以这样的回测其实是合理的。
 """
-import datetime
-
 from backtest.Evaluate import *
 from data.processing.Functions import *
 from get_strategy_function import get_strategy_function
-from utils import *
 from backtest.repick_time import *
 from back_test_config import *
 import warnings
+from utils_global.dingding_message import *
+
+import datetime
 
 warnings.filterwarnings('ignore')
 
@@ -154,7 +154,7 @@ def back_test_main(strategy_name, date_start, date_end, select_stock_num, period
 if __name__ == "__main__":
     # period_type = 'M'  # W代表周，M代表月
     # date_start = '2007-01-01'  # 需要从10年开始，因为使用到了ttm的同比差分，对比的是3年持续增长的数据
-    # date_end = '2023-03-31'  # 要以周期的最后一天结束，不然会报错
+    # date_end = '2023-03-31'
     # select_stock_num = 3  # 选股数量
     # strategy_name = '低价选股策略_百分比'
     # back_test_main(strategy_name, date_start, date_end, select_stock_num, period_type)
@@ -168,9 +168,12 @@ if __name__ == "__main__":
                     back_test_main(strategy_name, date_start, date_end, select_stock_num, period_type, serial_number,
                                    pick_time_mtd)
                 except Exception as e:
-                    print("策略{}执行失败：period_type:{}, select_stock_num:{}".format(strategy_name, period_type,
-                                                                                select_stock_num))
+                    msg = "交易播报：策略{}执行失败：period_type:{}, select_stock_num:{}".format(strategy_name, period_type,
+                                                                                select_stock_num)
+                    print(msg)
+                    send_dingding(msg)
                     print(e)
+    send_dingding("交易播报：执行 回测 成功！")
 
     # strategy_li_sp = ["垃圾股策略"]
     # period_type_li_sp = ['M', 'W']

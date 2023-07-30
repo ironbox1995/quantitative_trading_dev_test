@@ -1,4 +1,4 @@
-from machine_learning.predict import *
+from strategy.pick_stock.machine_learning.predict import *
 
 
 def random_forest_classify_strategy(pick_from_df, select_stock_num, period_type):
