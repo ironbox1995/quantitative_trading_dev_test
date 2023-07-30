@@ -112,8 +112,8 @@ def cal_tech_factor_all(df, extra_agg_dict):
     # extra_agg_dict['A/D'] = 'last'
     # df['TYP'] = (df['最高价_复权'] + df['收盘价_复权'] + df['最低价_复权']) / 3
     # extra_agg_dict['TYP'] = 'last'
-    # df['AMOV'] = df['成交量'] * ((df['开盘价_复权'] + df['收盘价_复权']) / 2)
-    # extra_agg_dict['AMOV'] = 'last'
+    df['AMOV'] = df['成交量'] * ((df['开盘价_复权'] + df['收盘价_复权']) / 2)
+    extra_agg_dict['AMOV'] = 'last'
 
     # 简单基本面指标
     # df['流通股本'] = df['流通市值'] / df['收盘价']
