@@ -11,3 +11,4 @@ date_start = '2010-01-01'
 # date_end = '2023-07-07'
 date_end = get_current_date()
 pick_time_mtd = "双均线择时"
+ALPHA = 0.7

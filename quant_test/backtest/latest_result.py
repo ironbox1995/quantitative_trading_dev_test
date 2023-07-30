@@ -10,7 +10,7 @@ from utils_global.dingding_message import *
 warnings.filterwarnings('ignore')
 
 
-def back_test_latest_result(strategy_name, date_start, date_end, select_stock_num, period_type, pick_time_mtd=""):
+def back_test_latest_result(strategy_name, select_stock_num, period_type, pick_time_mtd=""):
     pick_stock_strategy = get_strategy_function(strategy_name)
 
     print('策略名称:', strategy_name)
@@ -19,14 +19,6 @@ def back_test_latest_result(strategy_name, date_start, date_end, select_stock_nu
     # 常量设置
     c_rate = 1 / 10000  # 手续费 这里与之前不同
     t_rate = 1 / 1000  # 印花税
-
-    # # 导入指数数据
-    # index_data = import_index_data(
-    #     r"F:\quantitative_trading_dev_test\quant_test\data\historical\tushare_index_data\000001.SH.csv"
-    #     , back_trader_start=date_start, back_trader_end=date_end)
-    #
-    # # 创造空的事件周期表，用于填充不选股的周期
-    # # empty_df = create_empty_data(index_data, period_type)
 
     # ===导入数据
     # 从pickle文件中读取整理好的所有股票数据
@@ -90,9 +82,21 @@ def back_test_latest_result(strategy_name, date_start, date_end, select_stock_nu
         select_stock, latest_signal = pick_time(select_stock, pick_time_mtd)
         latest_selection['最新择时信号'] = latest_signal
 
+    # TODO: 计算强化学习的Q值，检查是否正确
+    # 给定alpha的值
+    alpha = ALPHA
+    # 计算Q列的值
+    select_stock['Q'] = alpha * select_stock['选股下周期涨跌幅'] + (1 - alpha) * select_stock['Q'].shift(fill_value=0)
+    latest_Q = select_stock.tail(1)['Q'].iloc[0]
+    latest_selection['Q'] = latest_Q
+    select_stock['Q'] = select_stock['Q'].shift(1)
+    select_stock['Q'].fillna(value=0, inplace=True)  # 最前面正常买入即可
+
     latest_selection.to_csv(
         r"F:\quantitative_trading_dev_test\quant_test\backtest\latest_selection\最新选股_{}_{}_选{}_{}.csv"
             .format(strategy_name, period_type, select_stock_num, pick_time_mtd), encoding='gbk')
+
+    return select_stock
 
 
 if __name__ == "__main__":
@@ -101,7 +105,7 @@ if __name__ == "__main__":
         for period_type in period_type_li:
             for select_stock_num in select_stock_num_li:
                 try:
-                    back_test_latest_result(strategy_name, date_start, date_end, select_stock_num, period_type, pick_time_mtd)
+                    back_test_latest_result(strategy_name, select_stock_num, period_type, pick_time_mtd)
                 except Exception as e:
                     msg = "交易播报：策略{}结果输出失败：period_type:{}, select_stock_num:{}".format(strategy_name, period_type,
                                                                                 select_stock_num)
