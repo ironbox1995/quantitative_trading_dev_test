@@ -1,6 +1,5 @@
 # coding=gbk
 
-from data.processing.Functions import *
 from get_strategy_function import get_strategy_function
 from backtest.repick_time import *
 from back_test_config import *
@@ -45,6 +44,7 @@ def back_test_latest_result(strategy_name, select_stock_num, period_type, pick_t
     # 保存select_stock的最后一行
     latest_selection = select_stock.tail(1)
 
+    # 去掉最后一行后再处理一次
     df.dropna(subset=['下周期每天涨跌幅'], inplace=True)
     group = df.groupby('交易日期')
     select_stock = pd.DataFrame()
@@ -82,15 +82,15 @@ def back_test_latest_result(strategy_name, select_stock_num, period_type, pick_t
         select_stock, latest_signal = pick_time(select_stock, pick_time_mtd)
         latest_selection['最新择时信号'] = latest_signal
 
-    # TODO: 计算强化学习的Q值，检查是否正确
-    # 给定alpha的值
-    alpha = ALPHA
-    # 计算Q列的值
-    select_stock['Q'] = alpha * select_stock['选股下周期涨跌幅'] + (1 - alpha) * select_stock['Q'].shift(fill_value=0)
-    latest_Q = select_stock.tail(1)['Q'].iloc[0]
-    latest_selection['Q'] = latest_Q
-    select_stock['Q'] = select_stock['Q'].shift(1)
-    select_stock['Q'].fillna(value=0, inplace=True)  # 最前面正常买入即可
+    # # TODO: 计算强化学习的Q值，检查是否正确
+    # # 给定alpha的值
+    # alpha = ALPHA
+    # # 计算Q列的值
+    # select_stock['Q'] = alpha * select_stock['选股下周期涨跌幅'] + (1 - alpha) * select_stock['Q'].shift(fill_value=0)
+    # latest_Q = select_stock.tail(1)['Q'].iloc[0]
+    # latest_selection['Q'] = latest_Q
+    # select_stock['Q'] = select_stock['Q'].shift(1)
+    # select_stock['Q'].fillna(value=0, inplace=True)  # 最前面正常买入即可
 
     latest_selection.to_csv(
         r"F:\quantitative_trading_dev_test\quant_test\backtest\latest_selection\最新选股_{}_{}_选{}_{}.csv"
@@ -104,12 +104,13 @@ if __name__ == "__main__":
     for strategy_name in strategy_li:
         for period_type in period_type_li:
             for select_stock_num in select_stock_num_li:
-                try:
-                    back_test_latest_result(strategy_name, select_stock_num, period_type, pick_time_mtd)
-                except Exception as e:
-                    msg = "交易播报：策略{}结果输出失败：period_type:{}, select_stock_num:{}".format(strategy_name, period_type,
-                                                                                select_stock_num)
-                    print(msg)
-                    send_dingding(msg)
-                    print(e)
+                for pick_time_mtd in pick_time_mtd_li:
+                    try:
+                        back_test_latest_result(strategy_name, select_stock_num, period_type, pick_time_mtd)
+                    except Exception as e:
+                        msg = "交易播报：策略{}结果输出失败：period_type:{}, select_stock_num:{}".format(strategy_name, period_type,
+                                                                                    select_stock_num)
+                        print(msg)
+                        send_dingding(msg)
+                        print(e)
     send_dingding("交易播报：执行 最新结果输出 成功！")

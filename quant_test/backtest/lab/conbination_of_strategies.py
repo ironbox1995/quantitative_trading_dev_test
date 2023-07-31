@@ -41,13 +41,9 @@ def load_all_strategies():
     # 使用pd.concat将它们合并成一个新的DataFrame，并保留原始的行索引
     merged_df = pd.concat(strategy_dct.values())
 
-    # 使用groupby方法按原始行索引聚合找到C列的最大值，同时保留其他列的信息
+    # 使用groupby方法按原始行索引聚合找到Q列的最大值，同时保留其他列的信息
     select_stock = merged_df.groupby(level=0).apply(lambda group: group.loc[group['Q'].idxmax()])
     # 以上代码来自ChatGPT，需要检查
-
-    # 常量设置
-    c_rate = 1 / 10000  # 手续费 这里与之前不同
-    t_rate = 1 / 1000  # 印花税
 
     # 导入指数数据
     index_data = import_index_data(
