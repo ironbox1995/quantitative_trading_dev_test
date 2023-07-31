@@ -3,6 +3,7 @@
 from get_strategy_function import get_strategy_function
 from backtest.repick_time import *
 from back_test_config import *
+from strategy.strategy_config import *
 import warnings
 from utils_global.dingding_message import *
 
@@ -11,6 +12,11 @@ warnings.filterwarnings('ignore')
 
 def back_test_latest_result(strategy_name, select_stock_num, period_type, pick_time_mtd=""):
     pick_stock_strategy = get_strategy_function(strategy_name)
+
+    if not Second_Board_available:
+        strategy_name += "无创业"
+    if not STAR_Market_available:
+        strategy_name += "无科创"
 
     print('策略名称:', strategy_name)
     print('周期:', period_type)
