@@ -1,7 +1,16 @@
+from strategy.strategy_config import *
+
+
 def price_volume_strategy(df, select_stock_num):
     factor = '量价相关性'  # 量价相关性
     ascending = True  # True，从小到大    False，从大到小
     df.dropna(subset=[factor], inplace=True)
+
+    if not Second_Board_available:
+        df = df[df['市场类型'] != '创业板']
+    if not STAR_Market_available:
+        df = df[df['市场类型'] != '科创板']
+
     df['排名'] = df.groupby('交易日期')[factor].rank(ascending=ascending, method='first')
     df['排名_百分比'] = df.groupby('交易日期')[factor].rank(ascending=ascending, pct=True, method='first')
 
@@ -28,6 +37,11 @@ def multi_factor_pv_strategy1(pick_from_df, select_stock_num):
     session_id = 100017
 
     df = pick_from_df
+
+    if not Second_Board_available:
+        df = df[df['市场类型'] != '创业板']
+    if not STAR_Market_available:
+        df = df[df['市场类型'] != '科创板']
 
     # 筛选
     df['杠杆'] = df['流通市值（万元）'] / df['总市值 （万元）']
@@ -69,9 +83,16 @@ def multi_factor_pv_strategy2(pick_from_df, select_stock_num):
     """
     session_id = 100017
 
+    df = pick_from_df
+
+    if not Second_Board_available:
+        df = df[df['市场类型'] != '创业板']
+    if not STAR_Market_available:
+        df = df[df['市场类型'] != '科创板']
+
     # 筛选
-    pick_from_df['量价相关性_20_排名'] = pick_from_df.groupby('交易日期')['量价相关性_20'].rank(pct=True)
-    df = pick_from_df[pick_from_df['量价相关性_20_排名'] < 0.8]
+    df['量价相关性_20_排名'] = df.groupby('交易日期')['量价相关性_20'].rank(pct=True)
+    df = df[df['量价相关性_20_排名'] < 0.8]
 
     # 排序
     df['成交额std_10_排名'] = df.groupby('交易日期')['成交额std_10'].rank()
@@ -99,6 +120,12 @@ def wr_bias_strategy(pick_from_df, select_stock_num):
     session_id = 100018
 
     df = pick_from_df
+
+    if not Second_Board_available:
+        df = df[df['市场类型'] != '创业板']
+    if not STAR_Market_available:
+        df = df[df['市场类型'] != '科创板']
+
     # 筛选
     df = df[df['WR_5'] >= 15]
     df = df[(df['bias_5'] >= -0.05)]
@@ -126,6 +153,11 @@ def volume_turnover_rate_strategy(pick_from_df, select_stock_num):
     session_id = 100019
 
     df = pick_from_df
+
+    if not Second_Board_available:
+        df = df[df['市场类型'] != '创业板']
+    if not STAR_Market_available:
+        df = df[df['市场类型'] != '科创板']
 
     # 排序
     df['总市值排名'] = df.groupby('交易日期')['总市值 （万元）'].rank()

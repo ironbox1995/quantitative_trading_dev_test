@@ -9,7 +9,6 @@ QMT自动交易案例
 """
 import time
 import datetime
-import sys
 from xtquant import xtconstant  # qmt常量
 from xtquant.xttype import StockAccount  # 证券账户
 from xtquant.xttrader import XtQuantTrader  # 交易接口
@@ -29,9 +28,6 @@ https://mp.weixin.qq.com/s/vrv-PniBGxEerJ44AV0jcw
 
 def run_strategy_buy():
 
-    with open(file_path, 'w') as file:
-        sys.stdout = file
-
     # ========== 初始化交易接口 ==========
     path = 'F:\\中航证券QMT实盘-交易端\\userdata_mini'  # 极简版QMT的路径
     session_id = 100001  # session_id为会话编号，策略使用方对于不同的Python策略需要使用不同的会话编号（自己随便写）
@@ -49,7 +45,8 @@ def run_strategy_buy():
 
     print("连接时间：{}".format(datetime.datetime.now()))
 
-    print("周一开单前现金量：{}".format(account_res.cash))
+    cash_amount = account_res.cash
+    print("周一开单前现金量：{}".format(cash_amount))
     # ========== 策略配置 ==========
     # buy_stock_list = ['002708.SZ', '003023.SZ', '002094.SZ']
     # buy_amount = 100000  # 0表示使用所有可用资金买入
@@ -92,9 +89,7 @@ def run_strategy_buy():
                 print("下单时间：{}".format(datetime.datetime.now()))
     else:
         print("本周期无下单目标。")
-
-    # 恢复 sys.stdout 到原来的标准输出流
-    sys.stdout = sys.__stdout__
+    return cash_amount
 
 
 def run_strategy_sell():
@@ -140,9 +135,10 @@ def run_strategy_sell():
     account_res = xt_trader.query_stock_asset(user)
     print("周五平仓后现金量：{}".format(account_res.cash))
 
+    return account_res.cash
+
 
 if __name__ == "__main__":
-    file_path = "实盘日志.txt"
 
     # 周一早上执行这个
     run_strategy_buy()

@@ -1,4 +1,5 @@
 from strategy.pick_stock.machine_learning.predict import *
+from strategy.strategy_config import *
 
 
 def random_forest_classify_strategy(pick_from_df, select_stock_num, period_type):
@@ -10,6 +11,11 @@ def random_forest_classify_strategy(pick_from_df, select_stock_num, period_type)
     :return:
     """
     session_id = 200001
+
+    if not Second_Board_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
+    if not STAR_Market_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
 
     pick_from_df = ML_model_predictor(pick_from_df, period_type, "random_forest_classify")
     pick_from_df = pick_from_df[pick_from_df["机器学习预测值"] == "1"]
@@ -29,6 +35,11 @@ def random_forest_regress_strategy(pick_from_df, select_stock_num, period_type):
     """
     session_id = 200002
 
+    if not Second_Board_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
+    if not STAR_Market_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+
     pick_from_df = ML_model_predictor(pick_from_df, period_type, "random_forest_regress")
     pick_from_df = pick_from_df[pick_from_df["机器学习预测值"] >= 0.002]  # 至少要能覆盖印花税和手续费
     pick_from_df['排名'] = pick_from_df.groupby('交易日期')['机器学习预测值'].rank(ascending=False)
@@ -45,6 +56,11 @@ def svm_classify_strategy(pick_from_df, select_stock_num, period_type):
     :return:
     """
     session_id = 200003
+
+    if not Second_Board_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
+    if not STAR_Market_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
 
     pick_from_df = ML_model_predictor(pick_from_df, period_type, "SVC_classify")
     pick_from_df = pick_from_df[pick_from_df["机器学习预测值"] == "1"]
@@ -63,6 +79,11 @@ def svm_regress_strategy(pick_from_df, select_stock_num, period_type):
     """
     session_id = 200004
 
+    if not Second_Board_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
+    if not STAR_Market_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+
     pick_from_df = ML_model_predictor(pick_from_df, period_type, "SVR_regress")
     pick_from_df = pick_from_df[pick_from_df["机器学习预测值"] >= 0.002]  # 至少要能覆盖印花税和手续费
     pick_from_df['排名'] = pick_from_df.groupby('交易日期')['机器学习预测值'].rank(ascending=False)
@@ -79,6 +100,11 @@ def fcn_classify_strategy(pick_from_df, select_stock_num, period_type):
     :return:
     """
     session_id = 200005
+
+    if not Second_Board_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
+    if not STAR_Market_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
 
     pick_from_df = DL_model_classify_predictor(pick_from_df, period_type, "FCN_classify")
     pick_from_df = pick_from_df[pick_from_df["机器学习预测值"] == "1"]
@@ -97,6 +123,11 @@ def fcn_regress_strategy(pick_from_df, select_stock_num, period_type):
     """
     session_id = 200006
 
+    if not Second_Board_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
+    if not STAR_Market_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+
     pick_from_df = DL_model_regress_predictor(pick_from_df, period_type, "FCN_regress")
     pick_from_df = pick_from_df[pick_from_df["机器学习预测值"] >= 0.002]  # 至少要能覆盖印花税和手续费
     pick_from_df['排名'] = pick_from_df.groupby('交易日期')['机器学习预测值'].rank(ascending=False)
@@ -105,8 +136,20 @@ def fcn_regress_strategy(pick_from_df, select_stock_num, period_type):
 
 
 def lstm_strategy(pick_from_df, select_stock_num, period_type):
+
+    if not Second_Board_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
+    if not STAR_Market_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+
     pass
 
 
 def rl_strategy(pick_from_df, select_stock_num, period_type):
+
+    if not Second_Board_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
+    if not STAR_Market_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+
     pass

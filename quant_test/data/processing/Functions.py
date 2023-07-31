@@ -242,6 +242,7 @@ def cal_zdt_price(df):
     df.loc[cond, '涨停价'] = df['前收盘价'] * 1.05
     df.loc[cond, '跌停价'] = df['前收盘价'] * 0.95
 
+    # TODO: 条件有点问题
     # 科创板 20%
     rule_kcb = df['股票代码'].str.contains('sh68')
     # 2020年8月23日之后涨跌停规则有所改变

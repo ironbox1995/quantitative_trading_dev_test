@@ -1,4 +1,4 @@
-import pandas as pd
+from strategy.strategy_config import *
 
 
 def consistent_strategy(pick_from_df, select_stock_num):
@@ -9,6 +9,11 @@ def consistent_strategy(pick_from_df, select_stock_num):
     :return:
     """
     session_id = 100004
+
+    if not Second_Board_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
+    if not STAR_Market_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
 
     pick_from_df['排名'] = pick_from_df.groupby('交易日期')['涨跌幅'].rank(ascending=False)
     df = pick_from_df[pick_from_df['排名'] <= select_stock_num]

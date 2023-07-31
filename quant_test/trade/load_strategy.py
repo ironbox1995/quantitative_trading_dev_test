@@ -50,6 +50,12 @@ def get_previous_workday():
     return previous_workday
 
 
+def save_to_csv(new_row):
+    pd.DataFrame(new_row, index=[0]).to_csv('交易日志.csv', mode='a', header=False, index=False)
+
+
 if __name__ == "__main__":
-    buy_stock_list, buy_amount = load_strategy_result(100000)
-    print("买入列表：{}， 购买金额：{}".format(buy_stock_list, buy_amount))
+    # buy_stock_list, buy_amount = load_strategy_result(100000)
+    # print("买入列表：{}， 购买金额：{}".format(buy_stock_list, buy_amount))
+    save_info_dct = {"日期": datetime.today().date(), "现金金额": 100000, "备注": "本周买入前金额"}
+    save_to_csv(save_info_dct)

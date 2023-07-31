@@ -12,6 +12,7 @@ from data.processing.Functions import *
 from get_strategy_function import get_strategy_function
 from backtest.repick_time import *
 from back_test_config import *
+from strategy.strategy_config import *
 import warnings
 from utils_global.dingding_message import *
 
@@ -27,6 +28,11 @@ def back_test_main(strategy_name, date_start, date_end, select_stock_num, period
                    show_pic=False):
     # 策略选择
     pick_stock_strategy = get_strategy_function(strategy_name)
+
+    if not Second_Board_available:
+        strategy_name += "无创业"
+    if not STAR_Market_available:
+        strategy_name += "无科创"
 
     print('策略名称:', strategy_name)
     print('周期:', period_type)
@@ -163,16 +169,17 @@ if __name__ == "__main__":
     for strategy_name in strategy_li:
         for period_type in period_type_li:
             for select_stock_num in select_stock_num_li:
-                try:
-                    serial_number = generate_serial_number()
-                    back_test_main(strategy_name, date_start, date_end, select_stock_num, period_type, serial_number,
-                                   pick_time_mtd)
-                except Exception as e:
-                    msg = "交易播报：策略{}执行失败：period_type:{}, select_stock_num:{}".format(strategy_name, period_type,
-                                                                                select_stock_num)
-                    print(msg)
-                    send_dingding(msg)
-                    print(e)
+                for pick_time_mtd in pick_time_mtd_li:
+                    try:
+                        serial_number = generate_serial_number()
+                        back_test_main(strategy_name, date_start, date_end, select_stock_num, period_type, serial_number,
+                                       pick_time_mtd)
+                    except Exception as e:
+                        msg = "交易播报：策略{}执行失败：period_type:{}, select_stock_num:{}".format(strategy_name, period_type,
+                                                                                    select_stock_num)
+                        print(msg)
+                        send_dingding(msg)
+                        print(e)
     send_dingding("交易播报：执行 回测 成功！")
 
     # strategy_li_sp = ["垃圾股策略"]
