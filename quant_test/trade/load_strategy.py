@@ -51,7 +51,7 @@ def get_previous_workday():
 
 
 def save_to_csv(new_row):
-    pd.DataFrame(new_row, index=[0]).to_csv('交易日志.csv', mode='a', header=False, index=False)
+    pd.DataFrame(new_row, index=[0]).to_csv(r'F:\quantitative_trading\quant_formal\trade\交易日志.csv', mode='a', header=False, index=False)
 
 
 if __name__ == "__main__":
