@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import chinese_calendar as calendar
 
 from trade.trade_config import *
+from strategy.strategy_config import *
 
 
 def load_strategy_result(cash_amount):
@@ -12,6 +13,12 @@ def load_strategy_result(cash_amount):
     # 如果多个策略选股重复则只选一次(暂定)
     buy_stock_list = []
     for strategy_name in strategy_li:
+
+        if not Second_Board_available:
+            strategy_name += "无创业"
+        if not STAR_Market_available:
+            strategy_name += "无科创"
+
         buy_stock_list.extend(split_last_line(strategy_name))
 
     # TODO: 仓位管理
@@ -55,7 +62,7 @@ def save_to_csv(new_row):
 
 
 if __name__ == "__main__":
-    # buy_stock_list, buy_amount = load_strategy_result(100000)
-    # print("买入列表：{}， 购买金额：{}".format(buy_stock_list, buy_amount))
-    save_info_dct = {"日期": datetime.today().date(), "现金金额": 100000, "备注": "本周买入前金额"}
-    save_to_csv(save_info_dct)
+    buy_stock_list, buy_amount = load_strategy_result(100000)
+    print("买入列表：{}， 购买金额：{}".format(buy_stock_list, buy_amount))
+    # save_info_dct = {"日期": datetime.today().date(), "现金金额": 100000, "备注": "本周买入前金额"}
+    # save_to_csv(save_info_dct)
