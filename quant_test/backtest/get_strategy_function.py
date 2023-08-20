@@ -6,6 +6,7 @@ from strategy.pick_stock.price_volume_strategy import *
 from strategy.pick_stock.revert_strategy import *
 from strategy.pick_stock.turnover_rate_strategy import *
 from strategy.pick_stock.average_strategy import *
+from strategy.pick_stock.multi_factor_strategy import *
 
 
 def get_strategy_function(strategy_name):
@@ -54,16 +55,30 @@ def get_strategy_function(strategy_name):
         pick_stock_strategy = wr_bias_strategy
     # elif strategy_name == "挖掘放量待涨小市值个股策略":
     #     pick_stock_strategy = volume_turnover_rate_strategy
+    elif strategy_name == "非高价股选股策略":
+        pick_stock_strategy = non_high_price_strategy
 
     # 换手率策略
     # elif strategy_name == "换手率策略":
     #     pick_stock_strategy = turnover_rate_strategy
+    elif strategy_name == "成交额换手率策略1":
+        pick_stock_strategy = volume_turnover_strategy1
 
     # 均线策略
     # elif strategy_name == "单均线策略20日":
     #     pick_stock_strategy = average_20_day_strategy
     # elif strategy_name == "单均线策略5日":
     #     pick_stock_strategy = average_5_day_strategy
+
+    # 多因子策略
+    elif strategy_name == "因子遍历增强策略1":
+        pick_stock_strategy = factor_iterated_strategy1
+    elif strategy_name == "低回撤单因子组合策略":
+        pick_stock_strategy = low_draw_down_factors_strategy
+    elif strategy_name == "均线偏离与流通市值策略":
+        pick_stock_strategy = bias_and_circulating_value_strategy
+    elif strategy_name == "换手率筛选多因子排序策略":
+        pick_stock_strategy = turnover_filter_strategy
 
     else:
         raise Exception("尚无此策略或经验证不可用！")

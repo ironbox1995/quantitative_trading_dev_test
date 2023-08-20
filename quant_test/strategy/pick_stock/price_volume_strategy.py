@@ -109,6 +109,34 @@ def multi_factor_pv_strategy2(pick_from_df, select_stock_num):
     return session_id, df
 
 
+def non_high_price_strategy(pick_from_df, select_stock_num):
+    """
+    非高价股选股策略
+    https://bbs.quantclass.cn/thread/2721
+    :return:
+    """
+    session_id = 100020
+
+    df = pick_from_df
+
+    if not Second_Board_available:
+        df = df[df['市场类型'] != '创业板']
+    if not STAR_Market_available:
+        df = df[df['市场类型'] != '科创板']
+
+    df = df[df['最高价'] < 45]
+    df = df[df['最高价'] > 4]
+    df['成交额std_10_排名'] = df.groupby('交易日期')['成交额std_10'].rank()
+    df['总市值_排名'] = df.groupby('交易日期')['总市值 （万元）'].rank()
+    df['成交额std_5_排名'] = df.groupby('交易日期')['成交额std_5'].rank()
+    df['bias_5_排名'] = df.groupby('交易日期')['bias_5'].rank()
+    df['因子'] = 0.45 * df['成交额std_10_排名'] + 0.4 * df['bias_5_排名'] + 0.45 * df['总市值_排名'] + 0.55 * df['成交额std_5_排名']  # 这尼玛参数看着就不靠谱
+    df['排名'] = df.groupby('交易日期')['因子'].rank()
+    df = df[df['排名'] <= select_stock_num]
+
+    return session_id, df
+
+
 def wr_bias_strategy(pick_from_df, select_stock_num):
     """
     不知道这个策略该叫什么，姑且称为：香农短线量价策略

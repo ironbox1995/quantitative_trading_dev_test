@@ -58,7 +58,7 @@ def run_strategy_buy():
         for stock in buy_stock_list:
             sub_id = xtdata.subscribe_quote(stock, period='tick', count=-1)  # 1个tick是3s，5分钟是100个tick
             print(f'{stock}订阅成功，订阅号：{sub_id}')
-        time.sleep(3)
+        # time.sleep(3)
 
         # 计算买入股票的下单金额
         # account_res = xt_trader.query_stock_asset(user)
@@ -77,16 +77,23 @@ def run_strategy_buy():
             if volume < 100:
                 print(f'{buy}下单量不足100股')
                 continue
-            # 按照开盘价下单（实际这样可能会存在无法成交的情况）
-            last_price = xtdata.get_full_tick([buy])[buy]['lastPrice']
-            order_id = xt_trader.order_stock(user, buy, xtconstant.STOCK_BUY, volume, xtconstant.FIX_PRICE,
-                                             last_price, 'strategy', 'remark')
-            if order_id != -1:
-                print(f'{buy}下单成功，下单价格：{last_price}，下单量：{volume}')
-                print("下单时间：{}".format(datetime.datetime.now()))
-            else:
-                print(f'{buy}下单失败！')
-                print("下单时间：{}".format(datetime.datetime.now()))
+            # 按照最新价下单
+            for _ in range(5):
+                # last_price = xtdata.get_full_tick([buy])[buy]['lastPrice']
+                # order_id = xt_trader.order_stock(user, buy, xtconstant.STOCK_BUY, volume, xtconstant.FIX_PRICE,
+                #                                  last_price, 'strategy', 'remark')
+                try:
+                    order_id = xt_trader.order_stock(user, buy, xtconstant.STOCK_BUY, volume, xtconstant.LATEST_PRICE,
+                                                     0, 'weekly strategy', 'remark')
+                    if order_id != -1:
+                        print(f'{buy}下单成功，下单价格：{last_price}，下单量：{volume}')
+                        print("下单时间：{}".format(datetime.datetime.now()))
+                        break
+                    else:
+                        print(f'{buy}下单失败！')
+                        raise Exception(f'{buy}下单失败！')
+                except:
+                    pass
     else:
         print("本周期无下单目标。")
     return cash_amount
@@ -117,20 +124,27 @@ def run_strategy_sell():
         # 订阅数据
         sub_id = xtdata.subscribe_quote(sell_stock, period='tick', count=-1)  # 1个tick是3s，5分钟是100个tick
         print(f'{sell_stock}订阅成功，订阅号：{sub_id}')
-        time.sleep(3)
+        # time.sleep(3)
 
         print('正在执行卖出操作')
 
-        # 按照收盘价卖出（实际这样可能会存在无法成交的情况）
-        last_price = xtdata.get_full_tick([sell_stock])[sell_stock]['lastPrice']
-        order_id = xt_trader.order_stock(user, sell_stock, xtconstant.STOCK_SELL, sell_amount, xtconstant.FIX_PRICE,
-                                         last_price, 'strategy', 'remark')
-        if order_id != -1:
-            print(f'{sell_stock}卖出成功，卖出价格：{last_price}，卖出量：{sell_amount}')
-            print("卖出时间：{}".format(datetime.datetime.now()))
-        else:
-            print(f'{sell_stock}卖出失败！')
-            print("卖出时间：{}".format(datetime.datetime.now()))
+        # 按照最新盘价卖出
+        for _ in range(5):
+            last_price = xtdata.get_full_tick([sell_stock])[sell_stock]['lastPrice']
+            # order_id = xt_trader.order_stock(user, sell_stock, xtconstant.STOCK_SELL, sell_amount, xtconstant.FIX_PRICE,
+            #                                  last_price, 'strategy', 'remark')
+            try:
+                order_id = xt_trader.order_stock(user, sell_stock, xtconstant.STOCK_SELL, sell_amount, xtconstant.LATEST_PRICE,
+                                                 0, 'weekly strategy', 'remark')
+                if order_id != -1:
+                    print(f'{sell_stock}卖出成功，卖出价格约为：{last_price}，卖出量：{sell_amount}')
+                    print("卖出时间：{}".format(datetime.datetime.now()))
+                    break
+                else:
+                    print(f'{sell_stock}卖出失败！')
+                    raise Exception(f'{sell_stock}卖出失败！')
+            except:
+                pass
 
     account_res = xt_trader.query_stock_asset(user)
     print("周五平仓后现金量：{}".format(account_res.cash))

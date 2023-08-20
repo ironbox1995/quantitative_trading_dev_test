@@ -1,12 +1,29 @@
 from strategy.pick_time.MA_signal import *
 from strategy.pick_time.LSTM_signal import *
+from strategy.pick_time.index_signal import *
 
 
 def pick_time(select_stock, pick_time_mtd):
+
+    # 均线择时
     if pick_time_mtd == "双均线择时":
         select_stock, latest_signal = MA_signal(select_stock, para=(1, 3))
-    elif pick_time_mtd == "LSTM择时":
-        select_stock, latest_signal = LSTM_signal(select_stock)
+
+    # 指标择时
+    elif pick_time_mtd == "MICD择时":
+        select_stock, latest_signal = MICD_signal(select_stock)
+    elif pick_time_mtd == "SROC择时":
+        select_stock, latest_signal = SROC_signal(select_stock)
+    elif pick_time_mtd == "ENV择时":
+        select_stock, latest_signal = ENV_signal(select_stock)
+    elif pick_time_mtd == "MTM择时":
+        select_stock, latest_signal = MTM_signal(select_stock)
+    elif pick_time_mtd == "DPO择时":
+        select_stock, latest_signal = DPO_signal(select_stock)
+
+    # 深度学习择时
+    # elif pick_time_mtd == "LSTM择时":
+    #     select_stock, latest_signal = LSTM_signal(select_stock)
     else:
         raise Exception("暂无此择时方法！")
     return select_stock, latest_signal

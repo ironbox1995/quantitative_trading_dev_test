@@ -36,6 +36,7 @@ def back_test_main(strategy_name, date_start, date_end, select_stock_num, period
 
     print('策略名称:', strategy_name)
     print('周期:', period_type)
+    print('再择时方法:', pick_time_mtd)
 
     # 常量设置
     c_rate = 1 / 10000  # 手续费 这里与之前不同
@@ -169,32 +170,17 @@ if __name__ == "__main__":
     for strategy_name in strategy_li:
         for period_type in period_type_li:
             for select_stock_num in select_stock_num_li:
-                for pick_time_mtd in pick_time_mtd_li:
-                    try:
-                        serial_number = generate_serial_number()
-                        back_test_main(strategy_name, date_start, date_end, select_stock_num, period_type, serial_number,
-                                       pick_time_mtd)
-                    except Exception as e:
-                        msg = "交易播报：策略{}执行失败：period_type:{}, select_stock_num:{}".format(strategy_name, period_type,
-                                                                                    select_stock_num)
-                        print(msg)
-                        send_dingding(msg)
-                        print(e)
+                pick_time_mtd = pick_time_mtd_dct[strategy_name]
+                try:
+                    serial_number = generate_serial_number()
+                    back_test_main(strategy_name, date_start, date_end, select_stock_num, period_type, serial_number,
+                                   pick_time_mtd)
+                    serial_number = generate_serial_number()
+                    back_test_main(strategy_name, date_start, date_end, select_stock_num, period_type, serial_number,
+                                   "无择时")
+                except Exception as e:
+                    msg = "交易播报：策略{}执行失败：".format(strategy_name)
+                    print(msg)
+                    send_dingding(msg)
+                    print(e)
     send_dingding("交易播报：执行 回测 成功！")
-
-    # strategy_li_sp = ["垃圾股策略"]
-    # period_type_li_sp = ['M', 'W']
-    # select_stock_num_li_sp = [200]
-    # date_start = '2010-01-01'
-    # date_end = '2023-03-31'
-    #
-    # for strategy_name in strategy_li_sp:
-    #     for period_type in period_type_li_sp:
-    #         for select_stock_num in select_stock_num_li_sp:
-    #             try:
-    #                 serial_number = generate_serial_number()
-    #                 back_test_main(strategy_name, date_start, date_end, select_stock_num, period_type, serial_number)
-    #             except Exception as e:
-    #                 print("策略{}执行失败：period_type:{}, select_stock_num:{}".format(strategy_name, period_type,
-    #                                                                             select_stock_num))
-    #                 print(e)
