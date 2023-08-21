@@ -87,7 +87,7 @@ def run_strategy_buy():
                                                      0, 'weekly strategy', 'remark')
                     if order_id != -1:
                         print(f'{buy}下单成功，下单价格：{last_price}，下单量：{volume}')
-                        print("下单时间：{}".format(datetime.datetime.now()))
+                        print("下单时间：{}".format(datetime.now()))
                         break
                     else:
                         print(f'{buy}下单失败！')
@@ -138,7 +138,7 @@ def run_strategy_sell():
                                                  0, 'weekly strategy', 'remark')
                 if order_id != -1:
                     print(f'{sell_stock}卖出成功，卖出价格约为：{last_price}，卖出量：{sell_amount}')
-                    print("卖出时间：{}".format(datetime.datetime.now()))
+                    print("卖出时间：{}".format(datetime.now()))
                     break
                 else:
                     print(f'{sell_stock}卖出失败！')
