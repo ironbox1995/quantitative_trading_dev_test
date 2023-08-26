@@ -1,5 +1,5 @@
 # 思路：使用Q学习中的eps-greedy方法并联策略，尝试寻找最优解，为防止所有策略同时失效的可能性，应加入空仓策略
-# 所有策略均选择未择时的策略
+# TODO：这段代码表现仍然不够稳定
 from data.processing.Functions import *
 from backtest.repick_time import *
 from backtest.latest_result import back_test_latest_result
@@ -10,7 +10,7 @@ from backtest.Evaluate import *
 def create_empty_strategy(pick_time_switch):
     # 导入指数数据
     index_data = import_index_data(
-        r"F:\quantitative_trading\quant_formal\data\historical\tushare_index_data\000001.SH.csv"
+        r"F:\quantitative_trading_dev_test\quant_test\data\historical\tushare_index_data\000001.SH.csv"
         , back_trader_start=date_start, back_trader_end=date_end)
     # 创造空的事件周期表，用于填充不选股的周期
     empty_df = create_empty_data(index_data, 'W')
@@ -79,7 +79,7 @@ def combine_all_strategies(eps, alpha, pick_time_switch):
 
     # 导入指数数据
     index_data = import_index_data(
-        r"F:\quantitative_trading\quant_formal\data\historical\tushare_index_data\000001.SH.csv"
+        r"F:\quantitative_trading_dev_test\quant_test\data\historical\tushare_index_data\000001.SH.csv"
         , back_trader_start=date_start, back_trader_end=date_end)
 
     # 创造空的事件周期表，用于填充不选股的周期
