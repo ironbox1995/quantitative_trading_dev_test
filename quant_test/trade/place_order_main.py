@@ -26,6 +26,25 @@ https://mp.weixin.qq.com/s/vrv-PniBGxEerJ44AV0jcw
 """
 
 
+def calculate_order_quantity(code, order_volume):
+    """
+    处理下单股数
+    :param code:
+    :param order_volume:
+    :return:
+    """
+    # 对科创板进行特殊处理
+    if code[:2] == '68' and code[-2:] == 'SH':
+        order_volume = int(order_volume)
+        if order_volume < 200:
+            return 0
+    else:
+        order_volume = int(order_volume / 100) * 100
+        if order_volume < 100:
+            return 0
+    return order_volume
+
+
 def run_strategy_buy():
 
     # ========== 初始化交易接口 ==========
@@ -71,11 +90,11 @@ def run_strategy_buy():
         for buy in buy_stock_list:
             # 获取最新价格
             last_price = xtdata.get_full_tick([buy])[buy]['lastPrice']
-            # 计算下单量：普通板块，一手100股，最低1手。科创板最低200股，超过200以后最低1股。（科创板处理流程当做作业自行实现）
+            # 计算下单量：普通板块，一手100股，最低1手。科创板最低200股，超过200以后最低1股。
             volume = single_stock_amount / last_price
-            volume = int(volume - volume % 100)
+            volume = calculate_order_quantity(buy, volume)
             if volume < 100:
-                print(f'{buy}下单量不足100股')
+                print(f'{buy}下单量不足')
                 continue
             # 按照最新价下单
             for _ in range(5):

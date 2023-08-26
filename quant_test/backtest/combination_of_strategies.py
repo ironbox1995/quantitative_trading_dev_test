@@ -10,7 +10,7 @@ from backtest.Evaluate import *
 def create_empty_strategy(pick_time_switch):
     # 导入指数数据
     index_data = import_index_data(
-        r"/historical/tushare_index_data/000001.SH.csv"
+        r"F:\quantitative_trading\quant_formal\data\historical\tushare_index_data\000001.SH.csv"
         , back_trader_start=date_start, back_trader_end=date_end)
     # 创造空的事件周期表，用于填充不选股的周期
     empty_df = create_empty_data(index_data, 'W')
@@ -79,7 +79,7 @@ def combine_all_strategies(eps, alpha, pick_time_switch):
 
     # 导入指数数据
     index_data = import_index_data(
-        r"/historical/tushare_index_data/000001.SH.csv"
+        r"F:\quantitative_trading\quant_formal\data\historical\tushare_index_data\000001.SH.csv"
         , back_trader_start=date_start, back_trader_end=date_end)
 
     # 创造空的事件周期表，用于填充不选股的周期
