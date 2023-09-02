@@ -114,7 +114,7 @@ def back_test_main(strategy_name, date_start, date_end, select_stock_num, period
 
     select_stock.to_csv(
         r"{}\backtest\result_record\select_stock_{}_{}_选{}_{}-{}_{}.csv"
-        .format(period_type, strategy_name, period_type, select_stock_num, date_start, date_end, pick_time_mtd), encoding='gbk')
+        .format(project_path, strategy_name, period_type, select_stock_num, date_start, date_end, pick_time_mtd), encoding='gbk')
 
     # ===计算选中股票每天的资金曲线
     # 计算每日资金曲线
