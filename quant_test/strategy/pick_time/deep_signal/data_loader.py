@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 
-from deep_signal.pick_time_utils import *
+from strategy.pick_time.deep_signal.pick_time_utils import *
 
 
 def data_split(curve_path, start_date, end_date, CLASSIFY=False):

@@ -1,7 +1,7 @@
-from machine_learning.data_loader import *
-from machine_learning.nn_model import *
-from machine_learning.model_config import *
-from machine_learning.ml_utils import *
+from strategy.pick_stock.machine_learning.data_loader import *
+from strategy.pick_stock.machine_learning.nn_model import *
+from strategy.pick_stock.machine_learning.model_config import *
+from strategy.pick_stock.machine_learning.ml_utils import *
 
 
 def ML_model_predictor(pick_stock_df, period_type, model_type):
@@ -15,7 +15,7 @@ def ML_model_predictor(pick_stock_df, period_type, model_type):
         if len(pick_stock_df_interval) == 0:
             continue
 
-        model_path = 'model/{}_model_{}_{}-{}.pt'.format(model_type, period_type, time_pair[0], time_pair[1])
+        model_path = r'{}\strategy\pick_stock\machine_learning\model\{}_model_{}_{}-{}.pt'.format(project_path, model_type, period_type, time_pair[0], time_pair[1])
 
         with open(model_path, 'rb') as file:
             pickle_model = pickle.load(file)
@@ -82,7 +82,7 @@ def DL_model_regress_predictor(pick_stock_df, data_type, hidden_size=fcn_hidden_
             continue
 
         X_predict = build_regression_prediction_data_set(pick_stock_df_interval)
-        model_path = "F:\quantitative_trading_dev_test\quant_test\strategy\pick_stock\machine_learning\model\FCN_regress_model_{}_{}-{}.pt".format(
+        model_path = "{}\strategy\pick_stock\machine_learning\model\FCN_regress_model_{}_{}-{}.pt".format(project_path,
             data_type, time_pair[0], time_pair[1])
         output_size = 1
 
@@ -108,7 +108,7 @@ def DL_model_classify_predictor(pick_stock_df, data_type, hidden_size=fcn_hidden
             continue
 
         X_predict = build_classify_prediction_data_set(pick_stock_df_interval)
-        model_path = "F:\quantitative_trading_dev_test\quant_test\strategy\pick_stock\machine_learning\model\FCN_classify_model_{}_{}-{}.pt".format(
+        model_path = "{}\strategy\pick_stock\machine_learning\model\FCN_classify_model_{}_{}-{}.pt".format(project_path,
             data_type, time_pair[0], time_pair[1])
         output_size = 2
 

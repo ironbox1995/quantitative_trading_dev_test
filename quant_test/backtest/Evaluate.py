@@ -13,6 +13,8 @@ import plotly.graph_objs as go
 from plotly.offline import plot
 from plotly.subplots import make_subplots
 
+from utils_global.global_config import *
+
 
 # 绘制策略曲线
 def draw_equity_curve_mat(df, data_dict, strategy_name, period_type, select_stock_num, serial_number, show_pic, pick_time_mtd, date_col=None, right_axis=None, pic_size=[16, 9], dpi=72,
@@ -71,7 +73,7 @@ def draw_equity_curve_mat(df, data_dict, strategy_name, period_type, select_stoc
         ax_r.set_ylabel(key, fontsize=font_size)
         ax_r.legend(loc=1, fontsize=font_size)
         ax_r.tick_params(labelsize=font_size)
-    plt.savefig(r'F:\quantitative_trading_dev_test\quant_test\backtest\curve_picture\backtest_{}_{}_选{}_{}_{}.jpg'.format(strategy_name, period_type, select_stock_num, pick_time_mtd, serial_number))
+    plt.savefig(r'{}\backtest\curve_picture\backtest_{}_{}_选{}_{}_{}.jpg'.format(project_path, strategy_name, period_type, select_stock_num, pick_time_mtd, serial_number))
     if show_pic:
         plt.show()
     plt.clf()

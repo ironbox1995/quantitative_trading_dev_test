@@ -7,15 +7,15 @@ author: 邢不行
 QMT自动交易案例
 需要打开极简版QMT
 """
-import time
-import datetime
 from xtquant import xtconstant  # qmt常量
 from xtquant.xttype import StockAccount  # 证券账户
 from xtquant.xttrader import XtQuantTrader  # 交易接口
+from decimal import Decimal, ROUND_HALF_UP
 from xtquant import xtdata
 from trade.load_strategy import *
 from trade.query import *
-
+from trade.logger.logger import record_log
+import datetime
 
 """
 交易案例
@@ -45,6 +45,18 @@ def calculate_order_quantity(code, order_volume):
     return order_volume
 
 
+def cal_limit_up(code, last_price):
+    # 对科创板进行特殊处理
+    if code[:2] == '68' and code[-2:] == 'SH':
+        limit_up = last_price * 1.2
+    elif code[:2] == '30' and code[-2:] == 'SZ':
+        limit_up = last_price * 1.2
+    else:
+        limit_up = last_price * 1.1
+
+    return float(Decimal(limit_up * 100).quantize(Decimal('1'), rounding=ROUND_HALF_UP) / 100)
+
+
 def run_strategy_buy():
 
     # ========== 初始化交易接口 ==========
@@ -56,16 +68,18 @@ def run_strategy_buy():
     xt_trader.start()
     # 建立交易连接，返回0表示连接成功
     connect_result = xt_trader.connect()
-    print('链接成功' if connect_result == 0 else '链接失败')
     # 对交易回调进行订阅，订阅后可以收到交易主推，返回0表示订阅成功
     subscribe_result = xt_trader.subscribe(user)
-    print('订阅成功' if subscribe_result == 0 else '订阅失败')
+    if subscribe_result != 0 or connect_result != 0:
+        record_log('链接或订阅失败，程序已退出', send=True)
+        exit()
+    else:
+        record_log('链接并订阅成功')
+    record_log("连接时间：{}".format(datetime.datetime.now()))
     account_res = xt_trader.query_stock_asset(user)
 
-    print("连接时间：{}".format(datetime.datetime.now()))
-
     cash_amount = account_res.cash
-    print("周一开单前现金量：{}".format(cash_amount))
+    record_log("周一开单前现金量：{}".format(cash_amount))
     # ========== 策略配置 ==========
     # buy_stock_list = ['002708.SZ', '003023.SZ', '002094.SZ']
     # buy_amount = 100000  # 0表示使用所有可用资金买入
@@ -76,17 +90,16 @@ def run_strategy_buy():
         # 批量订阅数据
         for stock in buy_stock_list:
             sub_id = xtdata.subscribe_quote(stock, period='tick', count=-1)  # 1个tick是3s，5分钟是100个tick
-            print(f'{stock}订阅成功，订阅号：{sub_id}')
+            record_log(f'{stock}订阅成功，订阅号：{sub_id}')
         # time.sleep(3)
 
         # 计算买入股票的下单金额
-        # account_res = xt_trader.query_stock_asset(user)
         if buy_amount == 0:  # 全仓买入
             single_stock_amount = account_res.cash / len(buy_stock_list)
         else:  # 指定金额买入
             single_stock_amount = min(buy_amount, account_res.cash) / len(buy_stock_list)
 
-        print('正在执行买入操作')
+        record_log('正在执行买入操作')
         for buy in buy_stock_list:
             # 获取最新价格
             last_price = xtdata.get_full_tick([buy])[buy]['lastPrice']
@@ -94,27 +107,30 @@ def run_strategy_buy():
             volume = single_stock_amount / last_price
             volume = calculate_order_quantity(buy, volume)
             if volume < 100:
-                print(f'{buy}下单量不足')
+                record_log(f'{buy}下单量不足')
                 continue
-            # 按照最新价下单
             for _ in range(5):
-                # last_price = xtdata.get_full_tick([buy])[buy]['lastPrice']
-                # order_id = xt_trader.order_stock(user, buy, xtconstant.STOCK_BUY, volume, xtconstant.FIX_PRICE,
-                #                                  last_price, 'strategy', 'remark')
                 try:
-                    order_id = xt_trader.order_stock(user, buy, xtconstant.STOCK_BUY, volume, xtconstant.LATEST_PRICE,
-                                                     0, 'weekly strategy', 'remark')
+                    # order_id = xt_trader.order_stock(user, buy, xtconstant.STOCK_BUY, volume, xtconstant.LATEST_PRICE,
+                    #                                  0, 'weekly strategy', 'remark')
+                    last_price = xtdata.get_full_tick([buy])[buy]['lastPrice']
+                    limit_up = cal_limit_up(buy, last_price)
+                    # 按照涨停价下单
+                    order_price = limit_up
+                    order_id = xt_trader.order_stock(user, buy, xtconstant.STOCK_BUY, volume, xtconstant.FIX_PRICE,
+                                                     order_price, 'weekly strategy', 'remark')
                     if order_id != -1:
-                        print(f'{buy}下单成功，下单价格：{last_price}，下单量：{volume}')
-                        print("下单时间：{}".format(datetime.now()))
+                        record_log(f'开仓{buy}委托成功，报价类型：{xtconstant.FIX_PRICE}，下单价格：{order_price}，下单量：{volume}')
+                        record_log("下单时间：{}".format(datetime.datetime.now()))
                         break
                     else:
-                        print(f'{buy}下单失败！')
-                        raise Exception(f'{buy}下单失败！')
+                        record_log(f'开仓{buy}下单失败！')
+                        raise Exception(f'开仓{buy}下单失败！')
                 except:
                     pass
+        record_log("已完成全部下单。")
     else:
-        print("本周期无下单目标。")
+        record_log("本周期无下单目标。")
     return cash_amount
 
 
@@ -129,12 +145,14 @@ def run_strategy_sell():
     xt_trader.start()
     # 建立交易连接，返回0表示连接成功
     connect_result = xt_trader.connect()
-    print('链接成功' if connect_result == 0 else '链接失败')
     # 对交易回调进行订阅，订阅后可以收到交易主推，返回0表示订阅成功
     subscribe_result = xt_trader.subscribe(user)
-    print('订阅成功' if subscribe_result == 0 else '订阅失败')
-
-    print("连接时间：{}".format(datetime.datetime.now()))
+    if subscribe_result != 0 or connect_result != 0:
+        record_log('链接或订阅失败，程序已退出', send=True)
+        exit()
+    else:
+        record_log('链接并订阅成功')
+    record_log("连接时间：{}".format(datetime.datetime.now()))
 
     sell_stock_dct = query_stock_with_position(xt_trader, user)
 
@@ -142,10 +160,10 @@ def run_strategy_sell():
 
         # 订阅数据
         sub_id = xtdata.subscribe_quote(sell_stock, period='tick', count=-1)  # 1个tick是3s，5分钟是100个tick
-        print(f'{sell_stock}订阅成功，订阅号：{sub_id}')
+        record_log(f'{sell_stock}订阅成功，订阅号：{sub_id}')
         # time.sleep(3)
 
-        print('正在执行卖出操作')
+        record_log('正在执行卖出操作')
 
         # 按照最新盘价卖出
         for _ in range(5):
@@ -156,17 +174,20 @@ def run_strategy_sell():
                 order_id = xt_trader.order_stock(user, sell_stock, xtconstant.STOCK_SELL, sell_amount, xtconstant.LATEST_PRICE,
                                                  0, 'weekly strategy', 'remark')
                 if order_id != -1:
-                    print(f'{sell_stock}卖出成功，卖出价格约为：{last_price}，卖出量：{sell_amount}')
-                    print("卖出时间：{}".format(datetime.now()))
+                    record_log(f'平仓{sell_stock}委托成功，报价类型：{xtconstant.FIX_PRICE}，委托价格约为：{last_price}，委托量：{sell_amount}')
                     break
                 else:
-                    print(f'{sell_stock}卖出失败！')
-                    raise Exception(f'{sell_stock}卖出失败！')
+                    record_log(f'平仓{sell_stock}委托失败！')
+                    raise Exception(f'平仓{sell_stock}委托失败！')
             except:
                 pass
 
+    # 推到当日交易时间结束之后再查询余额
+    while datetime.datetime.now().strftime("%H:%M:%S") < "15:00:30":
+        print(datetime.datetime.now().strftime("%H:%M:%S"), end="\r")
+
     account_res = xt_trader.query_stock_asset(user)
-    print("周五平仓后现金量：{}".format(account_res.cash))
+    record_log("周五平仓后现金量：{}".format(account_res.cash))
 
     return account_res.cash
 

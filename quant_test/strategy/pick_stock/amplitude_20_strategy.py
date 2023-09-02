@@ -1,4 +1,4 @@
-from strategy.strategy_config import *
+from utils_global.global_config import *
 
 
 def amplitude_20_day_strategy(pick_from_df, select_stock_num):

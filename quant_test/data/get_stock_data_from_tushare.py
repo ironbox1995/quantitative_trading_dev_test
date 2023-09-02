@@ -8,6 +8,7 @@
 # df_cash_flow = pro.cashflow(ts_code=stock_code, start_date=start_date, end_date=end_date)
 """
 from processing.reformat_utils import *
+from utils_global.global_config import *
 import time
 
 
@@ -80,7 +81,7 @@ def update_and_save_stock_data(pro, start_date, end_date):
             stock_basic_info = data.iloc[i]  # series类型
             one_stock_data_tushare = get_stock_data_from_tushare(pro, stock_code, stock_basic_info, start_date, end_date)
             # 构建存储文件路径
-            path = 'F:/quantitative_trading_dev_test/quant_test/data/historical/tushare_stock_data/' + stock_code + '.csv'
+            path = r'{}\data\historical\tushare_stock_data\{}.csv'.format(project_path, stock_code)
             # 保存数据
             save_data(path, "日K线", stock_code, one_stock_data_tushare)
             time.sleep(0.2)
@@ -110,6 +111,6 @@ def get_tushare_historical_kline_data_main(index_path):
 
 
 if __name__ == "__main__":
-    index_path = r"F:\quantitative_trading_dev_test\quant_test\data\historical\tushare_index_data\000001.SH.csv"
+    index_path = r"{}\data\historical\tushare_index_data\000001.SH.csv".format(project_path)
     get_tushare_historical_kline_data_main(index_path)
 

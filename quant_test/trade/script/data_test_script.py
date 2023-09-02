@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from trade.script.script_utils import *
+from utils_global.global_config import *
 
 
 def execute_multiple_files(file_paths):
@@ -11,8 +12,8 @@ def execute_multiple_files(file_paths):
 
 # 周六执行这个
 if __name__ == "__main__":
-    file_paths = ['F:\\quantitative_trading_dev_test\\quant_test\\data\\download_data_main.py'
-        , 'F:\\quantitative_trading_dev_test\\quant_test\\data\\data_processing_main.py'
-        , 'F:\\quantitative_trading_dev_test\\quant_test\\backtest\\backtest_pick_stock.py'
-        , 'F:\\quantitative_trading_dev_test\\quant_test\\backtest\\latest_result.py']
+    file_paths = [r'{}\data\download_data_main.py'.format(project_path),
+                  r'{}\data\data_processing_main.py'.format(project_path),
+                  r'{}\backtest\backtest_pick_stock.py'.format(project_path),
+                  r'{}\backtest\latest_result.py'.format(project_path)]
     execute_multiple_files(file_paths)

@@ -1,4 +1,4 @@
-from strategy.strategy_config import *
+from utils_global.global_config import *
 
 
 def price_volume_strategy(df, select_stock_num):

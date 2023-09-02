@@ -5,7 +5,8 @@ from torch.utils.data import TensorDataset, DataLoader
 import pandas as pd
 import numpy as np
 
-from model_config import *
+from strategy.pick_stock.machine_learning.model_config import *
+from utils_global.global_config import *
 
 
 def status_calc(stock, beta_increase, out_performance=0.1):
@@ -22,7 +23,7 @@ def status_calc(stock, beta_increase, out_performance=0.1):
 
 def build_classify_data_set(start_date, end_date, data_type):
 
-    data_path = r"F:\quantitative_trading_dev_test\quant_test\data\historical\processed_data\all_stock_data_{}.pkl".format(data_type)
+    data_path = r"{}\data\historical\processed_data\all_stock_data_{}.pkl".format(project_path, data_type)
     df = pd.read_pickle(data_path)
     df = df[(df['交易日期'] >= pd.to_datetime(start_date)) & (df['交易日期'] <= pd.to_datetime(end_date))]
 
@@ -44,7 +45,7 @@ def build_classify_data_set(start_date, end_date, data_type):
 
 def build_regression_data_set(start_date, end_date, data_type):
 
-    data_path = r"F:\quantitative_trading_dev_test\quant_test\data\historical\processed_data\all_stock_data_{}.pkl".format(data_type)
+    data_path = r"{}\data\historical\processed_data\all_stock_data_{}.pkl".format(project_path, data_type)
     df = pd.read_pickle(data_path)
     df = df[(df['交易日期'] >= pd.to_datetime(start_date)) & (df['交易日期'] <= pd.to_datetime(end_date))]
 

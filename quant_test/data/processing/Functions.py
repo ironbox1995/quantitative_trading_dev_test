@@ -242,12 +242,11 @@ def cal_zdt_price(df):
     df.loc[cond, '涨停价'] = df['前收盘价'] * 1.05
     df.loc[cond, '跌停价'] = df['前收盘价'] * 0.95
 
-    # TODO: 条件有点问题
     # 科创板 20%
-    rule_kcb = df['股票代码'].str.contains('sh68')
+    rule_kcb = df['市场类型'].str.contains('科创板')
     # 2020年8月23日之后涨跌停规则有所改变
     # 新规的创业板
-    new_rule_cyb = (df['交易日期'] > pd.to_datetime('2020-08-23')) & df['股票代码'].str.contains('sz30')
+    new_rule_cyb = (df['交易日期'] > pd.to_datetime('2020-08-23')) & df['市场类型'].str.contains('创业板')
     # 北交所条件
     cond_bj = df['股票代码'].str.contains('bj')
 

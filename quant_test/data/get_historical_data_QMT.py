@@ -2,6 +2,7 @@
 from xtquant import xtdata
 from tqdm import tqdm
 from processing.reformat_utils import *
+from utils_global.global_config import *
 
 
 def get_shse_a_list():
@@ -117,6 +118,6 @@ def reformat_historical_data_main(index_path):
 
 
 if __name__ == "__main__":
-    index_path = r"F:\quantitative_trading_dev_test\quant_test\data\historical\QMT_stock_data\000001.SH.csv"
+    index_path = r"{}\data\historical\QMT_stock_data\000001.SH.csv".format(project_path)
     get_historical_data_main(index_path)
     reformat_historical_data_main(index_path)

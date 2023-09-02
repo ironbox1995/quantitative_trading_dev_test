@@ -1,5 +1,4 @@
 # 思路：使用Q学习中的eps-greedy方法并联策略，尝试寻找最优解，为防止所有策略同时失效的可能性，应加入空仓策略
-# TODO：这段代码表现仍然不够稳定
 from data.processing.Functions import *
 from backtest.repick_time import *
 from backtest.latest_result import back_test_latest_result
@@ -10,7 +9,7 @@ from backtest.Evaluate import *
 def create_empty_strategy(pick_time_switch):
     # 导入指数数据
     index_data = import_index_data(
-        r"F:\quantitative_trading_dev_test\quant_test\data\historical\tushare_index_data\000001.SH.csv"
+        r"{}\data\historical\tushare_index_data\000001.SH.csv".format(project_path)
         , back_trader_start=date_start, back_trader_end=date_end)
     # 创造空的事件周期表，用于填充不选股的周期
     empty_df = create_empty_data(index_data, 'W')
@@ -39,7 +38,7 @@ def combine_all_strategies(eps, alpha, pick_time_switch):
     strategy_dct['空仓策略'] = create_empty_strategy(pick_time_switch)
 
     for k, v in strategy_dct.items():
-        v = v[v.index > pd.to_datetime('20100201')]  # 不知道为什么数据参差不齐
+        v = v[v.index > pd.to_datetime('20100201')]  # 不知道为什么数据参差不齐 TODO: 数据对齐
         v.reset_index(inplace=True, drop=False)  # 还原index，作为一列
         strategy_dct[k] = v
 
@@ -79,7 +78,7 @@ def combine_all_strategies(eps, alpha, pick_time_switch):
 
     # 导入指数数据
     index_data = import_index_data(
-        r"F:\quantitative_trading_dev_test\quant_test\data\historical\tushare_index_data\000001.SH.csv"
+        r"{}\data\historical\tushare_index_data\000001.SH.csv".format(project_path)
         , back_trader_start=date_start, back_trader_end=date_end)
 
     # 创造空的事件周期表，用于填充不选股的周期
@@ -97,8 +96,8 @@ def combine_all_strategies(eps, alpha, pick_time_switch):
 
     pick_time_mtd = "有择时" if pick_time_switch else "无择时"
     select_stock.to_csv(
-        r"F:\quantitative_trading_dev_test\quant_test\backtest\result_record\select_stock_{}_{}_选{}_{}-{}_{}.csv"
-        .format(strategy_name, period_type, select_stock_num, date_start, date_end, pick_time_mtd), encoding='gbk')
+        r"{}\backtest\result_record\select_stock_{}_{}_选{}_{}-{}_{}.csv"
+        .format(project_path, strategy_name, period_type, select_stock_num, date_start, date_end, pick_time_mtd), encoding='gbk')
 
     # ===计算选中股票每天的资金曲线
     # 计算每日资金曲线
@@ -115,14 +114,14 @@ def combine_all_strategies(eps, alpha, pick_time_switch):
     equity['benchmark'] = (equity['指数涨跌幅'] + 1).cumprod()
 
     # pick_time_mtd = "有择时" if pick_time_switch else "无择时"
-    equity.to_csv(r"F:\quantitative_trading_dev_test\quant_test\backtest\result_record\equity_{}_{}_选{}_{}-{}_{}.csv"
-                  .format(strategy_name, period_type, select_stock_num, date_start, date_end, pick_time_mtd),
+    equity.to_csv(r"{}\backtest\result_record\equity_{}_{}_选{}_{}-{}_{}.csv"
+                  .format(project_path, strategy_name, period_type, select_stock_num, date_start, date_end, pick_time_mtd),
                   encoding='gbk')
 
     serial_number = generate_serial_number()
     # ===计算策略评价指标
     rtn, year_return, month_return = strategy_evaluate(equity, select_stock)
-    with open(r"F:\quantitative_trading_dev_test\quant_test\backtest\result_record\策略执行日志.txt".format(strategy_name), 'a',
+    with open(r"{}\backtest\result_record\策略执行日志.txt".format(project_path), 'a',
               encoding='utf-8') as f:
         print("=" * 30, file=f)
         print(serial_number, file=f)

@@ -3,7 +3,7 @@
 from get_strategy_function import get_strategy_function
 from backtest.repick_time import *
 from back_test_config import *
-from strategy.strategy_config import *
+from utils_global.global_config import *
 import warnings
 from utils_global.dingding_message import *
 
@@ -24,12 +24,12 @@ def back_test_latest_result(strategy_name, select_stock_num, period_type, alpha,
 
     # 常量设置
     c_rate = 1 / 10000  # 手续费 这里与之前不同
-    t_rate = 1 / 1000  # 印花税
+    t_rate = 1 / 2000  # 印花税
 
     # ===导入数据
     # 从pickle文件中读取整理好的所有股票数据
     df = pd.read_pickle(
-        r'F:\quantitative_trading_dev_test\quant_test\data\historical\processed_data\all_stock_data_%s.pkl' % period_type)
+        r'{}\data\historical\processed_data\all_stock_data_{}.pkl'.format(project_path, period_type))
     # ===删除下个交易日不交易、开盘涨停的股票，因为这些股票在下个交易日开盘时不能买入。
     df = df[df['下日_是否交易'] == 1]
     df = df[df['下日_开盘涨停'] == False]
@@ -100,8 +100,8 @@ def back_test_latest_result(strategy_name, select_stock_num, period_type, alpha,
     select_stock['Q'].fillna(value=0, inplace=True)
 
     latest_selection.to_csv(
-        r"F:\quantitative_trading_dev_test\quant_test\backtest\latest_selection\最新选股_{}_{}_选{}_{}.csv"
-            .format(strategy_name, period_type, select_stock_num, pick_time_mtd), encoding='gbk')
+        r"{}\backtest\latest_selection\最新选股_{}_{}_选{}_{}.csv"
+            .format(project_path, strategy_name, period_type, select_stock_num, pick_time_mtd), encoding='gbk')
 
     return select_stock
 

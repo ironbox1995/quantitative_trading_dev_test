@@ -1,7 +1,7 @@
+import torch
 from torch.utils.data import DataLoader, TensorDataset
 
-from deep_signal.model import *
-from deep_signal.pick_time_model_config import *
+from strategy.pick_time.deep_signal.pick_time_model_config import *
 
 
 # Define a function to create the validation loader

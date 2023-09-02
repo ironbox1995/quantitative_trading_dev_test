@@ -1,4 +1,4 @@
-from strategy.strategy_config import *
+from utils_global.global_config import *
 
 
 def factor_iterated_strategy1(pick_from_df, select_stock_num):

@@ -16,8 +16,10 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, f1_score
 # from mlxtend.feature_selection import SequentialFeatureSelector
 
-from machine_learning.data_loader import status_calc
-from machine_learning.model_config import *
+from strategy.pick_stock.machine_learning.data_loader import status_calc
+from strategy.pick_stock.machine_learning.model_config import *
+
+from utils_global.global_config import *
 
 # feature_li = ['开盘价', '最高价', '最低价', '收盘价', '成交额', '流通市值（万元）', '总市值 （万元）', '成交量', '量比', '市盈率', '市盈率TTM', '市净率', '市销率', '市销率TTM', '股息率（%）', '股息率TTM（%）', '20日振幅', 'VWAP', '换手率（%）', '5日均线', '20日均线', 'bias_5', 'bias_20', '本周期涨跌幅']
 data_li = ["本周期涨跌幅", "本周期指数涨跌幅", "下周期涨跌幅"]
@@ -85,8 +87,7 @@ if __name__ == "__main__":
     train_start_date = "2022-12-01"
     train_end_date = "2022-12-31"
 
-    data_path = r"F:\quantitative_trading_dev_test\quant_test\data\historical\processed_data\all_stock_data_{}.pkl".format(
-        data_type)
+    data_path = r"{}\data\historical\processed_data\all_stock_data_{}.pkl".format(project_path, data_type)
     df = pd.read_pickle(data_path)
     df = df[(df['交易日期'] >= pd.to_datetime(train_start_date)) & (df['交易日期'] <= pd.to_datetime(train_end_date))]
     df.dropna(axis=0, how="any", inplace=True)

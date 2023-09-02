@@ -1,4 +1,4 @@
-from strategy.strategy_config import *
+from utils_global.global_config import *
 
 
 # TODO: 没有申万二级行业名称数据

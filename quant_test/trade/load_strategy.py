@@ -5,7 +5,7 @@ import chinese_calendar as calendar
 import random
 
 from trade.trade_config import *
-from strategy.strategy_config import *
+from utils_global.global_config import *
 
 
 def load_strategy_result(cash_amount):
@@ -40,8 +40,8 @@ def split_last_line(strategy_name):
         strategy_name += "无创业"
     if not STAR_Market_available:
         strategy_name += "无科创"
-    df = pd.read_csv(r"F:\quantitative_trading_dev_test\quant_test\backtest\latest_selection\最新选股_{}_{}_选{}_{}.csv"
-            .format(strategy_name, period_type, select_stock_num, pick_time_mtd), encoding='gbk', parse_dates=['交易日期'])
+    df = pd.read_csv(r"{}\backtest\latest_selection\最新选股_{}_{}_选{}_{}.csv"
+            .format(project_path, strategy_name, period_type, select_stock_num, pick_time_mtd), encoding='gbk', parse_dates=['交易日期'])
 
     buy_stock_code_li = []
     signal = df['最新择时信号'].iloc[-1]
@@ -68,8 +68,8 @@ def load_last_line_with_biggest_q():
             strategy_name += "无创业"
         if not STAR_Market_available:
             strategy_name += "无科创"
-        df = pd.read_csv(r"F:\quantitative_trading_dev_test\quant_test\backtest\latest_selection\最新选股_{}_{}_选{}_{}.csv"
-                .format(strategy_name, period_type, select_stock_num, pick_time_mtd), encoding='gbk', parse_dates=['交易日期'])
+        df = pd.read_csv(r"{}\backtest\latest_selection\最新选股_{}_{}_选{}_{}.csv"
+                .format(project_path, strategy_name, period_type, select_stock_num, pick_time_mtd), encoding='gbk', parse_dates=['交易日期'])
         signal = df['最新择时信号'].iloc[-1]
 
         # 判断是否为最新
@@ -114,7 +114,7 @@ def get_previous_workday():
 
 
 def save_to_csv(new_row):
-    pd.DataFrame(new_row, index=[0]).to_csv(r'F:\quantitative_trading\quant_formal\trade\交易日志.csv', mode='a', header=False, index=False)
+    pd.DataFrame(new_row, index=[0]).to_csv(r'{}\trade\交易日志.csv'.format(project_path), mode='a', header=False, index=False)
 
 
 def get_pick_time_mtd(strategy_name):

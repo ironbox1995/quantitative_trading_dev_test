@@ -19,7 +19,7 @@ import os
 # date_end = '2022-01-10'
 # select_stock_num = 3  # 选股数量
 # c_rate = 1 / 10000  # 手续费
-# t_rate = 1 / 1000  # 印花税
+# t_rate = 1 / 2000  # 印花税
 
 # # ===获取项目根目录
 # _ = os.path.abspath(os.path.dirname(__file__))  # 返回当前文件路径

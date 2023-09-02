@@ -3,10 +3,11 @@
 from get_index_data_from_tushare import *
 from get_stock_data_from_tushare import *
 from utils_global.dingding_message import *
+from utils_global.global_config import *
 
 
 def update_data_main():
-    tushare_index_path = r"F:\quantitative_trading_dev_test\quant_test\data\historical\tushare_index_data\000001.SH.csv"
+    tushare_index_path = r"{}\data\historical\tushare_index_data\000001.SH.csv".format(project_path)
     if os.path.exists(tushare_index_path):
         latest_date = pd.read_csv(tushare_index_path, encoding='gbk').tail(1)['交易日期'].values[0]
         latest_date = parse_update_start_time(latest_date)
