@@ -18,3 +18,7 @@ def record_log(msg, log_type='info', send=False):
         log.info(msg=log_msg)
         if send:
             send_dingding(log_msg)
+
+
+if __name__ == "__main__":
+    record_log("测试日志")

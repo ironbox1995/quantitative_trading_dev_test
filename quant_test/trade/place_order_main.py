@@ -71,7 +71,7 @@ def run_strategy_buy():
     # 对交易回调进行订阅，订阅后可以收到交易主推，返回0表示订阅成功
     subscribe_result = xt_trader.subscribe(user)
     if subscribe_result != 0 or connect_result != 0:
-        record_log('链接或订阅失败，程序已退出', send=True)
+        record_log('交易播报：链接或订阅失败，程序已退出', send=True)
         exit()
     else:
         record_log('链接并订阅成功')
@@ -148,7 +148,7 @@ def run_strategy_sell():
     # 对交易回调进行订阅，订阅后可以收到交易主推，返回0表示订阅成功
     subscribe_result = xt_trader.subscribe(user)
     if subscribe_result != 0 or connect_result != 0:
-        record_log('链接或订阅失败，程序已退出', send=True)
+        record_log('交易播报：链接或订阅失败，程序已退出', send=True)
         exit()
     else:
         record_log('链接并订阅成功')
