@@ -1,10 +1,14 @@
 from data.processing.CalcFactor import *
-# from data.processing.Function_fin import *
+from data.processing.Function_fin import *
 from data.processing.Functions import *
 from data.processing.reformat_utils import *
+from data.processing.data_config import *
+from utils_global.global_config import *
+
+import traceback
 
 
-def daily_factor_calculator(df, index_data):
+def daily_factor_calculator(code, df, index_data):
     """
     基于每日数据的因子计算
     :param price_volume: 是否计算量价因子
@@ -13,7 +17,7 @@ def daily_factor_calculator(df, index_data):
     """
     # 计算换手率
     # df['换手率'] = df['成交额'] / df['流通市值']
-    # =计算涨跌幅
+    # 计算涨跌幅
     df['涨跌幅'] = df['收盘价'] / df['前收盘价'] - 1
 
     # 计算复权因子：假设你一开始有1元钱，投资到这个股票，最终会变成多少钱。
@@ -21,19 +25,52 @@ def daily_factor_calculator(df, index_data):
 
     df['开盘买入涨跌幅'] = df['收盘价'] / df['开盘价'] - 1  # 为之后开盘买入做好准备
 
-    # =计算交易天数
+    # 计算交易天数
     df['上市至今交易天数'] = df.index + 1
 
-    # =计算涨跌停价格
+    # 计算涨跌停价格
     df = cal_zdt_price(df)
 
     # 需要额外保存的字段
     extra_fill_0_list = []  # 在和上证指数合并时使用。
     extra_agg_dict = {}  # 在转换周期时使用。
-    # =将股票和上证指数合并，补全停牌的日期，新增数据"是否交易"、"指数涨跌幅"
+    # 将股票和上证指数合并，补全停牌的日期，新增数据"是否交易"、"指数涨跌幅"
     df = merge_with_index_data(df, index_data, extra_fill_0_list)
     if df.empty:
         return pd.DataFrame()
+
+    # 计算量价选股因子
+    df = cal_tech_factor(df, extra_agg_dict)
+
+    if use_financial_data:
+        try:
+            # 导入财务数据，并计算相关衍生指标
+            # finance_df = import_fin_data(code, finance_data_path)
+            finance_df = import_tushare_fin_data(code, finance_data_path)
+            if not finance_df.empty:  # 如果数据不为空
+                # 计算财务数据：选取需要的字段、计算指定字段的同比、环比、ttm等指标
+                finance_df = proceed_fin_data(finance_df, raw_fin_cols, flow_fin_cols, cross_fin_cols, derived_fin_cols)
+                # 财务数据和股票k线数据合并，使用merge_asof
+                # 参考文档：https://pandas.pydata.org/pandas-docs/version/0.25.0/reference/api/pandas.merge_asof.html
+                df = pd.merge_asof(left=df, right=finance_df, left_on='交易日期', right_on='披露日期',
+                                   direction='backward')
+            else:  # 如果数据为空
+                # 把需要使用的字段都填为空值
+                for col in raw_fin_cols + derived_fin_cols:
+                    df[col] = np.nan
+
+            for col in raw_fin_cols:  # 财务数据在周期转换的时候，都是选取最后一天的数据
+                extra_agg_dict[col] = 'last'
+
+            for col in derived_fin_cols:
+                extra_agg_dict[col] = 'last'
+
+            # 计算财务因子
+            extra_agg_dict, df = calc_fin_factor(df, extra_agg_dict)
+
+        except Exception as e:
+            print("财务因子处理失败：", e)
+            traceback.print_exc()
 
     # ==== 计算因子
     # 计算基础振幅策略所需列
@@ -53,9 +90,6 @@ def daily_factor_calculator(df, index_data):
     df['下日_是否S'] = df['股票名称'].str.contains('S').shift(-1)
     df['下日_是否退市'] = df['股票名称'].str.contains('退').shift(-1)
     df['下日_开盘买入涨跌幅'] = df['开盘买入涨跌幅'].shift(-1)
-
-    # =计算量价选股因子
-    df = cal_tech_factor(df, extra_agg_dict)
 
     return extra_agg_dict, df
 

@@ -111,14 +111,15 @@ if __name__ == "__main__":
     for strategy_name in strategy_li:
         for period_type in period_type_li:
             for select_stock_num in select_stock_num_li:
-                pick_time_mtd = pick_time_mtd_dct[strategy_name]
-                try:
-                    back_test_latest_result(strategy_name, select_stock_num, period_type, ALPHA, pick_time_mtd)
-                    back_test_latest_result(strategy_name, select_stock_num, period_type, ALPHA, "无择时")
-                except Exception as e:
-                    msg = "交易播报：策略{}结果输出失败：period_type:{}, select_stock_num:{}".format(strategy_name, period_type,
-                                                                                select_stock_num)
-                    print(msg)
-                    send_dingding(msg)
-                    print(e)
+                # pick_time_mtd = pick_time_mtd_dct[strategy_name]
+                for pick_time_mtd in pick_time_li:
+                    try:
+                        back_test_latest_result(strategy_name, select_stock_num, period_type, ALPHA, pick_time_mtd)
+                        # back_test_latest_result(strategy_name, select_stock_num, period_type, ALPHA, "无择时")
+                    except Exception as e:
+                        msg = "交易播报：策略{}结果输出失败：period_type:{}, select_stock_num:{}".format(strategy_name, period_type,
+                                                                                    select_stock_num)
+                        print(msg)
+                        send_dingding(msg)
+                        print(e)
     send_dingding("交易播报：执行 最新结果输出 成功！")

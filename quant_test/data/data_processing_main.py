@@ -19,7 +19,7 @@ from utils_global.global_config import *
 
 warnings.filterwarnings('ignore')
 # ===数据周期
-period_type = 'W'  # W代表周，M代表月
+period_type = 'W'  # W代表周，M代表月，D代表日
 date_start = '2010-01-01'  # 回测开始时间
 # date_end = '2023-07-07'  # 回测结束时间
 date_end = get_current_date()  # 回测结束时间
@@ -58,7 +58,7 @@ def calculate_by_stock(code):
         # df['上市至今交易天数'] = df.index + 1
 
         # 计算按日的因子, extra_agg_dict在转换周期时使用
-        extra_agg_dict, df = daily_factor_calculator(df, index_data)
+        extra_agg_dict, df = daily_factor_calculator(code, df, index_data)
 
         # =将日线数据转化为月线或者周线
         df = transfer_to_period_data(df, period_type=period_type, extra_agg_dict=extra_agg_dict)
@@ -84,11 +84,13 @@ def calculate_by_stock(code):
         # 删除交易天数过少的周期数
         df = df[df['交易天数'] / df['市场交易天数'] >= 0.8]
         df.drop(['交易天数', '市场交易天数'], axis=1, inplace=True)
+        print("{}周期 个股：{}数据处理完成".format(period_type, code))
         return df
 
     except Exception as e:
         # 在子进程中捕获异常，根据需要处理异常
         print(f"子进程出现异常, 任务: {code}, 异常: {e}")
+        traceback.print_exc()
         return None  # 返回特定值或None表示处理异常
 
 
@@ -101,10 +103,6 @@ def parallel_data_processor(multiple_process=True):
     # 标记开始时间
     if multiple_process:
         # 开始并行
-        # with Pool(max(cpu_count() - 2, 1)) as pool:
-        #     # 使用并行批量获得data frame的一个列表
-        #     df_list = pool.map(calculate_by_stock, sorted(stock_code_list))
-
         # 创建一个进程池
         pool = Pool(max(cpu_count() - 2, 1))
         # 任务列表
@@ -144,7 +142,7 @@ def parallel_data_processor(multiple_process=True):
 
     # 检查数据是否正确
     if dev_or_test:
-        all_stock_data.to_csv(r"{}\data\historical\processed_data\all_data_{}.csv".format(project_path, period_type), encoding='gbk')
+        all_stock_data.tail(100).to_csv(r"{}\data\historical\processed_data\all_data_{}_tail100.csv".format(project_path, period_type), encoding='gbk')
 
     # 将数据存储到pickle文件
     all_stock_data.to_pickle(

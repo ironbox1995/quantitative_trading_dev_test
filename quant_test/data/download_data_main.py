@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# from get_historical_data_QMT import *
+from get_financial_data_from_tushare import *
 from get_index_data_from_tushare import *
 from get_stock_data_from_tushare import *
 from utils_global.dingding_message import *
@@ -21,6 +21,10 @@ def update_data_main():
     print("开始下载tushare指数数据。")
     get_historical_index_data_main(tushare_index_path)
     print("tushare指数数据下载完成。")
+
+    print("开始下载tushare财务数据。")
+    get_tushare_financial_data_main()
+    print("tushare财务数据下载完成。")
 
     # try:
     #     print("开始下载并更新财务数据。")

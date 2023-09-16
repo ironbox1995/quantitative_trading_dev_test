@@ -114,7 +114,10 @@ def deduplicate_csv(file_path):
     df = pd.read_csv(file_path, encoding='gbk')
 
     # 按日期去重
-    df.drop_duplicates(subset=["交易日期"], inplace=True)
+    if "交易日期" in df.columns:
+        df.drop_duplicates(subset=["交易日期"], inplace=True)
+    else:
+        df.drop_duplicates(subset=["披露日期"], inplace=True)
 
     # 将结果写回 CSV 文件
     df.to_csv(file_path, index=False, encoding='gbk')
@@ -126,6 +129,28 @@ def save_data(path, data_type, code, df_to_save):
         if os.path.exists(path):
             latest_date = pd.read_csv(path, encoding='gbk').tail(1)['交易日期'].values[0]
             if len(df_to_save) > 0 and latest_date != df_to_save.iloc[-1]['交易日期']:
+                df_to_save.to_csv(path, header=None, index=False, mode='a', encoding='gbk')
+                print("更新{}数据：{}".format(data_type, code))
+            else:
+                print("{}数据已是最新：{}".format(data_type, code))
+        # 文件不存在，说明是新股
+        else:
+            df_to_save.to_csv(path, index=False, mode='a', encoding='gbk')
+            print("新增{}数据：{}".format(data_type, code))
+        # 对文件进行按行去重
+        deduplicate_csv(path)
+
+    except Exception as e:
+        print(e)
+        print("处理失败，文件路径为：{}".format(path))
+
+
+def save_financial_data(path, data_type, code, df_to_save):
+    try:
+        # 文件存在，不是新股
+        if os.path.exists(path):
+            latest_date = pd.read_csv(path, encoding='gbk').tail(1)['披露日期'].values[0]
+            if len(df_to_save) > 0 and latest_date != df_to_save.iloc[-1]['披露日期']:
                 df_to_save.to_csv(path, header=None, index=False, mode='a', encoding='gbk')
                 print("更新{}数据：{}".format(data_type, code))
             else:

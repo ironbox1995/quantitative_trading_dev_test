@@ -83,54 +83,57 @@ def run_strategy_buy():
     # ========== 策略配置 ==========
     # buy_stock_list = ['002708.SZ', '003023.SZ', '002094.SZ']
     # buy_amount = 100000  # 0表示使用所有可用资金买入
-    buy_stock_list, buy_amount = load_strategy_result(cash_amount=account_res.cash)
+    all_buy_stock = load_strategy_result(cash_amount=account_res.cash)
 
-    if len(buy_stock_list) > 0:
-        # ========== 策略运行 ==========
-        # 批量订阅数据
-        for stock in buy_stock_list:
-            sub_id = xtdata.subscribe_quote(stock, period='tick', count=-1)  # 1个tick是3s，5分钟是100个tick
-            record_log(f'{stock}订阅成功，订阅号：{sub_id}')
-        # time.sleep(3)
+    for strategy_tup in all_buy_stock:
+        buy_stock_list = strategy_tup[0]
+        buy_amount = strategy_tup[1]
+        if len(buy_stock_list) > 0:
+            # ========== 策略运行 ==========
+            # 批量订阅数据
+            for stock in buy_stock_list:
+                sub_id = xtdata.subscribe_quote(stock, period='tick', count=-1)  # 1个tick是3s，5分钟是100个tick
+                record_log(f'{stock}订阅成功，订阅号：{sub_id}')
+            # time.sleep(3)
 
-        # 计算买入股票的下单金额
-        if buy_amount == 0:  # 全仓买入
-            single_stock_amount = account_res.cash / len(buy_stock_list)
-        else:  # 指定金额买入
-            single_stock_amount = min(buy_amount, account_res.cash) / len(buy_stock_list)
+            # 计算买入股票的下单金额
+            if buy_amount == 0:  # 全仓买入
+                single_stock_amount = account_res.cash / len(buy_stock_list)
+            else:  # 指定金额买入
+                single_stock_amount = min(buy_amount, account_res.cash) / len(buy_stock_list)
 
-        record_log('正在执行买入操作')
-        for buy in buy_stock_list:
-            # 获取最新价格
-            last_price = xtdata.get_full_tick([buy])[buy]['lastPrice']
-            # 计算下单量：普通板块，一手100股，最低1手。科创板最低200股，超过200以后最低1股。
-            volume = single_stock_amount / last_price
-            volume = calculate_order_quantity(buy, volume)
-            if volume < 100:
-                record_log(f'{buy}下单量不足')
-                continue
-            for _ in range(5):
-                try:
-                    # order_id = xt_trader.order_stock(user, buy, xtconstant.STOCK_BUY, volume, xtconstant.LATEST_PRICE,
-                    #                                  0, 'weekly strategy', 'remark')
-                    last_price = xtdata.get_full_tick([buy])[buy]['lastPrice']
-                    limit_up = cal_limit_up(buy, last_price)
-                    # 按照涨停价下单
-                    order_price = limit_up
-                    order_id = xt_trader.order_stock(user, buy, xtconstant.STOCK_BUY, volume, xtconstant.FIX_PRICE,
-                                                     order_price, 'weekly strategy', 'remark')
-                    if order_id != -1:
-                        record_log(f'开仓{buy}委托成功，报价类型：{xtconstant.FIX_PRICE}，下单价格：{order_price}，下单量：{volume}')
-                        record_log("下单时间：{}".format(datetime.datetime.now()))
-                        break
-                    else:
-                        record_log(f'开仓{buy}下单失败！')
-                        raise Exception(f'开仓{buy}下单失败！')
-                except:
-                    pass
-        record_log("已完成全部下单。")
-    else:
-        record_log("本周期无下单目标。")
+            record_log('正在执行买入操作')
+            for buy in buy_stock_list:
+                # 获取最新价格
+                last_price = xtdata.get_full_tick([buy])[buy]['lastPrice']
+                # 计算下单量：普通板块，一手100股，最低1手。科创板最低200股，超过200以后最低1股。
+                volume = single_stock_amount / last_price
+                volume = calculate_order_quantity(buy, volume)
+                if volume < 100:
+                    record_log(f'{buy}下单量不足')
+                    continue
+                for _ in range(5):
+                    try:
+                        # order_id = xt_trader.order_stock(user, buy, xtconstant.STOCK_BUY, volume, xtconstant.LATEST_PRICE,
+                        #                                  0, 'weekly strategy', 'remark')
+                        last_price = xtdata.get_full_tick([buy])[buy]['lastPrice']
+                        limit_up = cal_limit_up(buy, last_price)
+                        # 按照涨停价下单
+                        order_price = limit_up
+                        order_id = xt_trader.order_stock(user, buy, xtconstant.STOCK_BUY, volume, xtconstant.FIX_PRICE,
+                                                         order_price, 'weekly strategy', 'remark')
+                        if order_id != -1:
+                            record_log(f'开仓{buy}委托成功，报价类型：{xtconstant.FIX_PRICE}，下单价格：{order_price}，下单量：{volume}')
+                            record_log("下单时间：{}".format(datetime.datetime.now()))
+                            break
+                        else:
+                            record_log(f'开仓{buy}下单失败！')
+                            raise Exception(f'开仓{buy}下单失败！')
+                    except:
+                        pass
+            record_log("已完成全部下单。")
+        else:
+            record_log("本周期当前策略无下单目标。")
     return cash_amount
 
 

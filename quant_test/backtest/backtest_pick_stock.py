@@ -14,6 +14,7 @@ from backtest.repick_time import *
 from back_test_config import *
 from utils_global.global_config import *
 import warnings
+import traceback
 from utils_global.dingding_message import *
 
 import datetime
@@ -170,17 +171,19 @@ if __name__ == "__main__":
     for strategy_name in strategy_li:
         for period_type in period_type_li:
             for select_stock_num in select_stock_num_li:
-                pick_time_mtd = pick_time_mtd_dct[strategy_name]
-                try:
-                    serial_number = generate_serial_number()
-                    back_test_main(strategy_name, date_start, date_end, select_stock_num, period_type, serial_number,
-                                   pick_time_mtd)
-                    serial_number = generate_serial_number()
-                    back_test_main(strategy_name, date_start, date_end, select_stock_num, period_type, serial_number,
-                                   "无择时")
-                except Exception as e:
-                    msg = "交易播报：策略{}执行失败：".format(strategy_name)
-                    print(msg)
-                    send_dingding(msg)
-                    print(e)
+                # pick_time_mtd = pick_time_mtd_dct[strategy_name]
+                for pick_time_mtd in pick_time_li:
+                    try:
+                        serial_number = generate_serial_number()
+                        back_test_main(strategy_name, date_start, date_end, select_stock_num, period_type, serial_number,
+                                       pick_time_mtd)
+                        # serial_number = generate_serial_number()
+                        # back_test_main(strategy_name, date_start, date_end, select_stock_num, period_type, serial_number,
+                        #                "无择时")
+                    except Exception as e:
+                        msg = "交易播报：策略 {} 执行失败：".format(strategy_name)
+                        print(msg)
+                        send_dingding(msg)
+                        print(e)
+                        traceback.print_exc()
     send_dingding("交易播报：执行 回测 成功！")

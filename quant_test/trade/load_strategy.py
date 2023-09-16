@@ -12,9 +12,9 @@ def load_strategy_result(cash_amount):
 
     # 选股整理
     # 如果多个策略选股重复则重复买入（暂定）
-    buy_stock_list = []
+    all_buy_stock = []
     for strategy_name in strategy_li:
-
+        buy_stock_list = []
         if strategy_name != "Q学习并联策略":
             buy_stock_list.extend(split_last_line(strategy_name))
         else:
@@ -26,10 +26,11 @@ def load_strategy_result(cash_amount):
                 buy_stock_list.extend(split_last_line(default_strategy))
                 print("Q学习策略报错: {}，改为执行默认策略：{}".format(e, default_strategy))
 
-    # TODO: 仓位管理
-    buy_amount = cash_amount
+        buy_amount = cash_amount * strategy_dct[strategy_name]
 
-    return buy_stock_list, buy_amount
+        all_buy_stock.append((buy_stock_list, buy_amount))
+
+    return all_buy_stock
 
 
 def split_last_line(strategy_name):
@@ -50,6 +51,8 @@ def split_last_line(strategy_name):
     selection_day = df['交易日期'].iloc[-1]
     previous_workday = get_previous_workday()
     is_latest = (previous_workday == selection_day)
+    if dev_or_test:
+        is_latest = True
 
     if signal == 1.0 and is_latest:
         code_column = df['买入股票代码']  # Extract the '买入股票代码' column
@@ -125,7 +128,8 @@ def get_pick_time_mtd(strategy_name):
 
 
 if __name__ == "__main__":
-    buy_stock_list, buy_amount = load_strategy_result(100000)
-    print("买入列表：{}， 购买金额：{}".format(buy_stock_list, buy_amount))
+    all_buy_stock = load_strategy_result(100000)
+    for strategy_tup in all_buy_stock:
+        print("买入列表：{}， 购买金额：{}".format(strategy_tup[0], strategy_tup[1]))
     # save_info_dct = {"日期": datetime.today().date(), "现金金额": 100000, "备注": "本周买入前金额"}
     # save_to_csv(save_info_dct)

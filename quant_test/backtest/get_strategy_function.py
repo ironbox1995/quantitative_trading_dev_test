@@ -7,6 +7,7 @@ from strategy.pick_stock.revert_strategy import *
 from strategy.pick_stock.turnover_rate_strategy import *
 from strategy.pick_stock.average_strategy import *
 from strategy.pick_stock.multi_factor_strategy import *
+from strategy.pick_stock.financial_strategy import *
 
 
 def get_strategy_function(strategy_name):
@@ -79,6 +80,18 @@ def get_strategy_function(strategy_name):
         pick_stock_strategy = bias_and_circulating_value_strategy
     elif strategy_name == "换手率筛选多因子排序策略":
         pick_stock_strategy = turnover_filter_strategy
+
+    # 财务策略
+    elif strategy_name == "财报严选财务策略1":
+        pick_stock_strategy = financial_report_strategy1
+    elif strategy_name == "小市值策略_基本面优化1":
+        pick_stock_strategy = small_capital_financial_strategy1
+    elif strategy_name == "因子遍历增强策略":
+        pick_stock_strategy = reinforced_factors_strategy
+    elif strategy_name == "ROC换手率策略":
+        pick_stock_strategy = ROC_turnover_rate_strategy
+    elif strategy_name == "研发费用策略":
+        pick_stock_strategy = rnd_expense_strategy
 
     else:
         raise Exception("尚无此策略或经验证不可用！")

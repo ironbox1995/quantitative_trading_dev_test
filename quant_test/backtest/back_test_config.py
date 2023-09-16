@@ -2,13 +2,13 @@
 
 from utils import *
 
-strategy_li = ["小市值策略", "香农短线量价策略", "低价小市值策略", "多因子量价策略2", "低回撤单因子组合策略",
-               "均线偏离与流通市值策略", "小市值策略_量价优化1", "换手率筛选多因子排序策略", "非高价股选股策略"]
-# strategy_li = ["小市值策略"]
+strategy_li = ["小市值策略_量价优化1", "小市值策略"]
+# strategy_li = ["财报严选财务策略2"]
 period_type_li = ['W']
 select_stock_num_li = [3]
 date_start = '2010-01-01'
 date_end = get_current_date()
+pick_time_li = ["无择时", "MTM择时"]
 
 # 无创业无科创前提下：
 pick_time_mtd_dct = {"小市值策略": "MTM择时",

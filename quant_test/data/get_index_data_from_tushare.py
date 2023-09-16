@@ -1,12 +1,3 @@
-"""
-从tushare获取数据
-# # 获取利润表数据
-# df_income = pro.income(ts_code=stock_code, start_date=start_date, end_date=end_date)
-# # 资产负债表数据
-# df_balance = pro.balancesheet(ts_code=stock_code, start_date=start_date, end_date=end_date)
-# # 现金流数据
-# df_cash_flow = pro.cashflow(ts_code=stock_code, start_date=start_date, end_date=end_date)
-"""
 from processing.reformat_utils import *
 import time
 
@@ -41,7 +32,7 @@ def get_index_data_from_tushare(pro, stock_code, start_date, end_date):
     return one_index_data_tushare
 
 
-def update_and_save_stock_data(pro, start_date, end_date):
+def update_and_save_index_data(pro, start_date, end_date):
     """
     获取并保存数据
     :param pro: 接口
@@ -82,7 +73,7 @@ def get_historical_index_data_main(index_path):
     # 初始化tushare pro接口
     pro = ts.pro_api()
 
-    update_and_save_stock_data(pro, start_date=latest_date, end_date=get_today())
+    update_and_save_index_data(pro, start_date=latest_date, end_date=get_today())
 
 
 if __name__ == "__main__":
