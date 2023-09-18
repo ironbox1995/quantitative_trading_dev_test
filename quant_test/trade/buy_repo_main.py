@@ -34,28 +34,32 @@ def buy_reverse_repo(code='131809.SZ'):
     cash_amount = account_res.cash
     record_log("买入逆回购现金量：{}".format(cash_amount))
 
-    # 计算下单量：普通板块，一手100股，最低1手。科创板最低200股，超过200以后最低1股。
+    # 计算下单量：
     buy_volume = (cash_amount//1000) * 1000
     if buy_volume < 1000:
-        record_log(f'{code}下单量不足')
+        record_log(f'{code}下单量不足，程序退出')
+    else:
+        sub_id = xtdata.subscribe_quote(code, period='tick', count=-1)  # 1个tick是3s，5分钟是100个tick
+        record_log(f'{code}订阅成功，订阅号：{sub_id}')
 
-    # 按照最新价下单
-    for _ in range(5):
-        try:
-            # order_id = xt_trader.order_stock(user, buy, xtconstant.STOCK_BUY, volume, xtconstant.LATEST_PRICE,
-            #                                  0, 'weekly strategy', 'remark')
-            last_price = xtdata.get_full_tick([code])[code]['lastPrice']
-            order_id = xt_trader.order_stock(user, code, xtconstant.STOCK_BUY, buy_volume, xtconstant.LATEST_PRICE,
-                                             0, 'weekly strategy', 'remark')
-            if order_id != -1:
-                record_log(f'{code}下单成功，下单价格：{last_price}，下单量：{buy_volume}')
-                record_log("下单时间：{}".format(datetime.datetime.now()))
-                break
-            else:
-                record_log(f'{code}下单失败！')
-                raise Exception(f'{code}下单失败！')
-        except:
-            pass
+        # 按照最新价下单
+        for _ in range(5):
+            try:
+                # order_id = xt_trader.order_stock(user, buy, xtconstant.STOCK_BUY, volume, xtconstant.LATEST_PRICE,
+                #                                  0, 'weekly strategy', 'remark')
+                last_price = xtdata.get_full_tick([code])[code]['lastPrice']
+                order_id = xt_trader.order_stock(user, code, xtconstant.STOCK_BUY, buy_volume, xtconstant.LATEST_PRICE,
+                                                 0, 'weekly strategy', 'remark')
+                if order_id != -1:
+                    record_log(f'{code}下单成功，下单价格：{last_price}，下单量：{buy_volume}')
+                    record_log("下单时间：{}".format(datetime.datetime.now()))
+                    break
+                else:
+                    record_log(f'{code}下单失败！')
+                    raise Exception(f'{code}下单失败！')
+            except Exception as e:
+                record_log(f'第{_}次尝试下单{code}失败！')
+                print(e)
 
 
 if __name__ == "__main__":
