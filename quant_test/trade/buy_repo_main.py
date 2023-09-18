@@ -32,13 +32,13 @@ def buy_reverse_repo(code='131809.SZ'):
     record_log("连接时间：{}".format(datetime.datetime.now()))
 
     cash_amount = account_res.cash
-    record_log("买入逆回购现金量：{}".format(cash_amount))
 
     # 计算下单量：
-    buy_volume = (cash_amount//1000) * 1000
+    buy_volume = (cash_amount // 1000) * 1000
     if buy_volume < 1000:
         record_log(f'{code}下单量不足，程序退出')
     else:
+        record_log("买入逆回购现金量：{}".format(buy_volume))
         sub_id = xtdata.subscribe_quote(code, period='tick', count=-1)  # 1个tick是3s，5分钟是100个tick
         record_log(f'{code}订阅成功，订阅号：{sub_id}')
 
@@ -48,7 +48,7 @@ def buy_reverse_repo(code='131809.SZ'):
                 # order_id = xt_trader.order_stock(user, buy, xtconstant.STOCK_BUY, volume, xtconstant.LATEST_PRICE,
                 #                                  0, 'weekly strategy', 'remark')
                 last_price = xtdata.get_full_tick([code])[code]['lastPrice']
-                order_id = xt_trader.order_stock(user, code, xtconstant.STOCK_BUY, buy_volume, xtconstant.LATEST_PRICE,
+                order_id = xt_trader.order_stock(user, code, xtconstant.STOCK_BUY, int(buy_volume), xtconstant.LATEST_PRICE,
                                                  0, 'weekly strategy', 'remark')
                 if order_id != -1:
                     record_log(f'{code}下单成功，下单价格：{last_price}，下单量：{buy_volume}')
