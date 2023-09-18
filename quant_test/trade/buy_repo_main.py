@@ -16,7 +16,7 @@ def buy_reverse_repo(code='131809.SZ'):
     """
     # ========== 初始化交易接口 ==========
     path = 'F:\\中航证券QMT实盘-交易端\\userdata_mini'  # 极简版QMT的路径
-    session_id = 100001  # session_id为会话编号，策略使用方对于不同的Python策略需要使用不同的会话编号（自己随便写）
+    session_id = 100002  # session_id为会话编号，策略使用方对于不同的Python策略需要使用不同的会话编号（自己随便写）
     xt_trader = XtQuantTrader(path, session_id)  # 创建API实例
     user = StockAccount('010400007212', 'STOCK')  # 创建股票账户
     # 启动交易线程
@@ -29,37 +29,40 @@ def buy_reverse_repo(code='131809.SZ'):
     record_log('订阅成功' if subscribe_result == 0 else '订阅失败')
     account_res = xt_trader.query_stock_asset(user)
 
-    record_log("连接时间：{}".format(datetime.datetime.now()))
-
-    cash_amount = account_res.cash
-
-    # 计算下单量：
-    buy_volume = (cash_amount // 1000) * 1000
-    if buy_volume < 1000:
-        record_log(f'{code}下单量不足，程序退出')
+    if connect_result != 0 or subscribe_result != 0:
+        record_log('订阅失败，程序中止！')
     else:
-        record_log("买入逆回购现金量：{}".format(buy_volume))
-        sub_id = xtdata.subscribe_quote(code, period='tick', count=-1)  # 1个tick是3s，5分钟是100个tick
-        record_log(f'{code}订阅成功，订阅号：{sub_id}')
+        record_log("连接时间：{}".format(datetime.datetime.now()))
 
-        # 按照最新价下单
-        for _ in range(5):
-            try:
-                # order_id = xt_trader.order_stock(user, buy, xtconstant.STOCK_BUY, volume, xtconstant.LATEST_PRICE,
-                #                                  0, 'weekly strategy', 'remark')
-                last_price = xtdata.get_full_tick([code])[code]['lastPrice']
-                order_id = xt_trader.order_stock(user, code, xtconstant.STOCK_BUY, int(buy_volume), xtconstant.LATEST_PRICE,
-                                                 0, 'weekly strategy', 'remark')
-                if order_id != -1:
-                    record_log(f'{code}下单成功，下单价格：{last_price}，下单量：{buy_volume}')
-                    record_log("下单时间：{}".format(datetime.datetime.now()))
-                    break
-                else:
-                    record_log(f'{code}下单失败！')
-                    raise Exception(f'{code}下单失败！')
-            except Exception as e:
-                record_log(f'第{_}次尝试下单{code}失败！')
-                print(e)
+        cash_amount = account_res.cash
+
+        # 计算下单量：
+        buy_volume = (cash_amount // 1000) * 1000
+        if buy_volume < 1000:
+            record_log(f'{code}下单量不足，程序退出')
+        else:
+            record_log("买入逆回购现金量：{}".format(buy_volume))
+            sub_id = xtdata.subscribe_quote(code, period='tick', count=-1)  # 1个tick是3s，5分钟是100个tick
+            record_log(f'{code}订阅成功，订阅号：{sub_id}')
+
+            # 按照最新价下单
+            for _ in range(5):
+                try:
+                    # order_id = xt_trader.order_stock(user, buy, xtconstant.STOCK_BUY, volume, xtconstant.LATEST_PRICE,
+                    #                                  0, 'weekly strategy', 'remark')
+                    last_price = xtdata.get_full_tick([code])[code]['lastPrice']
+                    order_id = xt_trader.order_stock(user, code, xtconstant.STOCK_BUY, int(buy_volume), xtconstant.LATEST_PRICE,
+                                                     0, 'weekly strategy', 'remark')
+                    if order_id != -1:
+                        record_log(f'{code}下单成功，下单价格：{last_price}，下单量：{buy_volume}')
+                        record_log("下单时间：{}".format(datetime.datetime.now()))
+                        break
+                    else:
+                        record_log(f'{code}下单失败！')
+                        raise Exception(f'{code}下单失败！')
+                except Exception as e:
+                    record_log(f'第{_}次尝试下单{code}失败！')
+                    print(e)
 
 
 if __name__ == "__main__":
