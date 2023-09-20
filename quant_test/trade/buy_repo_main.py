@@ -46,7 +46,7 @@ def buy_reverse_repo(code='131809.SZ'):
             record_log(f'{code}订阅成功，订阅号：{sub_id}')
 
             # 按照最新价下单
-            for _ in range(5):
+            for i in range(5):
                 try:
                     # order_id = xt_trader.order_stock(user, buy, xtconstant.STOCK_BUY, volume, xtconstant.LATEST_PRICE,
                     #                                  0, 'weekly strategy', 'remark')
@@ -61,7 +61,7 @@ def buy_reverse_repo(code='131809.SZ'):
                         record_log(f'{code}下单失败！')
                         raise Exception(f'{code}下单失败！')
                 except Exception as e:
-                    record_log(f'第{_}次尝试下单{code}失败！')
+                    record_log(f'第{i}次尝试下单{code}失败！')
                     print(e)
 
 
