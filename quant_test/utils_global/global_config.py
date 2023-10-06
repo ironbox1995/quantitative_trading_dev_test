@@ -8,3 +8,4 @@ project_path = 'F:\quantitative_trading_dev_test\quant_test'
 # ==========项目配置==========
 dev_or_test = True
 use_financial_data = False
+force_run = True

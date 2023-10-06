@@ -54,7 +54,7 @@ def split_last_line(strategy_name):
     if dev_or_test:
         is_latest = True
 
-    if signal == 1.0 and is_latest:
+    if (signal == 1.0 and is_latest) or force_run:
         code_column = df['买入股票代码']  # Extract the '买入股票代码' column
         last_line = code_column.iloc[-1]  # Get the last line of the column
         buy_stock_code_li = last_line.strip().split()  # Split the last line by space
