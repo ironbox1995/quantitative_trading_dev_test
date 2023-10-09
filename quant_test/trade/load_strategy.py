@@ -80,7 +80,7 @@ def load_last_line_with_biggest_q():
         previous_workday = get_previous_workday()
         is_latest = (previous_workday == selection_day)
 
-        if signal == 1.0 and is_latest:
+        if signal == 1.0 and (is_latest or force_run):
             code_column = df['买入股票代码']  # Extract the '买入股票代码' column
             last_line = code_column.iloc[-1]  # Get the last line of the column
             buy_stock_code_li = last_line.strip().split()  # Split the last line by space
