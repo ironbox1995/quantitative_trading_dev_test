@@ -107,7 +107,8 @@ def run_strategy_buy():
                 # 获取最新价格
                 last_price = xtdata.get_full_tick([buy])[buy]['lastPrice']
                 # 计算下单量：普通板块，一手100股，最低1手。科创板最低200股，超过200以后最低1股。
-                volume = single_stock_amount / last_price
+                limit_up = cal_limit_up(buy, last_price)
+                volume = single_stock_amount / limit_up
                 volume = calculate_order_quantity(buy, volume)
                 if volume < 100:
                     record_log(f'{buy}下单量不足')
@@ -116,8 +117,8 @@ def run_strategy_buy():
                     try:
                         # order_id = xt_trader.order_stock(user, buy, xtconstant.STOCK_BUY, volume, xtconstant.LATEST_PRICE,
                         #                                  0, 'weekly strategy', 'remark')
-                        last_price = xtdata.get_full_tick([buy])[buy]['lastPrice']
-                        limit_up = cal_limit_up(buy, last_price)
+                        # last_price = xtdata.get_full_tick([buy])[buy]['lastPrice']
+                        # limit_up = cal_limit_up(buy, last_price)
                         # 按照涨停价下单
                         order_price = limit_up
                         order_id = xt_trader.order_stock(user, buy, xtconstant.STOCK_BUY, volume, xtconstant.FIX_PRICE,
