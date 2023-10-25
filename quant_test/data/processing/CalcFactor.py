@@ -18,13 +18,17 @@ def cal_tech_factor(df, extra_agg_dict):
     df['VWAP'] = df['成交额'] / df['成交量']
     extra_agg_dict['VWAP'] = 'last'
 
+    # =计算前日成交额
+    df['前日成交额'] = df['成交额']
+    extra_agg_dict['前日成交额'] = 'last'
+
     # =计算换手率
     df['换手率'] = df['换手率（%）'] / 100
     extra_agg_dict['换手率'] = 'mean'
 
-    # 计算当日换手率
-    df['当日换手率'] = df['换手率']
-    extra_agg_dict['当日换手率'] = 'last'
+    # 计算前日换手率
+    df['前日换手率'] = df['换手率']
+    extra_agg_dict['前日换手率'] = 'last'
 
     # =计算5日均线
     df['5日均线'] = df['收盘价_复权'].rolling(5).mean()
@@ -50,8 +54,8 @@ def cal_tech_factor(df, extra_agg_dict):
     df['20日涨跌幅环比变化'] = df['涨跌幅'].pct_change(20)
     extra_agg_dict['20日涨跌幅环比变化'] = 'last'
 
-    df['量价相关性'] = df['收盘价_复权'].rolling(10).corr(df['换手率'])
-    extra_agg_dict['量价相关性'] = 'last'
+    # df['量价相关性'] = df['收盘价_复权'].rolling(10).corr(df['换手率'])
+    # extra_agg_dict['量价相关性'] = 'last'
 
     # 20日涨跌幅：后复权价的20日环比变化
     df["20日涨跌幅"] = df['收盘价_复权'].pct_change(20)
@@ -60,6 +64,10 @@ def cal_tech_factor(df, extra_agg_dict):
     # =alpha95因子(五天成交额的标准差)
     df['alpha95'] = df['成交额'].rolling(5).std()
     extra_agg_dict['alpha95'] = 'last'
+
+    # bm：book-to-market ratio 账面市值比
+    df['账面市值比'] = 1 / df['市净率']
+    extra_agg_dict['账面市值比'] = 'last'
 
     try:
         df = cal_tech_factor_all(df, extra_agg_dict)
@@ -112,15 +120,15 @@ def cal_tech_factor_all(df, extra_agg_dict):
     # extra_agg_dict['A/D'] = 'last'
     # df['TYP'] = (df['最高价_复权'] + df['收盘价_复权'] + df['最低价_复权']) / 3
     # extra_agg_dict['TYP'] = 'last'
-    df['AMOV'] = df['成交量'] * ((df['开盘价_复权'] + df['收盘价_复权']) / 2)
-    extra_agg_dict['AMOV'] = 'last'
+    # df['AMOV'] = df['成交量'] * ((df['开盘价_复权'] + df['收盘价_复权']) / 2)
+    # extra_agg_dict['AMOV'] = 'last'
 
     # 简单基本面指标
     # df['流通股本'] = df['流通市值'] / df['收盘价']
     # extra_agg_dict['流通股本'] = 'last'
-    # df['总股本'] = df['总市值'] / df['收盘价']
+    # df['总股本'] = df['总市值 （万元）'] / df['收盘价']
     # extra_agg_dict['总股本'] = 'last'
-    # df['EP'] = df['总市值']/ df['净利润TTM']
+    # df['EP'] = df['总市值 （万元）'] / df['净利润_ttm']
     # extra_agg_dict['EP'] = 'last'
     # df['PB'] = df['总市值'] / df['净资产']
     # extra_agg_dict['PB'] = 'last'
@@ -169,18 +177,18 @@ def cal_tech_factor_all(df, extra_agg_dict):
         df['换手率mean_%d' % n] = df['换手率'].rolling(n, min_periods=1).mean()
         extra_agg_dict['换手率mean_%d' % n] = 'last'
 
-        # ===非流动性
-        df['非流动性_%d' % n] = abs(df['涨跌幅'] / df['成交额']) * 100000000
-        extra_agg_dict['非流动性_%d' % n] = 'mean'
+        # # ===非流动性
+        # df['非流动性_%d' % n] = abs(df['涨跌幅'] / df['成交额']) * 100000000
+        # extra_agg_dict['非流动性_%d' % n] = 'mean'
 
-        # ===MTM
-        df['MTM_%d' % n] = df['收盘价_复权'] - df['收盘价_复权'].shift(n)
-        extra_agg_dict['MTM_%d' % n] = 'last'
-        #
-        # # ===OCS
-        df['OCS_%d' % n] = 100 * (df['收盘价_复权'] - df['收盘价_复权'].rolling(n, min_periods=1).mean())
-        extra_agg_dict['OCS_%d' % n] = 'last'
-        #
+        # # ===MTM
+        # df['MTM_%d' % n] = df['收盘价_复权'] - df['收盘价_复权'].shift(n)
+        # extra_agg_dict['MTM_%d' % n] = 'last'
+
+        # # # ===OCS
+        # df['OCS_%d' % n] = 100 * (df['收盘价_复权'] - df['收盘价_复权'].rolling(n, min_periods=1).mean())
+        # extra_agg_dict['OCS_%d' % n] = 'last'
+
         # # ===ROC
         df['ROC_%d' % n] = 100 * ((df['收盘价_复权'] - df['收盘价_复权'].shift(n)) / df['收盘价_复权'].shift(n))
         extra_agg_dict['ROC_%d' % n] = 'last'
@@ -190,27 +198,27 @@ def cal_tech_factor_all(df, extra_agg_dict):
                                  / (df['最高价_复权'].rolling(n, min_periods=1).max() - df['最低价_复权'].rolling(n, min_periods=1).min()))
         extra_agg_dict['WR_%d' % n] = 'last'
 
-        # ===CYF
-        df['CYF_%d' % n] = 100 - 100 / (1 + df['换手率'].ewm(alpha=2 / (n + 1), adjust=False).mean())
-        extra_agg_dict['CYF_%d' % n] = 'last'
+        # # ===CYF
+        # df['CYF_%d' % n] = 100 - 100 / (1 + df['换手率'].ewm(alpha=2 / (n + 1), adjust=False).mean())
+        # extra_agg_dict['CYF_%d' % n] = 'last'
+
+        # # # ===EMV
+        # df['EMV_%d' % n] = ((100 * ((df['最高价_复权'] + df['最低价_复权']) - (df['最高价_复权'].shift() + df['最低价_复权'].shift()))
+        #                      / (df['最高价_复权'] + df['最低价_复权'])) * df['成交量'].rolling(n, min_periods=1).mean() *
+        #                     ((df['最高价_复权'] - df['最低价_复权']) / df['最高价_复权'].rolling(n).mean() - df['最低价_复权'].rolling(n).mean())).rolling(n, min_periods=1).mean()
+        # extra_agg_dict['EMV_%d' % n] = 'last'
+
+        # # ===VPT
+        # df['VPT_%d' % n] = (df['成交量'] * ((df['收盘价_复权'] - df['收盘价_复权'].shift()) / df['收盘价_复权'].shift())).rolling(n, min_periods=1).sum()
+        # extra_agg_dict['VPT_%d' % n] = 'last'
         #
-        # # ===EMV
-        df['EMV_%d' % n] = ((100 * ((df['最高价_复权'] + df['最低价_复权']) - (df['最高价_复权'].shift() + df['最低价_复权'].shift()))
-                             / (df['最高价_复权'] + df['最低价_复权'])) * df['成交量'].rolling(n, min_periods=1).mean() *
-                            ((df['最高价_复权'] - df['最低价_复权']) / df['最高价_复权'].rolling(n).mean() - df['最低价_复权'].rolling(n).mean())).rolling(n, min_periods=1).mean()
-        extra_agg_dict['EMV_%d' % n] = 'last'
-
-        # ===VPT
-        df['VPT_%d' % n] = (df['成交量'] * ((df['收盘价_复权'] - df['收盘价_复权'].shift()) / df['收盘价_复权'].shift())).rolling(n, min_periods=1).sum()
-        extra_agg_dict['VPT_%d' % n] = 'last'
-
-        # ===JS
-        df['JS_%d' % n] = (df['收盘价_复权'] - df['收盘价_复权'].shift(n)) / (n * df['收盘价_复权'].shift(n)) * 100
-        extra_agg_dict['JS_%d' % n] = 'last'
-
-        # ===AMV
-        df['AMV_%d' % n] = df['AMOV'].rolling(n, min_periods=1).sum() / df['成交量'].rolling(n, min_periods=1).sum()
-        extra_agg_dict['AMV_%d' % n] = 'last'
+        # # ===JS
+        # df['JS_%d' % n] = (df['收盘价_复权'] - df['收盘价_复权'].shift(n)) / (n * df['收盘价_复权'].shift(n)) * 100
+        # extra_agg_dict['JS_%d' % n] = 'last'
+        #
+        # # ===AMV
+        # df['AMV_%d' % n] = df['AMOV'].rolling(n, min_periods=1).sum() / df['成交量'].rolling(n, min_periods=1).sum()
+        # extra_agg_dict['AMV_%d' % n] = 'last'
 
     # 量价时序指标
     # t_list = [10, 15, 20, 40, 60, 120, 240]
@@ -249,6 +257,10 @@ def calc_fin_factor(df, extra_agg_dict):
     # 毛利率(ttm) = 营业总收入_ttm / 营业总成本_ttm - 1
     df['毛利率(ttm)'] = df['营业总收入_ttm'] / df['营业总成本_ttm'] - 1
     extra_agg_dict['毛利率(ttm)'] = 'last'
+
+    # SP指标
+    df['SP'] = df['营业总收入_单季'] / df['总市值 （万元）']
+    extra_agg_dict['SP'] = 'last'
 
     # ===计算企业倍数指标：EV2 / EBITDA
     """

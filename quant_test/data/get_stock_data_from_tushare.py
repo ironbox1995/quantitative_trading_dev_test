@@ -9,10 +9,12 @@
 """
 from processing.reformat_utils import *
 from utils_global.global_config import *
+from data.data_utils import *
 import time
+import traceback
 
 
-def get_stock_data_from_tushare(pro, stock_code, stock_basic_info, start_date, end_date):
+def get_stock_data_from_tushare(pro, stock_code, stock_basic_info, industry_dct, start_date, end_date):
     """
     https://tushare.pro/document/2
     代码部分来自chatGPT
@@ -36,6 +38,9 @@ def get_stock_data_from_tushare(pro, stock_code, stock_basic_info, start_date, e
     one_stock_data_tushare['股票名称'] = stock_basic_info['name']
     one_stock_data_tushare['行业'] = stock_basic_info['industry']
     one_stock_data_tushare['市场类型'] = stock_basic_info['market']
+    one_stock_data_tushare['申万三级行业'] = industry_dct['申万三级行业']
+    one_stock_data_tushare['申万二级行业'] = industry_dct['申万二级行业']
+    one_stock_data_tushare['申万一级行业'] = industry_dct['申万一级行业']
 
     one_stock_data_tushare['trade_date'] = pd.to_datetime(one_stock_data_tushare['trade_date'])
     one_stock_data_tushare.sort_values(by=['trade_date'], ascending=True, inplace=True)
@@ -49,9 +54,9 @@ def get_stock_data_from_tushare(pro, stock_code, stock_basic_info, start_date, e
                    'float_share': '流通股本 （万股）', 'free_share': '自由流通股本 （万）', 'total_mv': '总市值 （万元）',
                    'circ_mv': '流通市值（万元）'}
     one_stock_data_tushare.rename(columns=rename_dict, inplace=True)
-    one_stock_data_tushare = one_stock_data_tushare[['股票代码', '股票名称', '交易日期', '行业', '市场类型', '开盘价',
-                                                     '最高价', '最低价', '收盘价', '前收盘价', '涨跌额', '涨跌幅', '成交量',
-                                                     '成交额', '换手率（%）', '换手率（自由流通股）',
+    one_stock_data_tushare = one_stock_data_tushare[['股票代码', '股票名称', '交易日期', '行业', '申万一级行业', '申万二级行业',
+                                                     '申万三级行业', '市场类型', '开盘价', '最高价', '最低价', '收盘价', '前收盘价',
+                                                     '涨跌额', '涨跌幅', '成交量', '成交额', '换手率（%）', '换手率（自由流通股）',
                                                      '量比', '市盈率', '市盈率TTM', '市净率', '市销率', '市销率TTM',
                                                      '股息率（%）', '股息率TTM（%）', '总股本 （万股）', '流通股本 （万股）',
                                                      '自由流通股本 （万）', '总市值 （万元）', '流通市值（万元）']]
@@ -70,6 +75,8 @@ def update_and_save_stock_data(pro, start_date, end_date):
     # 仅返回上市的
     data = pro.query('stock_basic', exchange='', list_status='L', fields='ts_code,symbol,name,area,market,industry,'
                                                                          'list_date')
+    df_industry = pd.read_csv(r'{}\data\historical\tushare_industry_data\industry_data_clean.csv'.format(project_path))
+
     print("开始从tushare下载历史k线数据，本次开始下载的时间为：", datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
     print("下载数据起止时间为：{}-{}".format(start_date, end_date))
     for i in range(len(data)):
@@ -79,7 +86,13 @@ def update_and_save_stock_data(pro, start_date, end_date):
                 print("不下载北京证券交易所股票数据：{}".format(stock_code))
                 continue
             stock_basic_info = data.iloc[i]  # series类型
-            one_stock_data_tushare = get_stock_data_from_tushare(pro, stock_code, stock_basic_info, start_date, end_date)
+
+            # 获取行业数据
+            industry_dct = df_industry[df_industry["con_code"] == stock_code].to_dict(orient='list')
+            industry_dct = reorganize_industry_dct(industry_dct)
+
+            one_stock_data_tushare = get_stock_data_from_tushare(pro, stock_code, stock_basic_info, industry_dct,
+                                                                 start_date, end_date)
             # 构建存储文件路径
             path = r'{}\data\historical\tushare_stock_data\{}.csv'.format(project_path, stock_code)
             # 保存数据
@@ -88,6 +101,7 @@ def update_and_save_stock_data(pro, start_date, end_date):
         except Exception as e:
             stock_code = data.iloc[i]['ts_code']
             print(stock_code + "数据获取失败：", e)
+            traceback.print_exc()
 
     print("从tushare下载历史k线数据结束，本次下载结束的时间为：", datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
 
@@ -113,4 +127,3 @@ def get_tushare_historical_kline_data_main(index_path):
 if __name__ == "__main__":
     index_path = r"{}\data\historical\tushare_index_data\000001.SH.csv".format(project_path)
     get_tushare_historical_kline_data_main(index_path)
-

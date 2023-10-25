@@ -49,20 +49,23 @@ def daily_factor_calculator(code, df, index_data):
             finance_df = import_tushare_fin_data(code, finance_data_path)
             if not finance_df.empty:  # 如果数据不为空
                 # 计算财务数据：选取需要的字段、计算指定字段的同比、环比、ttm等指标
-                finance_df = proceed_fin_data(finance_df, raw_fin_cols, flow_fin_cols, cross_fin_cols, derived_fin_cols)
+                finance_df = proceed_fin_data(finance_df, raw_fin_cols, flow_fin_cols, cross_fin_cols, derived_fin_cols, fin_ind_col_final)
                 # 财务数据和股票k线数据合并，使用merge_asof
                 # 参考文档：https://pandas.pydata.org/pandas-docs/version/0.25.0/reference/api/pandas.merge_asof.html
                 df = pd.merge_asof(left=df, right=finance_df, left_on='交易日期', right_on='披露日期',
                                    direction='backward')
             else:  # 如果数据为空
                 # 把需要使用的字段都填为空值
-                for col in raw_fin_cols + derived_fin_cols:
+                for col in raw_fin_cols + derived_fin_cols + fin_ind_col_final:
                     df[col] = np.nan
 
             for col in raw_fin_cols:  # 财务数据在周期转换的时候，都是选取最后一天的数据
                 extra_agg_dict[col] = 'last'
 
             for col in derived_fin_cols:
+                extra_agg_dict[col] = 'last'
+
+            for col in fin_ind_col_final:
                 extra_agg_dict[col] = 'last'
 
             # 计算财务因子

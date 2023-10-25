@@ -172,6 +172,9 @@ def transfer_to_period_data(df, period_type='m', extra_agg_dict=None):
         '下日_开盘买入涨跌幅': 'last',
 
         '行业': 'last',
+        '申万一级行业': 'last',
+        '申万二级行业': 'last',
+        '申万三级行业': 'last',
         '市场类型': 'last',
         '成交量': 'sum',
         '量比': 'last',
@@ -335,8 +338,6 @@ def strategy_evaluate(equity, select_stock):
     equity.set_index('交易日期', inplace=True)
     year_return = equity[['涨跌幅']].resample(rule='A').apply(lambda x: (1 + x).prod() - 1)
     monthly_return = equity[['涨跌幅']].resample(rule='M').apply(lambda x: (1 + x).prod() - 1)
-
-    # TODO：计算夏普率
 
     return results.T, year_return, monthly_return
 

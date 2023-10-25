@@ -8,11 +8,11 @@ from utils_global.global_config import *
 
 def update_data_main():
     tushare_index_path = r"{}\data\historical\tushare_index_data\000001.SH.csv".format(project_path)
-    if os.path.exists(tushare_index_path):
-        latest_date = pd.read_csv(tushare_index_path, encoding='gbk').tail(1)['交易日期'].values[0]
-        latest_date = parse_update_start_time(latest_date)
-    else:
-        latest_date = "20070101"
+    # if os.path.exists(tushare_index_path):
+    #     latest_date = pd.read_csv(tushare_index_path, encoding='gbk').tail(1)['交易日期'].values[0]
+    #     latest_date = parse_update_start_time(latest_date)
+    # else:
+    #     latest_date = "20070101"
 
     print("开始下载tusharek线数据。")
     get_tushare_historical_kline_data_main(tushare_index_path)

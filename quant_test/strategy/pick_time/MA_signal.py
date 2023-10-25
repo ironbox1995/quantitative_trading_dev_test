@@ -1,5 +1,5 @@
 # MA策略
-def MA_signal(select_stock, para=(5, 20)):
+def MA_signal(select_stock, para=(1, 3)):
     """
     简单的移动平均线策略。只能做多。
     当短期均线上穿长期均线的时候，做多，当短期均线下穿长期均线的时候，平仓

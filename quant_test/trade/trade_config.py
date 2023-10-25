@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # strategy_li = ["小市值策略", "小市值策略_量价优化1"]
-strategy_dct = {"小市值策略": 0.5, "小市值策略_量价优化1": 0.5}  # 策略及资金权重
-strategy_li = strategy_dct.keys()
+strategy_part_dct = {"小市值策略": 0.5, "小市值策略_量价优化1": 0.5}  # 策略及资金权重
+strategy_li = strategy_part_dct.keys()
 # strategy_li = ["Q学习并联策略"]
 period_type = 'W'  # 周期不完整时也会看做一个完整周期正常选股
 select_stock_num = 3

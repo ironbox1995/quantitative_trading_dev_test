@@ -25,8 +25,8 @@ pd.set_option('expand_frame_repr', False)  # 当列太多时不换行
 pd.set_option('display.max_rows', 5000)  # 最多显示数据的行数
 
 
-def back_test_main(strategy_name, date_start, date_end, select_stock_num, period_type, serial_number, pick_time_mtd="",
-                   show_pic=False):
+def back_test_main(df, index_data, strategy_name, date_start, date_end, select_stock_num, period_type, serial_number
+                   , pick_time_mtd="", show_pic=False):
     # 策略选择
     pick_stock_strategy = get_strategy_function(strategy_name)
 
@@ -43,18 +43,10 @@ def back_test_main(strategy_name, date_start, date_end, select_stock_num, period
     c_rate = 1 / 10000  # 手续费 这里与之前不同
     t_rate = 1 / 2000  # 印花税
 
-    # 导入指数数据
-    index_data = import_index_data(
-        r"{}\data\historical\tushare_index_data\000001.SH.csv".format(project_path)
-        , back_trader_start=date_start, back_trader_end=date_end)
-
     # 创造空的事件周期表，用于填充不选股的周期
     empty_df = create_empty_data(index_data, period_type)
 
-    # ===导入数据
-    # 从pickle文件中读取整理好的所有股票数据
-    df = pd.read_pickle(
-        r'{}\data\historical\processed_data\all_stock_data_{}.pkl'.format(project_path, period_type))
+    # 处理数据
     df.dropna(subset=['下周期每天涨跌幅'], inplace=True)
     # ===删除下个交易日不交易、开盘涨停的股票，因为这些股票在下个交易日开盘时不能买入。
     df = df[df['下日_是否交易'] == 1]
@@ -111,7 +103,7 @@ def back_test_main(strategy_name, date_start, date_end, select_stock_num, period
     if pick_time_mtd == "" or pick_time_mtd == "无择时":
         pick_time_mtd = "无择时"
     else:
-        select_stock = curve_pick_time(select_stock, pick_time_mtd)
+        select_stock, latest_signal = curve_pick_time(select_stock, pick_time_mtd, index_data)
 
     select_stock.to_csv(
         r"{}\backtest\result_record\select_stock_{}_{}_选{}_{}-{}_{}.csv"
@@ -128,7 +120,7 @@ def back_test_main(strategy_name, date_start, date_end, select_stock_num, period
     equity.dropna(subset=['持有股票代码'], inplace=True)
     # del equity['买入股票代码']
 
-    equity['涨跌幅'] = select_stock['选股下周期每天涨跌幅'].sum()  # 累加是没错的
+    equity['涨跌幅'] = select_stock['选股下周期每天涨跌幅'].sum()
     equity['equity_curve'] = (equity['涨跌幅'] + 1).cumprod()
     equity['benchmark'] = (equity['指数涨跌幅'] + 1).cumprod()
 
@@ -160,30 +152,26 @@ def back_test_main(strategy_name, date_start, date_end, select_stock_num, period
 
 
 if __name__ == "__main__":
-    # period_type = 'M'  # W代表周，M代表月
-    # date_start = '2007-01-01'  # 需要从10年开始，因为使用到了ttm的同比差分，对比的是3年持续增长的数据
-    # date_end = '2023-03-31'
-    # select_stock_num = 3  # 选股数量
-    # strategy_name = '低价选股策略_百分比'
-    # back_test_main(strategy_name, date_start, date_end, select_stock_num, period_type)
+    index_data = import_index_data(r"{}\data\historical\tushare_index_data\000001.SH.csv".format(project_path), back_trader_start=date_start, back_trader_end=date_end)
 
     # ==============批量回测==============
-    for strategy_name in strategy_li:
-        for period_type in period_type_li:
+    for period_type in period_type_li:
+        df = pd.read_pickle(r'{}\data\historical\processed_data\all_stock_data_{}.pkl'.format(project_path, period_type))
+        for strategy_name in strategy_li:
             for select_stock_num in select_stock_num_li:
-                # pick_time_mtd = pick_time_mtd_dct[strategy_name]
-                for pick_time_mtd in pick_time_li:
-                    try:
-                        serial_number = generate_serial_number()
-                        back_test_main(strategy_name, date_start, date_end, select_stock_num, period_type, serial_number,
-                                       pick_time_mtd)
-                        # serial_number = generate_serial_number()
-                        # back_test_main(strategy_name, date_start, date_end, select_stock_num, period_type, serial_number,
-                        #                "无择时")
-                    except Exception as e:
-                        msg = "交易播报：策略 {} 执行失败：".format(strategy_name)
-                        print(msg)
-                        send_dingding(msg)
-                        print(e)
-                        traceback.print_exc()
+                pick_time_mtd = pick_time_mtd_dct[strategy_name]
+                # for pick_time_mtd in pick_time_li:
+                try:
+                    serial_number = generate_serial_number()
+                    back_test_main(df, index_data, strategy_name, date_start, date_end, select_stock_num, period_type, serial_number,
+                                   pick_time_mtd)
+                    serial_number = generate_serial_number()
+                    back_test_main(df, index_data, strategy_name, date_start, date_end, select_stock_num, period_type, serial_number,
+                                   "无择时")
+                except Exception as e:
+                    msg = "交易播报：策略 {} 执行失败：".format(strategy_name)
+                    print(msg)
+                    send_dingding(msg)
+                    print(e)
+                    traceback.print_exc()
     send_dingding("交易播报：执行 回测 成功！")

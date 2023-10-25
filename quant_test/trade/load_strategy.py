@@ -26,7 +26,10 @@ def load_strategy_result(cash_amount):
                 buy_stock_list.extend(split_last_line(default_strategy))
                 print("Q学习策略报错: {}，改为执行默认策略：{}".format(e, default_strategy))
 
-        buy_amount = cash_amount * strategy_dct[strategy_name]
+        if total_position >= 0:
+            cash_amount = min(cash_amount, total_position)
+
+        buy_amount = cash_amount * strategy_part_dct[strategy_name]
 
         all_buy_stock.append((buy_stock_list, buy_amount))
 

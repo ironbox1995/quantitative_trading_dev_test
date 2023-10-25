@@ -6,11 +6,13 @@ from back_test_config import *
 from utils_global.global_config import *
 import warnings
 from utils_global.dingding_message import *
+from data.processing.Functions import *
+
 
 warnings.filterwarnings('ignore')
 
 
-def back_test_latest_result(strategy_name, select_stock_num, period_type, alpha, pick_time_mtd=""):
+def back_test_latest_result(df, index_data, strategy_name, select_stock_num, period_type, alpha, pick_time_mtd=""):
     pick_stock_strategy = get_strategy_function(strategy_name)
 
     if not Second_Board_available:
@@ -26,10 +28,6 @@ def back_test_latest_result(strategy_name, select_stock_num, period_type, alpha,
     c_rate = 1 / 10000  # 手续费 这里与之前不同
     t_rate = 1 / 2000  # 印花税
 
-    # ===导入数据
-    # 从pickle文件中读取整理好的所有股票数据
-    df = pd.read_pickle(
-        r'{}\data\historical\processed_data\all_stock_data_{}.pkl'.format(project_path, period_type))
     # ===删除下个交易日不交易、开盘涨停的股票，因为这些股票在下个交易日开盘时不能买入。
     df = df[df['下日_是否交易'] == 1]
     df = df[df['下日_开盘涨停'] == False]
@@ -86,7 +84,7 @@ def back_test_latest_result(strategy_name, select_stock_num, period_type, alpha,
         pick_time_mtd = "无择时"
         latest_selection['最新择时信号'] = 1  # 即使无择时也要输出一个信号，便于正确读取。
     else:
-        select_stock, latest_signal = pick_time(select_stock, pick_time_mtd)
+        select_stock, latest_signal = curve_pick_time(select_stock, pick_time_mtd, index_data)
         latest_selection['最新择时信号'] = latest_signal
 
     # 计算Q列的值
@@ -107,19 +105,21 @@ def back_test_latest_result(strategy_name, select_stock_num, period_type, alpha,
 
 
 if __name__ == "__main__":
+    index_data = import_index_data(r"{}\data\historical\tushare_index_data\000001.SH.csv".format(project_path), back_trader_start=date_start, back_trader_end=date_end)
 
-    for strategy_name in strategy_li:
-        for period_type in period_type_li:
+    for period_type in period_type_li:
+        df = pd.read_pickle(r'{}\data\historical\processed_data\all_stock_data_{}.pkl'.format(project_path, period_type))
+        for strategy_name in strategy_li:
             for select_stock_num in select_stock_num_li:
-                # pick_time_mtd = pick_time_mtd_dct[strategy_name]
-                for pick_time_mtd in pick_time_li:
-                    try:
-                        back_test_latest_result(strategy_name, select_stock_num, period_type, ALPHA, pick_time_mtd)
-                        # back_test_latest_result(strategy_name, select_stock_num, period_type, ALPHA, "无择时")
-                    except Exception as e:
-                        msg = "交易播报：策略{}结果输出失败：period_type:{}, select_stock_num:{}".format(strategy_name, period_type,
-                                                                                    select_stock_num)
-                        print(msg)
-                        send_dingding(msg)
-                        print(e)
+                pick_time_mtd = pick_time_mtd_dct[strategy_name]
+                # for pick_time_mtd in pick_time_li:
+                try:
+                    back_test_latest_result(df, index_data, strategy_name, select_stock_num, period_type, ALPHA, pick_time_mtd)
+                    # back_test_latest_result(strategy_name, select_stock_num, period_type, ALPHA, "无择时")
+                except Exception as e:
+                    msg = "交易播报：策略{}结果输出失败：period_type:{}, select_stock_num:{}".format(strategy_name, period_type,
+                                                                                select_stock_num)
+                    print(msg)
+                    send_dingding(msg)
+                    print(e)
     send_dingding("交易播报：执行 最新结果输出 成功！")

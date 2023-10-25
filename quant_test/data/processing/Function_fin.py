@@ -341,7 +341,7 @@ def reorganize_raw_fin_data(finance_df):
     return finance_df
 
 
-def proceed_fin_data(finance_df, raw_fin_cols, flow_fin_cols, cross_fin_cols, derived_fin_cols):
+def proceed_fin_data(finance_df, raw_fin_cols, flow_fin_cols, cross_fin_cols, derived_fin_cols, fin_ind_col_final):
     """
     处理财务数据
     :param finance_df:
@@ -352,7 +352,7 @@ def proceed_fin_data(finance_df, raw_fin_cols, flow_fin_cols, cross_fin_cols, de
     """
     # ===选股需要的财务数据字段
     # 判断财务数据中是否包含我们需要的finance_cols，没有的话新增一列，赋值为空
-    cols = raw_fin_cols + derived_fin_cols
+    cols = raw_fin_cols + derived_fin_cols + fin_ind_col_final
     all_cols = finance_df.columns
     for col in cols:
         if col not in all_cols:

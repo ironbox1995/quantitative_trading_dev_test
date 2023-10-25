@@ -165,3 +165,51 @@ def low_price_small_cap_strategy(pick_from_df, select_stock_num):
     pick_from_df = pick_from_df[pick_from_df['排名'] <= select_stock_num]
 
     return session_id, pick_from_df
+
+
+def small_cap_bin_optimized(pick_from_df, select_stock_num):
+    """
+    小市值策略+分箱优化
+    :param pick_from_df:
+    :param select_stock_num:
+    :return:
+    """
+    session_id = 100015
+
+    if not Second_Board_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
+    if not STAR_Market_available:
+        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    df = pick_from_df
+
+    # 筛选：过滤掉市值太大的，保留小市值这一范围
+    df = df[df['总市值 （万元）'] < 300000]
+
+    # 计算所需因子排名
+    df['量比排名百分比'] = df.groupby('交易日期')['量比'].rank(ascending=True, pct=True, method='min')
+    # df['ROC_20排名百分比'] = df.groupby('交易日期')['ROC_20'].rank(ascending=True, pct=True, method='min')
+    df['成交额std_20排名百分比'] = df.groupby('交易日期')['成交额std_20'].rank(ascending=True, pct=True, method='min')
+    df['量价相关性_20排名百分比'] = df.groupby('交易日期')['量价相关性_20'].rank(ascending=True, pct=True, method='min')
+
+    # 筛选：过滤掉量比最大的25%
+    df = df[df['量比排名百分比'] < 0.75]
+    # # 筛选：保留ROC_20最小的10%
+    # df = df[df['ROC_20排名百分比'] < 0.10]
+    # 筛选：过滤掉成交额std_20最大的25%
+    df = df[df['成交额std_20排名百分比'] < 0.75]
+    # 筛选：过滤掉量价相关性_20最大的25%
+    df = df[df['量价相关性_20排名百分比'] < 0.75]
+
+    # 排序：
+    df['振幅排名'] = df.groupby('交易日期')['振幅_20'].rank(ascending=False, pct=False, method='min')
+    df['市值排名'] = df.groupby('交易日期')['总市值 （万元）'].rank(ascending=True, pct=False, method='min')
+    df['量价排名'] = df.groupby('交易日期')['量价相关性_20'].rank(ascending=True, pct=False, method='min')
+
+    # 计算复合因子
+    df['复合因子'] = df['市值排名'] + df['量价排名'] + df['振幅排名']
+    # 对因子进行排名
+    df['排名'] = df.groupby('交易日期')['复合因子'].rank()
+    # 选取排名靠前的股票
+    df = df[df['排名'] <= select_stock_num]
+
+    return session_id, df
