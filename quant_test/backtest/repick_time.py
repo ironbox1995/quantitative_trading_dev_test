@@ -18,7 +18,7 @@ def pick_time(select_stock, pick_time_mtd):
     elif pick_time_mtd == "ENV择时":
         select_stock, latest_signal = ENV_signal(select_stock)
     elif pick_time_mtd == "MTM择时":
-        select_stock, latest_signal = MTM_signal(select_stock, 1)
+        select_stock, latest_signal = MTM_signal(select_stock, 2)
     elif pick_time_mtd == "DPO择时":
         select_stock, latest_signal = DPO_signal(select_stock, 2)
     elif pick_time_mtd == "T3择时":
