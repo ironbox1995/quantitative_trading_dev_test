@@ -174,9 +174,9 @@ if __name__ == "__main__":
                     serial_number = generate_serial_number()
                     back_test_main(df, index_data, strategy_name, date_start, date_end, select_stock_num, period_type, serial_number,
                                    pick_time_mtd)
-                    serial_number = generate_serial_number()
-                    back_test_main(df, index_data, strategy_name, date_start, date_end, select_stock_num, period_type, serial_number,
-                                   "无择时")
+                    # serial_number = generate_serial_number()
+                    # back_test_main(df, index_data, strategy_name, date_start, date_end, select_stock_num, period_type, serial_number,
+                    #                "无择时")
                 except Exception as e:
                     msg = "交易播报：策略 {} 执行失败：".format(strategy_name)
                     print(msg)
