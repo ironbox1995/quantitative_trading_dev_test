@@ -6,6 +6,7 @@ import random
 
 from trade.trade_config import *
 from utils_global.global_config import *
+from utils_global.dingding_message import *
 
 
 def load_strategy_result(cash_amount):
@@ -46,18 +47,38 @@ def split_last_line(strategy_name):
         strategy_name += "无科创"
     df = pd.read_csv(r"{}\backtest\latest_selection\最新选股_{}_{}_选{}_{}.csv"
             .format(project_path, strategy_name, period_type, select_stock_num, pick_time_mtd), encoding='gbk', parse_dates=['交易日期'])
+    df_draw_down = pd.read_csv(r"{}\backtest\latest_selection\最近回撤_{}_{}_选{}_{}.csv"
+            .format(project_path, strategy_name, period_type, select_stock_num, pick_time_mtd), encoding='gbk', parse_dates=['交易日期'])
+    last_draw_down = df_draw_down['最近回撤幅度'].tail(1)
 
     buy_stock_code_li = []
+
+    # 判断择时信号
     signal = df['最新择时信号'].iloc[-1]
 
-    # 判断是否为最新
+    # 判断是否为最新结果
     selection_day = df['交易日期'].iloc[-1]
     previous_workday = get_previous_workday()
     is_latest = (previous_workday == selection_day)
     if dev_or_test:
         is_latest = True
 
-    if signal == 1.0 and (is_latest or force_run):
+    # 判断回撤幅度是否需要告警或止损
+    preset_draw_down = strategy_stop_loss_point_dct[strategy_name]
+    if preset_draw_down > 0:  # 回撤非正，所以如果设为正数则不止损
+        strategy_loss_permission = True
+    else:
+        if last_draw_down < preset_draw_down * draw_down_warning_point:  # 回撤大于特定比例则告警
+            send_dingding(f"交易播报：策略：{strategy_name} 最近回撤为 {last_draw_down * 100}%，"
+                          f"大于预设值 {preset_draw_down * 100}% 的 {draw_down_warning_point * 100}%，"
+                          f"告警！需引起重视！")
+            strategy_loss_permission = True
+        elif last_draw_down < preset_draw_down:  # 回撤大于特定比例则止损
+            strategy_loss_permission = False
+        else:  # 没有此类情况则正常执行
+            strategy_loss_permission = True
+
+    if signal == 1.0 and (is_latest or force_run) and strategy_loss_permission:
         code_column = df['买入股票代码']  # Extract the '买入股票代码' column
         last_line = code_column.iloc[-1]  # Get the last line of the column
         buy_stock_code_li = last_line.strip().split()  # Split the last line by space

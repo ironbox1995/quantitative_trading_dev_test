@@ -145,7 +145,13 @@ def back_test_main(df, index_data, strategy_name, date_start, date_end, select_s
         print("=" * 30, file=f)
         print("", file=f)
 
-    # TODO：保存最近一次回撤
+    # 保存最近一次回撤
+    latest_drawdown_df = pd.DataFrame()
+    latest_drawdown_df['最近回撤幅度'] = latest_drawdown
+    latest_drawdown_df.to_csv(
+        r"{}\backtest\latest_selection\最近回撤_{}_{}_选{}_{}.csv"
+            .format(project_path, strategy_name, period_type, select_stock_num, pick_time_mtd), encoding='gbk')
+
 
     # ===画图
     equity = equity.reset_index()
