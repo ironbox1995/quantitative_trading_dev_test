@@ -120,7 +120,7 @@ def combine_all_strategies(eps, alpha, pick_time_switch):
 
     serial_number = generate_serial_number()
     # ===计算策略评价指标
-    rtn, year_return, month_return = strategy_evaluate(equity, select_stock)
+    rtn, year_return, month_return, latest_drawdown = strategy_evaluate(equity, select_stock)
     with open(r"{}\backtest\result_record\策略执行日志.txt".format(project_path), 'a',
               encoding='utf-8') as f:
         print("=" * 30, file=f)

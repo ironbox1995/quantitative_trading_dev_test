@@ -129,7 +129,7 @@ def back_test_main(df, index_data, strategy_name, date_start, date_end, select_s
                   encoding='gbk')
 
     # ===计算策略评价指标
-    rtn, year_return, month_return = strategy_evaluate(equity, select_stock)
+    rtn, year_return, month_return, latest_drawdown = strategy_evaluate(equity, select_stock)
     with open(r"{}\backtest\result_record\策略执行日志.txt".format(project_path), 'a',
               encoding='utf-8') as f:
         print("=" * 30, file=f)
@@ -141,8 +141,11 @@ def back_test_main(df, index_data, strategy_name, date_start, date_end, select_s
         print('择时方法:{}'.format(pick_time_mtd), file=f)
         print('回测开始时间：{}，回测结束时间：{}'.format(date_start, date_end), file=f)
         print(rtn, file=f)
+        print('最近一次回撤幅度:{}'.format(latest_drawdown), file=f)
         print("=" * 30, file=f)
         print("", file=f)
+
+    # TODO：保存最近一次回撤
 
     # ===画图
     equity = equity.reset_index()

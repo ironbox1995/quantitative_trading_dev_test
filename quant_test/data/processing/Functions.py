@@ -339,7 +339,12 @@ def strategy_evaluate(equity, select_stock):
     year_return = equity[['涨跌幅']].resample(rule='A').apply(lambda x: (1 + x).prod() - 1)
     monthly_return = equity[['涨跌幅']].resample(rule='M').apply(lambda x: (1 + x).prod() - 1)
 
-    return results.T, year_return, monthly_return
+    # 计算当前回撤
+    max_value = equity['equity_curve'].max()
+    latest_value = equity['equity_curve'].tail(1)
+    latest_drawdown = latest_value/max_value - 1
+
+    return results.T, year_return, monthly_return, latest_drawdown
 
 
 def create_empty_data(index_data, period):
