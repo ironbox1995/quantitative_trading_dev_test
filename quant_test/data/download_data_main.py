@@ -2,6 +2,7 @@
 from get_financial_data_from_tushare import *
 from get_index_data_from_tushare import *
 from get_stock_data_from_tushare import *
+from get_industry_data_from_tushare import *
 from utils_global.dingding_message import *
 from utils_global.global_config import *
 
@@ -13,6 +14,10 @@ def update_data_main():
     #     latest_date = parse_update_start_time(latest_date)
     # else:
     #     latest_date = "20070101"
+
+    print("开始下载tushare行业数据。")
+    get_tushare_industry_data_main()
+    print("tushare行业数据下载完成。")
 
     print("开始下载tusharek线数据。")
     get_tushare_historical_kline_data_main(tushare_index_path)
@@ -26,6 +31,7 @@ def update_data_main():
     get_tushare_financial_data_main()
     print("tushare财务数据下载完成。")
 
+    # ============QMT数据下载============
     # try:
     #     print("开始下载并更新财务数据。")
     #     download_historical_financial_data(start_time=latest_date)
