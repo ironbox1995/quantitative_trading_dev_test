@@ -141,7 +141,12 @@ def get_previous_workday():
 
 
 def save_to_csv(new_row):
-    pd.DataFrame(new_row, index=[0]).to_csv(r'{}\trade\交易日志.csv'.format(project_path), mode='a', header=False, index=False)
+    try:
+        pd.DataFrame(new_row, index=[0]).to_csv(r'{}\trade\交易日志.csv'.format(project_path), mode='a', header=False, index=False)
+    except:
+        print("交易日志保存失败，待保存数据为：")
+        print(new_row)
+
 
 
 def get_pick_time_mtd(strategy_name):
