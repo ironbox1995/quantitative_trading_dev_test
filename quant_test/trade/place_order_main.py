@@ -78,8 +78,8 @@ def run_strategy_buy():
     record_log("连接时间：{}".format(datetime.datetime.now()))
     account_res = xt_trader.query_stock_asset(user)
 
-    cash_amount = account_res.cash
-    record_log("周一开单前现金量：{}".format(cash_amount))
+    cash_amount_before = account_res.cash
+    record_log("周一开单前现金量：{}".format(cash_amount_before))
     # ========== 策略配置 ==========
     # buy_stock_list = ['002708.SZ', '003023.SZ', '002094.SZ']
     # buy_amount = 100000  # 0表示使用所有可用资金买入
@@ -135,7 +135,12 @@ def run_strategy_buy():
             record_log("已完成全部下单。")
         else:
             record_log("本周期当前策略无下单目标。")
-    return cash_amount
+
+    account_res = xt_trader.query_stock_asset(user)
+    cash_amount_after = account_res.cash
+    record_log("周一开单后现金量：{}".format(cash_amount_after))
+
+    return cash_amount_before, cash_amount_after
 
 
 def run_strategy_sell():
@@ -157,6 +162,10 @@ def run_strategy_sell():
     else:
         record_log('链接并订阅成功')
     record_log("连接时间：{}".format(datetime.datetime.now()))
+
+    account_res = xt_trader.query_stock_asset(user)
+    cash_amount_before = account_res.cash
+    record_log("周五平仓前现金量：{}".format(cash_amount_before))
 
     sell_stock_dct = query_stock_with_position(xt_trader, user)
 
@@ -191,9 +200,10 @@ def run_strategy_sell():
         print(datetime.datetime.now().strftime("%H:%M:%S"), end="\r")
 
     account_res = xt_trader.query_stock_asset(user)
-    record_log("周五平仓后现金量：{}".format(account_res.cash))
+    cash_amount_after = account_res.cash
+    record_log("周五平仓后现金量：{}".format(cash_amount_after))
 
-    return account_res.cash
+    return cash_amount_before, cash_amount_after
 
 
 if __name__ == "__main__":
