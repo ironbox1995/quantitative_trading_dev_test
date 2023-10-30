@@ -14,6 +14,8 @@ def consistent_strategy(pick_from_df, select_stock_num):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     pick_from_df['排名'] = pick_from_df.groupby('交易日期')['涨跌幅'].rank(ascending=False)
     df = pick_from_df[pick_from_df['排名'] <= select_stock_num]

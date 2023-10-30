@@ -14,6 +14,8 @@ def small_cap_strategy(pick_from_df, select_stock_num):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     pick_from_df['排名'] = pick_from_df.groupby('交易日期')['总市值 （万元）'].rank(ascending=True)
     df = pick_from_df[pick_from_df['排名'] <= select_stock_num]
@@ -33,6 +35,8 @@ def small_cap_strategy_pv_opt_1(pick_from_df, select_stock_num):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     # 计算总市值排名
     pick_from_df['总市值排名'] = pick_from_df.groupby('交易日期')['总市值 （万元）'].rank(ascending=True, method='min')
@@ -63,6 +67,8 @@ def large_cap_strategy(pick_from_df, select_stock_num):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     pick_from_df['排名'] = pick_from_df.groupby('交易日期')['总市值 （万元）'].rank(ascending=False)
     df = pick_from_df[pick_from_df['排名'] <= select_stock_num]
@@ -84,6 +90,8 @@ def low_price_strategy(pick_from_df, select_stock_num=50):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     # 低价股选股：价格最低的50只(默认值为50)，且收盘价>=2
     pick_from_df['价格排名'] = pick_from_df.groupby('交易日期')['收盘价'].rank(ascending=True, pct=False, method='first')
@@ -106,6 +114,8 @@ def low_price_pct_strategy(pick_from_df, select_stock_num):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     # print("本策略不需要select_stock_num：{}".format(select_stock_num))
     # 低价股选股：价格最低的前20%只股票，且收盘价>=2
@@ -129,6 +139,8 @@ def junk_stock_strategy(pick_from_df, select_stock_num=200):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     # 低价股 + 小市值选股：价格和市值同时满足：最小的前200只股票，且收盘价>=2
     pick_from_df['价格排名'] = pick_from_df.groupby('交易日期')['收盘价'].rank(ascending=True, pct=False, method='first')
@@ -153,6 +165,8 @@ def low_price_small_cap_strategy(pick_from_df, select_stock_num):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     pick_from_df = pick_from_df[pick_from_df['收盘价'] >= 2]
     # 低价股 + 小市值选股：混合排名
@@ -180,6 +194,8 @@ def small_cap_bin_optimized(pick_from_df, select_stock_num):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
     df = pick_from_df
 
     # 筛选：过滤掉市值太大的，保留小市值这一范围

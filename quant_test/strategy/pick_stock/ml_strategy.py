@@ -16,6 +16,8 @@ def random_forest_classify_strategy(pick_from_df, select_stock_num, period_type)
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     pick_from_df = ML_model_predictor(pick_from_df, period_type, "random_forest_classify")
     pick_from_df = pick_from_df[pick_from_df["机器学习预测值"] == "1"]
@@ -39,6 +41,8 @@ def random_forest_regress_strategy(pick_from_df, select_stock_num, period_type):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     pick_from_df = ML_model_predictor(pick_from_df, period_type, "random_forest_regress")
     pick_from_df = pick_from_df[pick_from_df["机器学习预测值"] >= 0.002]  # 至少要能覆盖印花税和手续费
@@ -61,6 +65,8 @@ def svm_classify_strategy(pick_from_df, select_stock_num, period_type):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     pick_from_df = ML_model_predictor(pick_from_df, period_type, "SVC_classify")
     pick_from_df = pick_from_df[pick_from_df["机器学习预测值"] == "1"]
@@ -83,6 +89,8 @@ def svm_regress_strategy(pick_from_df, select_stock_num, period_type):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     pick_from_df = ML_model_predictor(pick_from_df, period_type, "SVR_regress")
     pick_from_df = pick_from_df[pick_from_df["机器学习预测值"] >= 0.002]  # 至少要能覆盖印花税和手续费
@@ -105,6 +113,8 @@ def fcn_classify_strategy(pick_from_df, select_stock_num, period_type):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     pick_from_df = DL_model_classify_predictor(pick_from_df, period_type, "FCN_classify")
     pick_from_df = pick_from_df[pick_from_df["机器学习预测值"] == "1"]
@@ -127,6 +137,8 @@ def fcn_regress_strategy(pick_from_df, select_stock_num, period_type):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     pick_from_df = DL_model_regress_predictor(pick_from_df, period_type, "FCN_regress")
     pick_from_df = pick_from_df[pick_from_df["机器学习预测值"] >= 0.002]  # 至少要能覆盖印花税和手续费
@@ -141,6 +153,8 @@ def lstm_strategy(pick_from_df, select_stock_num, period_type):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     pass
 
@@ -151,5 +165,7 @@ def rl_strategy(pick_from_df, select_stock_num, period_type):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     pass

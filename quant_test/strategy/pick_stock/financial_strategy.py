@@ -48,6 +48,8 @@ def financial_report_strategy1(pick_from_df, select_stock_num):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     df = pick_from_df
     # 筛选
@@ -78,6 +80,8 @@ def small_capital_financial_strategy1(pick_from_df, select_stock_num):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     df = pick_from_df
 
@@ -153,6 +157,8 @@ def reinforced_factors_strategy(pick_from_df, select_stock_num):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     df = pick_from_df
 
@@ -194,6 +200,8 @@ def ROC_turnover_rate_strategy(pick_from_df, select_stock_num):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     df = pick_from_df
 
@@ -264,6 +272,8 @@ def rnd_expense_strategy(pick_from_df, select_stock_num):
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
     if not STAR_Market_available:
         pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
+    if use_black_list:
+        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
 
     df = pick_from_df
 

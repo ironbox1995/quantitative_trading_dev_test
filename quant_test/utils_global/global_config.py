@@ -13,3 +13,9 @@ force_run = True
 
 # ==========买入配置==========
 total_position = -1  # -1代表满仓
+
+# ==========黑名单配置==========
+use_black_list = True
+black_list = [
+    "002856.SZ",  # 美芝股份：此股涨少跌多
+]
