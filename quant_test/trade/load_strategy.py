@@ -9,7 +9,7 @@ from utils_global.global_config import *
 from utils_global.dingding_message import *
 
 
-def load_strategy_result(cash_amount):
+def load_strategy_result():
 
     # 选股整理
     # 如果多个策略选股重复则重复买入（暂定）
@@ -27,12 +27,8 @@ def load_strategy_result(cash_amount):
                 buy_stock_list.extend(split_last_line(default_strategy))
                 print("Q学习策略报错: {}，改为执行默认策略：{}".format(e, default_strategy))
 
-        if total_position >= 0:
-            cash_amount = min(cash_amount, total_position)
-
-        buy_amount = cash_amount * strategy_part_dct[strategy_name]
-
-        all_buy_stock.append((buy_stock_list, buy_amount))
+        fund_share = strategy_part_dct[strategy_name]
+        all_buy_stock.append((buy_stock_list, fund_share))
 
     return all_buy_stock
 
@@ -82,6 +78,7 @@ def split_last_line(strategy_name):
         code_column = df['买入股票代码']  # Extract the '买入股票代码' column
         last_line = code_column.iloc[-1]  # Get the last line of the column
         buy_stock_code_li = last_line.strip().split()  # Split the last line by space
+
     return buy_stock_code_li
 
 
@@ -148,7 +145,6 @@ def save_to_csv(new_row):
         print(new_row)
 
 
-
 def get_pick_time_mtd(strategy_name):
     if pick_time_switch:
         return pick_time_mtd_dct[strategy_name]
@@ -157,7 +153,7 @@ def get_pick_time_mtd(strategy_name):
 
 
 if __name__ == "__main__":
-    all_buy_stock = load_strategy_result(100000)
+    all_buy_stock = load_strategy_result()
     for strategy_tup in all_buy_stock:
         print("买入列表：{}， 购买金额：{}".format(strategy_tup[0], strategy_tup[1]))
     # save_info_dct = {"日期": datetime.today().date(), "现金金额": 100000, "备注": "本周买入前金额"}
