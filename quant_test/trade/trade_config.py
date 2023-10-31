@@ -5,6 +5,16 @@ strategy_li = strategy_part_dct.keys()
 strategy_stop_loss_point_dct = {"小市值策略": 1, "小市值策略_分箱优化1": 1}
 draw_down_warning_point = 0.8
 
+"""
+每天买入一天期逆回购：https://bbs.quantclass.cn/thread/3401
+后续可以考虑反弹下单之类的手段
+'131810.SZ' --一天期
+'131809.SZ' --四天期
+:return:
+"""
+buy_reverse_repo = True
+repo_code = '131809.SZ'
+
 period_type = 'W'  # 周期不完整时也会看做一个完整周期正常选股
 select_stock_num = 3
 

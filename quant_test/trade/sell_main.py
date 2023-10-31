@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from trade.place_order_main import *
 from trade.script.script_utils import *
-from utils_global.dingding_message import *
+from trade.load_strategy import *
 
 # 周五下午执行这个
 if __name__ == "__main__":
