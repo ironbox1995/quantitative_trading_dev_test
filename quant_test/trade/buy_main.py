@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from trade.place_order_main import *
 from trade.script.script_utils import *
-from trade.buy_repo_main import *
 from trade.load_strategy import *
 
 

@@ -31,6 +31,7 @@ https://mp.weixin.qq.com/s/vrv-PniBGxEerJ44AV0jcw
 def calculate_order_quantity(code, order_volume):
     """
     处理下单股数
+    计算下单量：普通板块，一手100股，最低1手。科创板最低200股，超过200以后最低1股。
     :param code:
     :param order_volume:
     :return:
@@ -79,36 +80,31 @@ def run_strategy_buy(all_buy_stock):
     record_log("连接时间：{}".format(datetime.datetime.now()))
     account_res = xt_trader.query_stock_asset(user)
 
+    # ========== 可用现金量计算 ==========
     cash_amount_before = account_res.cash
     record_log("周一开单前现金量：{}".format(cash_amount_before))
-
     # all_buy_stock = load_strategy_result()
     if total_position >= 0:
         cash_amount = min(cash_amount_before, total_position)
     else: 
         cash_amount = cash_amount_before
 
+    # ========== 开始买入股票 ==========
     for strategy_tup in all_buy_stock:
         buy_stock_list = strategy_tup[0]
         strategy_buy_amount = strategy_tup[1] * cash_amount
         if len(buy_stock_list) > 0:
-            # ========== 策略运行 ==========
             # 批量订阅数据
             for stock in buy_stock_list:
                 sub_id = xtdata.subscribe_quote(stock, period='tick', count=-1)  # 1个tick是3s，5分钟是100个tick
                 record_log(f'{stock}订阅成功，订阅号：{sub_id}')
-
             # 计算买入股票的下单金额
             single_stock_amount = strategy_buy_amount / len(buy_stock_list)
-
             record_log('正在执行买入操作')
             for buy_stock in buy_stock_list:
-                # 获取最新价格
-                last_price = xtdata.get_full_tick([buy_stock])[buy_stock]['lastPrice']
-                # 计算下单量：普通板块，一手100股，最低1手。科创板最低200股，超过200以后最低1股。
-                limit_up = cal_limit_up(buy_stock, last_price)
-                volume = single_stock_amount / limit_up
-                volume = calculate_order_quantity(buy_stock, volume)
+                last_price = xtdata.get_full_tick([buy_stock])[buy_stock]['lastPrice']  # 获取最新价格
+                limit_up = cal_limit_up(buy_stock, last_price)  # 计算涨停价
+                volume = calculate_order_quantity(buy_stock, single_stock_amount / limit_up)
                 if volume < 100:
                     record_log(f'{buy_stock}下单量不足')
                     continue
@@ -132,6 +128,7 @@ def run_strategy_buy(all_buy_stock):
         else:
             record_log("本周期当前策略无下单目标。")
 
+    # ========== 开始买入逆回购 ==========
     if buy_reverse_repo:
         # 开始进行逆回购下单
         cash_amount_repo = account_res.cash
@@ -160,6 +157,7 @@ def run_strategy_buy(all_buy_stock):
                     record_log(f'第{i}次尝试下单{repo_code}失败！')
                     print(e)
 
+    # ========== 计算剩余现金 ==========
     account_res = xt_trader.query_stock_asset(user)
     cash_amount_after = account_res.cash
     record_log("周一开单后现金量：{}".format(cash_amount_after))
@@ -190,15 +188,14 @@ def run_strategy_sell():
     account_res = xt_trader.query_stock_asset(user)
     cash_amount_before = account_res.cash
     record_log("周五平仓前现金量：{}".format(cash_amount_before))
-
     sell_stock_dct = query_stock_with_position(xt_trader, user)
 
+    # ========== 开始卖出股票 ==========
     for sell_stock, sell_amount in sell_stock_dct.items():
 
         # 订阅数据
         sub_id = xtdata.subscribe_quote(sell_stock, period='tick', count=-1)  # 1个tick是3s，5分钟是100个tick
         record_log(f'{sell_stock}订阅成功，订阅号：{sub_id}')
-
         record_log('正在执行卖出操作')
         # 按照最新盘价卖出
         for _ in range(5):
