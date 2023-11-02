@@ -60,7 +60,8 @@ def split_last_line(strategy_name):
         is_latest = True
 
     # 判断回撤幅度是否需要告警或止损
-    preset_draw_down = strategy_stop_loss_point_dct[strategy_name]
+    full_name = "{}_{}_选{}_{}".format(strategy_name, period_type, select_stock_num, pick_time_mtd)
+    preset_draw_down = strategy_stop_loss_point_dct[full_name]
     if preset_draw_down > 0:  # 回撤非正，所以如果设为正数则不止损
         strategy_loss_permission = True
     else:

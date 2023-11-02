@@ -30,7 +30,9 @@ buy_reverse_repo = True
 repo_code = '131809.SZ'
 
 # ==========止损配置==========
-strategy_stop_loss_point_dct = {"小市值策略": 1, "小市值策略_分箱优化1": 1}
+# strategy_stop_loss_point_dct = {"小市值策略": 1, "小市值策略_分箱优化1": 1}
+strategy_stop_loss_point_dct = {"{}_{}_选{}_{}".format("小市值策略", period_type, select_stock_num, "无择时"): 1,
+                                "{}_{}_选{}_{}".format("小市值策略_分箱优化1", period_type, select_stock_num, "WMA择时"): 1}
 draw_down_warning_point = 0.8
 
 # ==========Q学习配置==========
