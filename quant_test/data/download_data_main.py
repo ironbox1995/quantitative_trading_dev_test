@@ -4,7 +4,7 @@ from get_index_data_from_tushare import *
 from get_stock_data_from_tushare import *
 from get_industry_data_from_tushare import *
 from utils_global.dingding_message import *
-from utils_global.global_config import *
+from Config.global_config import *
 
 
 def update_data_main():

@@ -11,7 +11,7 @@ import os
 import numpy as np
 import pandas as pd
 
-from processing.data_config import *
+from Config.data_config import *
 
 pd.set_option('expand_frame_repr', False)  # 当列太多时不换行
 pd.set_option('display.max_rows', 5000)  # 最多显示数据的行数

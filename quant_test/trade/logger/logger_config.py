@@ -1,6 +1,6 @@
 import datetime
 import logging as log
-from utils_global.global_config import *
+from Config.global_config import *
 
 # ========== 初始化 ==========
 root_path = project_path

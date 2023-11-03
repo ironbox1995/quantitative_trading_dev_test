@@ -9,10 +9,10 @@ author: 邢不行
 """
 from backtest.Evaluate import *
 from data.processing.Functions import *
-from get_strategy_function import get_strategy_function
+from strategy.get_strategy_function import get_pick_stock_strategy
 from backtest.repick_time import *
-from back_test_config import *
-from utils_global.global_config import *
+from Config.back_test_config import *
+from Config.global_config import *
 import warnings
 import traceback
 from utils_global.dingding_message import *
@@ -28,7 +28,7 @@ pd.set_option('display.max_rows', 5000)  # 最多显示数据的行数
 def back_test_main(df, index_data, strategy_name, date_start, date_end, select_stock_num, period_type, serial_number
                    , pick_time_mtd="", show_pic=False):
     # 策略选择
-    pick_stock_strategy = get_strategy_function(strategy_name)
+    pick_stock_strategy = get_pick_stock_strategy(strategy_name)
 
     if not Second_Board_available:
         strategy_name += "无创业"

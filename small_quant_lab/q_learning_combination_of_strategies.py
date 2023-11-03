@@ -2,7 +2,7 @@
 from data.processing.Functions import *
 from backtest.repick_time import *
 from backtest.latest_result import back_test_latest_result
-from back_test_config import *
+from Config.back_test_config import *
 from backtest.Evaluate import *
 
 

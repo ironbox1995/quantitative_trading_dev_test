@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from trade.script.script_utils import *
-from utils_global.global_config import *
+from Config.global_config import *
 
 
 # 周一早上执行这个

@@ -1,6 +1,6 @@
 from processing.reformat_utils import *
-from data.processing.data_config import *
-from utils_global.global_config import *
+from Config.data_config import *
+from Config.global_config import *
 import time
 
 

@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 
 from strategy.pick_stock.machine_learning.model_config import *
-from utils_global.global_config import *
+from Config.global_config import *
 
 
 def status_calc(stock, beta_increase, out_performance=0.1):

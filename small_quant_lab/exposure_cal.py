@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
-import pandas as pd
-from utils_global.global_config import *
+from Config.global_config import *
 from small_quant_lab.factor_industry_exposure_function import *
 
 period_type = "W"

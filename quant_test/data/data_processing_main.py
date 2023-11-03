@@ -15,7 +15,7 @@ from data.processing.factors_calculator import *
 from data.processing.reformat_utils import *
 from data.data_utils import *
 from utils_global.dingding_message import *
-from utils_global.global_config import *
+from Config.global_config import *
 
 warnings.filterwarnings('ignore')
 # ===数据周期

@@ -1,6 +1,6 @@
 import pandas as pd
 import tushare as ts
-from processing.data_config import *
+from Config.data_config import *
 import time
 
 

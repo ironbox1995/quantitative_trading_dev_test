@@ -1,9 +1,9 @@
 # coding=gbk
 
-from get_strategy_function import get_strategy_function
+from strategy.get_strategy_function import get_pick_stock_strategy
 from backtest.repick_time import *
-from back_test_config import *
-from utils_global.global_config import *
+from Config.back_test_config import *
+from Config.global_config import *
 import warnings
 from utils_global.dingding_message import *
 from data.processing.Functions import *
@@ -13,7 +13,7 @@ warnings.filterwarnings('ignore')
 
 
 def back_test_latest_result(df, index_data, strategy_name, select_stock_num, period_type, alpha, pick_time_mtd=""):
-    pick_stock_strategy = get_strategy_function(strategy_name)
+    pick_stock_strategy = get_pick_stock_strategy(strategy_name)
 
     if not Second_Board_available:
         strategy_name += "无创业"

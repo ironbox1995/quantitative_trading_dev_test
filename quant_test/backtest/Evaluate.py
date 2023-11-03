@@ -13,7 +13,7 @@ import plotly.graph_objs as go
 from plotly.offline import plot
 from plotly.subplots import make_subplots
 
-from utils_global.global_config import *
+from Config.global_config import *
 
 
 # 绘制策略曲线

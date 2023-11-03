@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import timedelta
 import chinese_calendar as calendar
 import random
 
-from trade.trade_config import *
-from utils_global.global_config import *
+from Config.trade_config import *
+from Config.global_config import *
 from utils_global.dingding_message import *
 
 

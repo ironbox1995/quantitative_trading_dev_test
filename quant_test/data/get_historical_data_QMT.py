@@ -2,7 +2,7 @@
 from xtquant import xtdata
 from tqdm import tqdm
 from processing.reformat_utils import *
-from utils_global.global_config import *
+from Config.global_config import *
 
 
 def get_shse_a_list():

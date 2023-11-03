@@ -1,3 +1,4 @@
+# 导入选股策略
 from strategy.pick_stock.amplitude_20_strategy import *
 from strategy.pick_stock.capitalization_strategy import *
 from strategy.pick_stock.consistent_strategy import *
@@ -9,8 +10,13 @@ from strategy.pick_stock.average_strategy import *
 from strategy.pick_stock.multi_factor_strategy import *
 from strategy.pick_stock.financial_strategy import *
 
+# 导入择时策略
+from strategy.pick_time.MA_signal import *
+from strategy.pick_time.LSTM_signal import *
+from strategy.pick_time.index_signal import *
 
-def get_strategy_function(strategy_name):
+
+def get_pick_stock_strategy(strategy_name):
     # 空仓策略
     if strategy_name == "空仓策略":
         pick_stock_strategy = no_position_strategy
@@ -99,3 +105,49 @@ def get_strategy_function(strategy_name):
         raise Exception("尚无此策略或经验证不可用！")
 
     return pick_stock_strategy
+
+
+def get_pick_time_strategy(select_stock, pick_time_mtd):
+
+    # 均线择时
+    if pick_time_mtd == "双均线择时":
+        select_stock, latest_signal = MA_signal(select_stock, para=(1, 3))
+
+    # 指标择时
+    elif pick_time_mtd == "MICD择时":
+        select_stock, latest_signal = MICD_signal(select_stock)
+    elif pick_time_mtd == "SROC择时":
+        select_stock, latest_signal = SROC_signal(select_stock)
+    elif pick_time_mtd == "ENV择时":
+        select_stock, latest_signal = ENV_signal(select_stock)
+    elif pick_time_mtd == "MTM择时":
+        select_stock, latest_signal = MTM_signal(select_stock, 2)
+    elif pick_time_mtd == "DPO择时":
+        select_stock, latest_signal = DPO_signal(select_stock, 2)
+    elif pick_time_mtd == "T3择时":
+        select_stock, latest_signal = T3_signal(select_stock)
+    elif pick_time_mtd == "BBI择时":
+        select_stock, latest_signal = BBI_signal(select_stock)
+    elif pick_time_mtd == "PMO择时":
+        select_stock, latest_signal = PMO_signal(select_stock)
+    elif pick_time_mtd == "PO择时":
+        select_stock, latest_signal = PO_signal(select_stock)
+    elif pick_time_mtd == "RSIH择时":
+        select_stock, latest_signal = RSIH_signal(select_stock)
+    elif pick_time_mtd == "WMA择时":
+        select_stock, latest_signal = WMA_signal(select_stock, 5)
+    elif pick_time_mtd == "TMA择时":
+        select_stock, latest_signal = TMA_signal(select_stock)
+    elif pick_time_mtd == "MACD择时":
+        select_stock, latest_signal = MACD_signal(select_stock)
+    elif pick_time_mtd == "KDJ择时":
+        select_stock, latest_signal = KDJ_signal(select_stock)
+    elif pick_time_mtd == "ARRON择时":
+        select_stock, latest_signal = ARRON_signal(select_stock)
+
+    # 深度学习择时
+    # elif pick_time_mtd == "LSTM择时":
+    #     select_stock, latest_signal = LSTM_signal(select_stock)
+    else:
+        raise Exception("暂无此择时方法！")
+    return select_stock, latest_signal

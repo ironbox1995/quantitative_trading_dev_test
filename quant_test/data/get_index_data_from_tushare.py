@@ -1,7 +1,7 @@
 from processing.reformat_utils import *
 import time
 
-from utils_global.global_config import *
+from Config.global_config import *
 
 
 def get_index_data_from_tushare(pro, stock_code, start_date, end_date):

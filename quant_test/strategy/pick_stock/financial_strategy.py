@@ -1,5 +1,4 @@
-import numpy as np
-from utils_global.global_config import *
+from Config.global_config import *
 
 
 # def financial_report_strategy2(pick_from_df, select_stock_num):

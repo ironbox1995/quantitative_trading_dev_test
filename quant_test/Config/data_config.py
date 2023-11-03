@@ -1,6 +1,8 @@
+# ====================数据配置====================
+
 # +++++++++++++++++++++财务数据+++++++++++++++++++++
 # 财务数据的列名含义
-from utils_global.global_config import *
+from Config.global_config import *
 # QMT财务数据字典
 QMT_balance_columns_name_dct = {'m_anntime': '披露日期',
                                 'm_timetag': '截止日期',

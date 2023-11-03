@@ -1,5 +1,5 @@
 from strategy.pick_stock.machine_learning.predict import *
-from utils_global.global_config import *
+from Config.global_config import *
 
 
 def random_forest_classify_strategy(pick_from_df, select_stock_num, period_type):

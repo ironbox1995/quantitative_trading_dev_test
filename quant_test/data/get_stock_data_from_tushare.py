@@ -8,7 +8,7 @@
 # df_cash_flow = pro.cashflow(ts_code=stock_code, start_date=start_date, end_date=end_date)
 """
 from processing.reformat_utils import *
-from utils_global.global_config import *
+from Config.global_config import *
 from data.data_utils import *
 import time
 import traceback
