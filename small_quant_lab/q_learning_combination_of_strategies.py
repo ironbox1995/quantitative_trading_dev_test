@@ -1,4 +1,5 @@
 # 思路：使用Q学习中的eps-greedy方法并联策略，尝试寻找最优解，为防止所有策略同时失效的可能性，应加入空仓策略
+import random
 from data.processing.Functions import *
 from backtest.repick_time import *
 from backtest.latest_result import back_test_latest_result
