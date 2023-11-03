@@ -30,6 +30,14 @@ def get_pick_stock_strategy(strategy_name):
     # 市值类
     elif strategy_name == "小市值策略":
         pick_stock_strategy = small_cap_strategy
+    elif strategy_name == "小市值策略_分箱优化1":
+        pick_stock_strategy = small_cap_bin_optimized1
+    elif strategy_name == "小市值策略_量价优化1":
+        pick_stock_strategy = small_cap_strategy_pv_opt_1
+    elif strategy_name == "相对小市值策略":
+        pick_stock_strategy = relative_small_cap_strategy
+    elif strategy_name == "小市值策略_分箱优化2":
+        pick_stock_strategy = small_cap_bin_optimized2
     # elif strategy_name == "大市值策略":
     #     pick_stock_strategy = large_cap_strategy
     # elif strategy_name == "低价选股策略":
@@ -38,12 +46,8 @@ def get_pick_stock_strategy(strategy_name):
     #     pick_stock_strategy = low_price_pct_strategy
     # elif strategy_name == "垃圾股策略":
     #     pick_stock_strategy = junk_stock_strategy
-    elif strategy_name == "小市值策略_量价优化1":
-        pick_stock_strategy = small_cap_strategy_pv_opt_1
     # elif strategy_name == "低价小市值策略":
     #     pick_stock_strategy = low_price_small_cap_strategy
-    elif strategy_name == "小市值策略_分箱优化1":
-        pick_stock_strategy = small_cap_bin_optimized1
 
     # # 惯性类
     # elif strategy_name == "惯性策略":
