@@ -43,7 +43,7 @@ def get_pick_stock_strategy(strategy_name):
     # elif strategy_name == "低价小市值策略":
     #     pick_stock_strategy = low_price_small_cap_strategy
     elif strategy_name == "小市值策略_分箱优化1":
-        pick_stock_strategy = small_cap_bin_optimized
+        pick_stock_strategy = small_cap_bin_optimized1
 
     # # 惯性类
     # elif strategy_name == "惯性策略":
