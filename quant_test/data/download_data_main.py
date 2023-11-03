@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from get_financial_data_from_tushare import *
-from get_index_data_from_tushare import *
-from get_stock_data_from_tushare import *
-from get_industry_data_from_tushare import *
+from data.get_financial_data_from_tushare import *
+from data.get_index_data_from_tushare import *
+from data.get_stock_data_from_tushare import *
+from data.get_industry_data_from_tushare import *
 from utils_global.dingding_message import *
 from Config.global_config import *
 

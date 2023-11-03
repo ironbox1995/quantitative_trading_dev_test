@@ -11,6 +11,7 @@ from backtest.Evaluate import *
 from data.processing.Functions import *
 from strategy.get_strategy_function import get_pick_stock_strategy
 from backtest.repick_time import *
+from backtest.utils import *
 from Config.back_test_config import *
 from Config.global_config import *
 import warnings

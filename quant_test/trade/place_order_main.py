@@ -20,9 +20,6 @@ from Config.global_config import total_position
 import datetime
 
 """
-交易案例
-指定一批股票，均仓买入。
-
 如何定时运行本脚本？
 https://mp.weixin.qq.com/s/vrv-PniBGxEerJ44AV0jcw
 """
