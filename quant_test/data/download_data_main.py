@@ -6,6 +6,7 @@ from data.get_industry_data_from_tushare import *
 from utils_global.dingding_message import *
 from Config.global_config import *
 
+import traceback
 
 def update_data_main():
     tushare_index_path = r"{}\data\historical\tushare_index_data\000001.SH.csv".format(project_path)
@@ -46,4 +47,5 @@ if __name__ == "__main__":
         send_dingding("交易播报：执行 数据获取 成功！")
     except Exception as e:
         send_dingding("交易播报：执行 数据获取 失败，后续流程已阻断，请查看后台了解详细原因。")
+        traceback.print_exc()
         print(e)
