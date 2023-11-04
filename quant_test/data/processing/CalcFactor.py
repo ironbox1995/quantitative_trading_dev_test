@@ -87,6 +87,9 @@ def cal_tech_factor_all(df, extra_agg_dict):
     df['VWAP'] = df['成交额'] / df['成交量']
     extra_agg_dict['VWAP'] = 'last'
 
+    df['非流动性'] = abs(df['涨跌幅'] / df['成交额']) * 100000000
+    extra_agg_dict['非流动性'] = 'mean'
+
     # ===计算MACD指标
     # df['DIF'] = df['收盘价_复权'].ewm(alpha=2 / 13, adjust=False).mean() - df['收盘价_复权'].ewm(alpha=2 / 27, adjust=False).mean()
     # df['DEA'] = df['DIF'].ewm(alpha=2 / 10, adjust=False).mean()
@@ -162,7 +165,7 @@ def cal_tech_factor_all(df, extra_agg_dict):
         extra_agg_dict['换手率mean_%d' % n] = 'last'
 
         # ===非流动性
-        df['非流动性_%d' % n] = abs(df['涨跌幅'] / df['成交额']) * 100000000
+        df['非流动性_%d' % n] = abs(df['涨跌幅_%d' % n] / df['成交额_%d' % n]) * 100000000
         extra_agg_dict['非流动性_%d' % n] = 'mean'
 
         # ===MTM
@@ -205,7 +208,8 @@ def cal_tech_factor_all(df, extra_agg_dict):
         extra_agg_dict['AMV_%d' % n] = 'last'
 
     # 量价时序指标
-    t_list = [10, 15, 20, 40, 60, 120, 240]
+    # t_list = [10, 15, 20, 40, 60, 120, 240]
+    t_list = [5, 10, 15, 20]
     for t in t_list:
         # ===计算cro
         df['cro_%s' % t] = df['涨跌幅'].rolling(t, min_periods=1).corr(df['上市至今交易天数'])
