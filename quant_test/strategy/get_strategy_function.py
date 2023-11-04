@@ -32,12 +32,18 @@ def get_pick_stock_strategy(strategy_name):
         pick_stock_strategy = small_cap_strategy
     elif strategy_name == "小市值策略_分箱优化1":
         pick_stock_strategy = small_cap_bin_optimized1
+    elif strategy_name == "小市值策略_分箱优化2":
+        pick_stock_strategy = small_cap_bin_optimized2
+    elif strategy_name == "小市值策略_分箱优化3":
+        pick_stock_strategy = small_cap_bin_optimized3
+    elif strategy_name == "小市值策略_分箱优化4":
+        pick_stock_strategy = small_cap_bin_optimized4
+    elif strategy_name == "小市值策略_分箱优化5":
+        pick_stock_strategy = small_cap_bin_optimized5
     elif strategy_name == "小市值策略_量价优化1":
         pick_stock_strategy = small_cap_strategy_pv_opt_1
     elif strategy_name == "相对小市值策略":
         pick_stock_strategy = relative_small_cap_strategy
-    elif strategy_name == "小市值策略_分箱优化2":
-        pick_stock_strategy = small_cap_bin_optimized2
     # elif strategy_name == "大市值策略":
     #     pick_stock_strategy = large_cap_strategy
     # elif strategy_name == "低价选股策略":
@@ -136,8 +142,6 @@ def get_pick_time_strategy(select_stock, pick_time_mtd):
         select_stock, latest_signal = PMO_signal(select_stock)
     elif pick_time_mtd == "PO择时":
         select_stock, latest_signal = PO_signal(select_stock)
-    elif pick_time_mtd == "RSIH择时":
-        select_stock, latest_signal = RSIH_signal(select_stock)
     elif pick_time_mtd == "WMA择时":
         select_stock, latest_signal = WMA_signal(select_stock, 5)
     elif pick_time_mtd == "TMA择时":

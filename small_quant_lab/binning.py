@@ -26,7 +26,7 @@ if not Second_Board_available:
     df = df[df['市场类型'] != '创业板']
 if not STAR_Market_available:
     df = df[df['市场类型'] != '科创板']
-start_date = "20100101"
+start_date = "20220101"
 end_date = '20230930'
 
 # start_date = "20220101"

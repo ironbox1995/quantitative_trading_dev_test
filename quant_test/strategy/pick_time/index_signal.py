@@ -388,55 +388,6 @@ def PO_signal(df, para=(2, 3)):
     return df, latest_signal
 
 
-def RSIH_signal(df, para=(2, 4)):
-    """
-    https://bbs.quantclass.cn/thread/29814
-    :param df:
-    :param para:
-    :return:
-    """
-
-    # ===策略参数
-    n1 = int(para[0])  # 短期均线。ma代表：moving_average
-    n2 = int(para[1])  # 长期均线
-
-    # ===计算RSI和RSI_SIGNAL
-    df['CLOSE_DIFF_POS'] = 0
-    df.loc[df['涨跌幅'] >= 0, 'CLOSE_DIFF_POS'] = df['涨跌幅']
-
-    df['SUM_CLOSE_DIFF_POS'] = df['CLOSE_DIFF_POS'].cumsum()
-    df['SUM_涨跌幅'] = df['涨跌幅'].cumsum()
-
-    # ===计算RSI
-    df['SUM_CLOSE_DIFF_POSn1'] = df['CLOSE_DIFF_POS'].rolling(n1, min_periods=1).mean()
-    df['SUM_涨跌幅n1'] = abs(df['SUM_涨跌幅']).rolling(n1, min_periods=1).mean()
-    df['RSI'] = df['SUM_CLOSE_DIFF_POSn1'] / df['SUM_涨跌幅n1']
-
-    # ===RSI_SIGNAL
-    df['RSI_SIGNAL'] = df['RSI'].rolling(n2, min_periods=1).mean()
-
-    # 生成买入卖出信号
-    # ===找出做多信号
-    condition1 = df['RSI']  >  df['RSI_SIGNAL'] # 短期均线 > 长期均线
-    condition2 = df['RSI'] .shift(1) <= df['RSI_SIGNAL'].shift(1)  # 上一周期的短期均线 <= 长期均线
-    df.loc[condition1 & condition2, 'signal'] = 1  # 将产生做多信号的那根K线的signal设置为1，1代表做多
-
-    # ===找出做多平仓信号
-    condition1 = df['RSI'] < df['RSI_SIGNAL']  # 短期均线 < 长期均线
-    condition2 = df['RSI'] .shift(1) >= df['RSI_SIGNAL'].shift(1)   # 上一周期的短期均线 >= 长期均线
-    df.loc[condition1 & condition2, 'signal'] = 0  # 将产生平仓信号当天的signal设置为0，0代表平仓
-
-    df['signal'].fillna(method='ffill', inplace=True)
-    latest_signal = df.tail(1)['signal'].iloc[0]
-    df['signal'] = df['signal'].shift(1)  # 产生的信号下个周期才能用
-    df['signal'].fillna(value=1, inplace=True)  # 最前面正常买入即可
-
-    # ===删除无关中间变量
-    df.drop(['CLOSE_DIFF_POS', 'SUM_CLOSE_DIFF_POS','SUM_涨跌幅','SUM_CLOSE_DIFF_POSn1','SUM_涨跌幅n1','RSI','RSI_SIGNAL'], axis=1, inplace=True)
-
-    return df, latest_signal
-
-
 # WMA 策略
 def WMA_signal(df, para=6):
     """
