@@ -214,14 +214,13 @@ def small_cap_bin_optimized4(pick_from_df, select_stock_num):
     df['量价相关性_10排名百分比'] = df.groupby('交易日期')['量价相关性_10'].rank(ascending=True, pct=True, method='min')
     df['成交额std_10排名百分比'] = df.groupby('交易日期')['成交额std_10'].rank(ascending=True, pct=True, method='min')
     df['alpha95排名百分比'] = df.groupby('交易日期')['alpha95'].rank(ascending=True, pct=True, method='min')
-    df['成交额_10排名百分比'] = df.groupby('交易日期')['成交额_10'].rank(ascending=True, pct=True, method='min')
 
     # 筛选：过滤掉量价相关性_10最大的30%
     df = df[df['量价相关性_10排名百分比'] < 0.7]
     # 筛选：过滤掉成交额std_10最大的25%
     df = df[df['成交额std_10排名百分比'] < 0.75]
-    # 筛选：过滤掉成交额std_20最大的25%
-    # df = df[df['成交额_10排名百分比'] < 0.75]
+    # 筛选：过滤掉alpha95最大的20%
+    df = df[df['alpha95排名百分比'] < 0.8]
 
     # 排序：
     df['非流动性排名'] = df.groupby('交易日期')['非流动性_5'].rank(ascending=False, pct=False, method='min')
