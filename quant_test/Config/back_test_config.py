@@ -4,8 +4,8 @@
 from backtest.utils import get_current_date
 
 # ==========策略配置==========
-strategy_li = ["小市值策略", "小市值策略_分箱优化1"]
-# strategy_li = ["小市值策略_分箱优化2"]
+# strategy_li = ["小市值策略", "小市值策略_分箱优化1"]
+strategy_li = ["小市值策略_分箱优化4"]
 period_type_li = ['W']
 select_stock_num_li = [3]
 date_start = '2010-01-01'
@@ -17,8 +17,10 @@ date_end = get_current_date()
 pick_time_li = ["WMA择时", "无择时"]
 # 无创业无科创前提下：
 pick_time_mtd_dct = {"小市值策略": "无择时",  # DPO择时
-                     "小市值策略_分箱优化1": "WMA择时",
+                     "小市值策略_分箱优化1": "WMA择时",  # WMA择时
                      "小市值策略_分箱优化2": "无择时",
+                     "小市值策略_分箱优化3": "无择时",
+                     "小市值策略_分箱优化4": "无择时",
                      "小市值策略_量价优化1": "MTM择时",
                      "小市值策略_分箱优化5": "SROC择时",
                      "香农短线量价策略": "DPO择时",

@@ -124,8 +124,8 @@ def small_cap_bin_optimized2(pick_from_df, select_stock_num):
 
     # 筛选：过滤掉量价相关性_20最大的30%
     df = df[df['量价相关性_10排名百分比'] < 0.7]
-    # 筛选：过滤掉成交额std_20最大的20%
-    df = df[df['成交额std_10排名百分比'] < 0.7]
+    # 筛选：过滤掉成交额std_20最大的25%
+    df = df[df['成交额std_10排名百分比'] < 0.75]
 
     # 排序：
     df['非流动性排名'] = df.groupby('交易日期')['非流动性_10'].rank(ascending=False, pct=False, method='min')
@@ -192,7 +192,7 @@ def small_cap_bin_optimized3(pick_from_df, select_stock_num):
 def small_cap_bin_optimized4(pick_from_df, select_stock_num):
     """
     小市值策略+分箱优化4
-    1基于最新知识的优化
+    基于3的优化：使用单调性好的因子：用长时间数据过滤，用短时间数据排名
     :param pick_from_df: 选股数据
     :param select_stock_num: 选股数
     :return:
@@ -211,24 +211,26 @@ def small_cap_bin_optimized4(pick_from_df, select_stock_num):
     df = df[df['总市值 （万元）'] < 300000]
 
     # 计算所需因子排名
-    df['量比排名百分比'] = df.groupby('交易日期')['量比'].rank(ascending=True, pct=True, method='min')
-    df['成交额std_20排名百分比'] = df.groupby('交易日期')['成交额std_20'].rank(ascending=True, pct=True, method='min')
-    df['量价相关性_20排名百分比'] = df.groupby('交易日期')['量价相关性_20'].rank(ascending=True, pct=True, method='min')
+    df['量价相关性_10排名百分比'] = df.groupby('交易日期')['量价相关性_10'].rank(ascending=True, pct=True, method='min')
+    df['成交额std_10排名百分比'] = df.groupby('交易日期')['成交额std_10'].rank(ascending=True, pct=True, method='min')
+    df['alpha95排名百分比'] = df.groupby('交易日期')['alpha95'].rank(ascending=True, pct=True, method='min')
+    df['成交额_10排名百分比'] = df.groupby('交易日期')['成交额_10'].rank(ascending=True, pct=True, method='min')
 
-    # 筛选：过滤掉量比最大的25%
-    df = df[df['量比排名百分比'] < 0.75]
+    # 筛选：过滤掉量价相关性_10最大的30%
+    df = df[df['量价相关性_10排名百分比'] < 0.7]
+    # 筛选：过滤掉成交额std_10最大的25%
+    df = df[df['成交额std_10排名百分比'] < 0.75]
     # 筛选：过滤掉成交额std_20最大的25%
-    df = df[df['成交额std_20排名百分比'] < 0.75]
-    # 筛选：过滤掉量价相关性_20最大的25%
-    df = df[df['量价相关性_20排名百分比'] < 0.75]
+    # df = df[df['成交额_10排名百分比'] < 0.75]
 
     # 排序：
+    df['非流动性排名'] = df.groupby('交易日期')['非流动性_5'].rank(ascending=False, pct=False, method='min')
     df['市值排名'] = df.groupby('交易日期')['总市值 （万元）'].rank(ascending=True, pct=False, method='min')
+    df['振幅排名'] = df.groupby('交易日期')['振幅_20'].rank(ascending=False, pct=False, method='min')
     df['量价排名'] = df.groupby('交易日期')['量价相关性_20'].rank(ascending=True, pct=False, method='min')
-    df['非流动性排名'] = df.groupby('交易日期')['非流动性_10'].rank(ascending=False, pct=False, method='min')
 
     # 计算复合因子
-    df['复合因子'] = df['量价排名'] + df['非流动性排名'] + df['市值排名']
+    df['复合因子'] = df['量价排名'] + df['非流动性排名'] + df['振幅排名'] + df['市值排名'] * 2
     # 对因子进行排名
     df['排名'] = df.groupby('交易日期')['复合因子'].rank()
     # 选取排名靠前的股票
@@ -270,9 +272,9 @@ def small_cap_bin_optimized5(pick_from_df, select_stock_num):
     df = df[df['alpha95排名百分比'] < 0.75]
     # 筛选：过滤掉前日成交额最大的20%
     df = df[df['前日成交额排名百分比'] < 0.8]
-    # 筛选：过滤掉量价相关性_20最大的25%
+    # 筛选：过滤掉量价相关性_10最大的25%
     df = df[df['量价相关性_10排名百分比'] < 0.75]
-    # 筛选：过滤掉成交额std_20最大的15%
+    # 筛选：过滤掉成交额std_10最大的15%
     df = df[df['成交额std_10排名百分比'] < 0.85]
 
     # 排序：
