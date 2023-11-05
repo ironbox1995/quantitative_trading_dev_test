@@ -3,10 +3,13 @@ import pandas as pd
 from datetime import timedelta
 import chinese_calendar as calendar
 import random
+import warnings
 
 from Config.trade_config import *
 from Config.global_config import *
 from utils_global.dingding_message import *
+
+warnings.filterwarnings('ignore')
 
 
 def load_strategy_result():
@@ -45,7 +48,7 @@ def split_last_line(strategy_name):
             .format(project_path, strategy_name, period_type, select_stock_num, pick_time_mtd), encoding='gbk', parse_dates=['交易日期'])
     df_draw_down = pd.read_csv(r"{}\backtest\latest_selection\最近回撤_{}_{}_选{}_{}.csv"
             .format(project_path, strategy_name, period_type, select_stock_num, pick_time_mtd), encoding='gbk', parse_dates=['交易日期'])
-    last_draw_down = df_draw_down['最近回撤幅度'].tail(1)
+    last_draw_down = df_draw_down['最近回撤幅度'].iloc[-1]
 
     buy_stock_code_li = []
 
@@ -156,6 +159,4 @@ def get_pick_time_mtd(strategy_name):
 if __name__ == "__main__":
     all_buy_stock = load_strategy_result()
     for strategy_tup in all_buy_stock:
-        print("买入列表：{}， 购买金额：{}".format(strategy_tup[0], strategy_tup[1]))
-    # save_info_dct = {"日期": datetime.today().date(), "现金金额": 100000, "备注": "本周买入前金额"}
-    # save_to_csv(save_info_dct)
+        print("买入列表：{}， 购买比例：{}".format(strategy_tup[0], strategy_tup[1]))
