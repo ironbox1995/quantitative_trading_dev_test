@@ -1,4 +1,11 @@
 # ====================数据配置====================
+import datetime
+
+# +++++++++++++++++++++数据处理+++++++++++++++++++++
+# from Config.back_test_config import date_start, date_end
+# 回测起止时间
+date_start = '2010-01-01'
+date_end = datetime.datetime.now().strftime('%Y-%m-%d')
 
 # +++++++++++++++++++++财务数据+++++++++++++++++++++
 # 财务数据的列名含义

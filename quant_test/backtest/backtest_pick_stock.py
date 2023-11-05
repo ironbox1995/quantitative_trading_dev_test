@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-《邢不行-2021新版|Python股票量化投资课程》
-author: 邢不行
-微信: xbx9585
-
 根据选股数据，进行选股
-我粗略想了想，如果不考虑均仓买入后剩余的资金的量的话，根本就不需要考虑总共有多少钱。所以这样的回测其实是合理的。
 """
 from backtest.Evaluate import *
 from data.processing.Functions import *

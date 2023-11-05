@@ -1,8 +1,4 @@
 """
-《邢不行-2021新版|Python股票量化投资课程》
-author: 邢不行
-微信: xbx9585
-
 共用数据处理函数
 """
 import itertools

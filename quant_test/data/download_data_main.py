@@ -8,6 +8,7 @@ from Config.global_config import *
 
 import traceback
 
+
 def update_data_main():
     tushare_index_path = r"{}\data\historical\tushare_index_data\000001.SH.csv".format(project_path)
     # if os.path.exists(tushare_index_path):

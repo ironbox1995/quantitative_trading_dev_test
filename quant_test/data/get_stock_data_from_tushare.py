@@ -1,11 +1,5 @@
 """
 从tushare获取数据
-# # 获取利润表数据
-# df_income = pro.income(ts_code=stock_code, start_date=start_date, end_date=end_date)
-# # 资产负债表数据
-# df_balance = pro.balancesheet(ts_code=stock_code, start_date=start_date, end_date=end_date)
-# # 现金流数据
-# df_cash_flow = pro.cashflow(ts_code=stock_code, start_date=start_date, end_date=end_date)
 """
 from data.processing.reformat_utils import *
 from Config.global_config import *
