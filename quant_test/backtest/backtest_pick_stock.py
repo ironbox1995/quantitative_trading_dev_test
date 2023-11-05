@@ -153,7 +153,6 @@ def back_test_main(df, index_data, strategy_name, date_start, date_end, select_s
         r"{}\backtest\latest_selection\最近回撤_{}_{}_选{}_{}.csv"
             .format(project_path, strategy_name, period_type, select_stock_num, pick_time_mtd), encoding='gbk')
 
-
     # ===画图
     equity = equity.reset_index()
     draw_equity_curve_mat(equity, data_dict={'策略表现': 'equity_curve', '基准涨跌幅': 'benchmark'}, date_col='交易日期'

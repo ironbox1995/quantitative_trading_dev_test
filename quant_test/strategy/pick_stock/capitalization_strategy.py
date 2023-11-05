@@ -192,7 +192,7 @@ def small_cap_bin_optimized3(pick_from_df, select_stock_num):
 def small_cap_bin_optimized4(pick_from_df, select_stock_num):
     """
     小市值策略+分箱优化4
-    基于3的优化：使用单调性好的因子：用长时间数据过滤，用短时间数据排名
+    基于3的优化：使用单调性好的因子：用短时间数据过滤，用长时间数据排名
     :param pick_from_df: 选股数据
     :param select_stock_num: 选股数
     :return:
@@ -326,7 +326,7 @@ def small_cap_strategy_pv_opt_1(pick_from_df, select_stock_num):
 def large_cap_strategy(pick_from_df, select_stock_num):
     """
     大市值策略
-    :param buy_amount: 最大仓位
+    :param select_stock_num: 选股数
     :param pick_from_df: 用于选股的数据
     :return:
     """
