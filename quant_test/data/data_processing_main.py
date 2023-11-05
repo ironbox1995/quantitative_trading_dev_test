@@ -18,6 +18,22 @@ from Config.global_config import *
 
 warnings.filterwarnings('ignore')
 
+# ===数据周期
+period_type = 'W'  # W代表周，M代表月，D代表日
+
+# ===读取所有股票代码的列表
+path = r'{}\data\historical\tushare_stock_data'.format(project_path)
+stock_code_list = get_stock_code_list_in_one_dir(path)
+stock_code_list = [code for code in stock_code_list if 'BJ' not in code]  # 排除北京证券交易所
+# rule_out = ['301202.SZ', '301292.SZ', '301395.SZ', '301429.SZ', '301486.SZ', '301488.SZ', '688433.SH']  # 排除有问题的数据
+rule_out = []
+stock_code_list = [code for code in stock_code_list if code not in rule_out]
+
+# ===循环读取并且合并
+# 导入上证指数，保证指数数据和股票数据在同一天结束，不然会出现问题。
+index_data = import_index_data(r'{}\data\historical\tushare_index_data\000001.SH.csv'.format(project_path),
+                               back_trader_start=date_start, back_trader_end=date_end)
+
 
 # 循环读取股票数据
 def calculate_by_stock(code):
@@ -131,21 +147,7 @@ def parallel_data_processor(multiple_process=True):
 
 
 if __name__ == '__main__':
-    # ===数据周期
-    period_type = 'W'  # W代表周，M代表月，D代表日
 
-    # ===读取所有股票代码的列表
-    path = r'{}\data\historical\tushare_stock_data'.format(project_path)
-    stock_code_list = get_stock_code_list_in_one_dir(path)
-    stock_code_list = [code for code in stock_code_list if 'BJ' not in code]  # 排除北京证券交易所
-    # rule_out = ['301202.SZ', '301292.SZ', '301395.SZ', '301429.SZ', '301486.SZ', '301488.SZ', '688433.SH']  # 排除有问题的数据
-    rule_out = []
-    stock_code_list = [code for code in stock_code_list if code not in rule_out]
-
-    # ===循环读取并且合并
-    # 导入上证指数，保证指数数据和股票数据在同一天结束，不然会出现问题。
-    index_data = import_index_data(r'{}\data\historical\tushare_index_data\000001.SH.csv'.format(project_path),
-                                   back_trader_start=date_start, back_trader_end=date_end)
     try:
         print("开始处理{}数据".format(period_type))
         parallel_data_processor(multiple_process=True)
