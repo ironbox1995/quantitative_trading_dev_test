@@ -75,7 +75,7 @@ def update_and_save_stock_data(pro, start_date, end_date):
     # 仅返回上市的
     data = pro.query('stock_basic', exchange='', list_status='L', fields='ts_code,symbol,name,area,market,industry,'
                                                                          'list_date')
-    df_industry = pd.read_csv(r'{}\data\historical\tushare_industry_data\industry_data_clean.csv'.format(project_path))
+    df_industry = pd.read_csv(r'{}\data\historical\tushare_industry_data\industry_data.csv'.format(project_path))
 
     print("开始从tushare下载历史k线数据，本次开始下载的时间为：", datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
     print("下载数据起止时间为：{}-{}".format(start_date, end_date))

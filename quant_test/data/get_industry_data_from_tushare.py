@@ -4,20 +4,11 @@ from Config.data_config import *
 import time
 
 
-def deduplicate_industry_data(df):
-    # 读取 CSV 文件
-    # df = pd.read_csv(r'{}\data\historical\tushare_industry_data\industry_data.csv'.format(project_path))
-
+def clean_industry_data(df):
     df = df[df['is_new'] == "Y"]
-
     df['申万三级行业'] = df['index_code'].map(ind3_code_to_name_dct)
     df['申万二级行业'] = df['申万三级行业'].map(ind3_to_ind2_dct)
     df['申万一级行业'] = df['申万三级行业'].map(ind3_to_ind1_dct)
-
-    # df.drop_duplicates(subset=['index_code', 'con_code'], keep='last', inplace=True)
-
-    # 将结果写回 CSV 文件
-    # df.to_csv(r'{}\data\historical\tushare_industry_data\industry_data_clean.csv'.format(project_path), index=False)
     return df
 
 
@@ -40,7 +31,7 @@ def get_tushare_industry_data_main():
         time.sleep(0.5)
         print("{}行业数据获取完成。".format(sw_l3))
     all_industry_data = pd.concat(df_list, ignore_index=True)
-    all_industry_data = deduplicate_industry_data(all_industry_data)
+    all_industry_data = clean_industry_data(all_industry_data)
     all_industry_data.to_csv(r'{}\data\historical\tushare_industry_data\industry_data.csv'.format(project_path))
 
 
