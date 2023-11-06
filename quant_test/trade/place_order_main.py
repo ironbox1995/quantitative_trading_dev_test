@@ -12,7 +12,6 @@ from xtquant.xttype import StockAccount  # 证券账户
 from xtquant.xttrader import XtQuantTrader  # 交易接口
 from decimal import Decimal, ROUND_HALF_UP
 from xtquant import xtdata
-from trade.load_strategy import load_strategy_result
 from trade.query import *
 from trade.logger.logger import record_log
 from Config.trade_config import repo_code, buy_reverse_repo
