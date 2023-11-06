@@ -57,39 +57,12 @@ def cal_limit_up(code, last_price):
     return float(Decimal(limit_up * 100).quantize(Decimal('1'), rounding=ROUND_HALF_UP) / 100)
 
 
-def run_strategy_buy(all_buy_stock):
-    # ========== 初始化交易接口 ==========
-    path = 'F:\\中航证券QMT实盘-交易端\\userdata_mini'  # 极简版QMT的路径
-    session_id = 100001  # session_id为会话编号，策略使用方对于不同的Python策略需要使用不同的会话编号（自己随便写）
-    xt_trader = XtQuantTrader(path, session_id)  # 创建API实例
-    user = StockAccount('010400007212', 'STOCK')  # 创建股票账户
-    # 启动交易线程
-    xt_trader.start()
-    # 建立交易连接，返回0表示连接成功
-    connect_result = xt_trader.connect()
-    # 对交易回调进行订阅，订阅后可以收到交易主推，返回0表示订阅成功
-    subscribe_result = xt_trader.subscribe(user)
-    if subscribe_result != 0 or connect_result != 0:
-        record_log('交易播报：链接或订阅失败，程序已退出', send=True)
-        exit()
-    else:
-        record_log('链接并订阅成功')
-    record_log("连接时间：{}".format(datetime.datetime.now()))
-    account_res = xt_trader.query_stock_asset(user)
-
-    # ========== 可用现金量计算 ==========
-    cash_amount_before = account_res.cash
-    record_log("周一开单前现金量：{}".format(cash_amount_before))
-    # all_buy_stock = load_strategy_result()
-    if total_position >= 0:
-        cash_amount = min(cash_amount_before, total_position)
-    else: 
-        cash_amount = cash_amount_before
-
-    # ========== 开始买入股票 ==========
+def place_stock_order(xt_trader, user, cash_amount, all_buy_stock, use_limit_up):
     for strategy_tup in all_buy_stock:
         buy_stock_list = strategy_tup[0]
         strategy_buy_amount = strategy_tup[1] * cash_amount
+        strategy_name = strategy_tup[2]
+        record_log(f'策略{strategy_name}下单开始！使用{"涨停价" if use_limit_up else "昨收价"}下单')
         if len(buy_stock_list) > 0:
             # 批量订阅数据
             for stock in buy_stock_list:
@@ -99,16 +72,20 @@ def run_strategy_buy(all_buy_stock):
             single_stock_amount = strategy_buy_amount / len(buy_stock_list)
             record_log('正在执行买入操作')
             for buy_stock in buy_stock_list:
+                # 计算最新价和涨停价，并判断使用哪个下单
                 last_price = xtdata.get_full_tick([buy_stock])[buy_stock]['lastPrice']  # 获取最新价格
                 limit_up = cal_limit_up(buy_stock, last_price)  # 计算涨停价
-                volume = calculate_order_quantity(buy_stock, single_stock_amount / limit_up)
+                if use_limit_up:
+                    order_price = limit_up
+                else:
+                    order_price = last_price
+                volume = calculate_order_quantity(buy_stock, single_stock_amount / order_price)
                 if volume < 100:
                     record_log(f'{buy_stock}下单量不足')
                     continue
                 for _ in range(5):
                     try:
-                        # 按照涨停价下单
-                        order_price = limit_up
+                        # 按照之前计算的价格下单
                         order_id = xt_trader.order_stock(user, buy_stock, xtconstant.STOCK_BUY, volume, xtconstant.FIX_PRICE,
                                                          order_price, 'weekly strategy', 'remark')
                         if order_id != -1:
@@ -120,15 +97,17 @@ def run_strategy_buy(all_buy_stock):
                             raise Exception(f'开仓{buy_stock}下单失败！')
                     except Exception as e:
                         record_log(f'开仓{buy_stock}下单失败！')
+                        print(e)
                         pass
-            record_log("已完成全部下单。")
+            record_log(f"策略:{strategy_name}已完成全部下单。")
         else:
-            record_log("本周期当前策略无下单目标。")
+            record_log(f"本周期策略:{strategy_name}不进行下单。")
 
-    # ========== 开始买入逆回购 ==========
+
+def place_repo_order(xt_trader, user):
     if buy_reverse_repo:
         # 开始进行逆回购下单
-        account_res = xt_trader.query_stock_asset(user)  # 重新查询现金量
+        account_res = xt_trader.query_stock_asset(user)  # 重新计算剩余现金
         cash_amount_repo = account_res.cash
         # 计算下单量：
         buy_volume = (cash_amount_repo // 1000) * 1000
@@ -154,6 +133,51 @@ def run_strategy_buy(all_buy_stock):
                 except Exception as e:
                     record_log(f'第{i}次尝试下单{repo_code}失败！')
                     print(e)
+
+
+def run_strategy_buy(all_buy_stock):
+    # ========== 初始化交易接口 ==========
+    path = 'F:\\中航证券QMT实盘-交易端\\userdata_mini'  # 极简版QMT的路径
+    session_id = 100001  # session_id为会话编号，策略使用方对于不同的Python策略需要使用不同的会话编号（自己随便写）
+    xt_trader = XtQuantTrader(path, session_id)  # 创建API实例
+    user = StockAccount('010400007212', 'STOCK')  # 创建股票账户
+    # 启动交易线程
+    xt_trader.start()
+    # 建立交易连接，返回0表示连接成功
+    connect_result = xt_trader.connect()
+    # 对交易回调进行订阅，订阅后可以收到交易主推，返回0表示订阅成功
+    subscribe_result = xt_trader.subscribe(user)
+    if subscribe_result != 0 or connect_result != 0:
+        record_log('交易播报：链接或订阅失败，程序已退出', send=True)
+        exit()
+    else:
+        record_log('链接并订阅成功')
+    record_log("连接时间：{}".format(datetime.datetime.now()))
+    account_res = xt_trader.query_stock_asset(user)
+
+    # ========== 可用现金量计算 ==========
+    cash_amount_before = account_res.cash
+    record_log("周一开单前现金量：{}".format(cash_amount_before))
+    if total_position >= 0:
+        cash_amount = min(cash_amount_before, total_position)
+    else:
+        cash_amount = cash_amount_before
+
+    # ========== 开始买入股票 ==========
+    # 为确保成交率，使用涨停价买入
+    place_stock_order(xt_trader, user, cash_amount, all_buy_stock, use_limit_up=True)
+
+    # 为确保资金使用率，使用昨收价买入
+    # 重新计算可用现金量
+    cash_amount_to_use = account_res.cash
+    if total_position >= 0:
+        cash_amount = min(cash_amount_to_use, total_position)
+    else:
+        cash_amount = cash_amount_to_use
+    place_stock_order(xt_trader, user, cash_amount, all_buy_stock, use_limit_up=False)
+
+    # ========== 开始买入逆回购 ==========
+    place_repo_order(xt_trader, user)
 
     # ========== 计算剩余现金 ==========
     account_res = xt_trader.query_stock_asset(user)
@@ -221,11 +245,11 @@ def run_strategy_sell():
     return cash_amount_before, cash_amount_after
 
 
-if __name__ == "__main__":
-    all_buy_stock = load_strategy_result()
-
-    # 周一早上执行这个
-    run_strategy_buy(all_buy_stock)
-
-    # 周五下午执行这个
-    run_strategy_sell()
+# if __name__ == "__main__":
+#     all_buy_stock = load_strategy_result()
+#
+#     # 周一早上执行这个
+#     run_strategy_buy(all_buy_stock)
+#
+#     # 周五下午执行这个
+#     run_strategy_sell()
