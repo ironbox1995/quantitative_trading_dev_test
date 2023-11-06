@@ -128,6 +128,7 @@ def run_strategy_buy(all_buy_stock):
     # ========== 开始买入逆回购 ==========
     if buy_reverse_repo:
         # 开始进行逆回购下单
+        account_res = xt_trader.query_stock_asset(user)  # 重新查询现金量
         cash_amount_repo = account_res.cash
         # 计算下单量：
         buy_volume = (cash_amount_repo // 1000) * 1000
