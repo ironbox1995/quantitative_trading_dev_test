@@ -31,7 +31,7 @@ def load_strategy_result():
                 print("Q学习策略报错: {}，改为执行默认策略：{}".format(e, default_strategy))
 
         fund_share = strategy_part_dct[strategy_name]
-        all_buy_stock.append((buy_stock_list, fund_share))
+        all_buy_stock.append((buy_stock_list, fund_share, strategy_name))
 
     return all_buy_stock
 
@@ -159,4 +159,4 @@ def get_pick_time_mtd(strategy_name):
 if __name__ == "__main__":
     all_buy_stock = load_strategy_result()
     for strategy_tup in all_buy_stock:
-        print("买入列表：{}， 购买比例：{}".format(strategy_tup[0], strategy_tup[1]))
+        print("策略名称：{}，买入列表：{}，购买比例：{}".format(strategy_tup[2], strategy_tup[0], strategy_tup[1]))

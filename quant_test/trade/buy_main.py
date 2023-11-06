@@ -16,13 +16,6 @@ if __name__ == "__main__":
             save_to_csv(save_info_dct)
             send_dingding("交易播报：买入股票委托成功！")
 
-            # 延迟到九点半
-            # while datetime.datetime.now().strftime("%H:%M:%S") < "09:35:01":  # 一开始利率不稳定
-            #     print(datetime.datetime.now().strftime("%H:%M:%S"), end="\r")
-            # send_dingding("交易播报：开始执行买入逆回购委托！")
-            # buy_reverse_repo(code='131809.SZ')  # 买入四天期逆回购
-            # send_dingding("交易播报：买入逆回购委托成功！")
-
         else:
             send_dingding("交易播报：今天不符合买入日条件。")
     except Exception as e:
