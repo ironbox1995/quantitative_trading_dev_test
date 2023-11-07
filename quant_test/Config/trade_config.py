@@ -2,7 +2,8 @@
 # ====================交易配置====================
 
 # ==========策略配置==========
-strategy_part_dct = {"小市值策略": 0.5, "小市值策略_分箱优化1": 0.5}  # 策略及资金权重
+# strategy_part_dct = {"小市值策略": 0.5, "小市值策略_分箱优化1": 0.5}  # 策略及资金权重
+strategy_part_dct = {"小市值策略": 1}  # 策略及资金权重
 strategy_li = strategy_part_dct.keys()
 period_type = 'W'  # 数据周期
 select_stock_num = 3  # 选股数量
