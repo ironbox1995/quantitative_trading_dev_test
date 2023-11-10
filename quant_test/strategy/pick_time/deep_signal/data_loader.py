@@ -1,37 +1,28 @@
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
 
-from strategy.pick_time.deep_signal.pick_time_utils import *
 
-
-def data_split(curve_path, start_date, end_date, CLASSIFY=False):
+def data_split(curve_path, start_date, end_date):
     # Load dataset
-    dataset = pd.read_csv(curve_path, parse_dates=['交易日期'], encoding='gbk')
-    dataset = dataset[(dataset['交易日期'] >= pd.to_datetime(start_date)) & (dataset['交易日期'] <= pd.to_datetime(end_date))]
-    print("数据集长度为：{}".format(len(dataset)))
+    data = pd.read_csv(curve_path, parse_dates=['交易日期'], encoding='gbk')
+    data = data[(data['交易日期'] >= pd.to_datetime(start_date)) & (data['交易日期'] <= pd.to_datetime(end_date))]
+    print("数据集长度为：{}".format(len(data)))
 
-    # Normalize the data
-    fund_curve = dataset['资金曲线'].values
-    # fund_curve_5d_avg = np.convolve(fund_curve, np.ones((5,)) / 5, mode='valid')
-    # fund_curve_5d_avg = np.concatenate((np.zeros(4), fund_curve_5d_avg))
-    # fund_curve_10d_avg = np.convolve(fund_curve, np.ones((10,)) / 10, mode='valid')
-    # fund_curve_10d_avg = np.concatenate((np.zeros(9), fund_curve_10d_avg))
+    # Assuming '下周期涨跌幅' is the target variable, and the rest are features
+    features = data.drop(columns=['交易日期', '下周期涨跌幅'])
+    targets = data['下周期涨跌幅']
 
-    # Define features and target
-    if DIFF or CLASSIFY:
-        increase_rate = [(fund_curve[i] - fund_curve[i - 1])/fund_curve[i - 1] for i in range(1, len(fund_curve))]
-        increase_rate_std = [(increase_rate[i] - np.mean(increase_rate)) / np.std(increase_rate) for i in range(1, len(increase_rate))]
-        X = np.array([increase_rate_std[i - PRCT_LENGTH:i] for i in range(PRCT_LENGTH, len(increase_rate_std))])
-        y = np.array([increase_rate_std[i] for i in range(PRCT_LENGTH, len(increase_rate_std))])
-    else:
-        fund_curve = (fund_curve - np.mean(fund_curve)) / np.std(fund_curve)
-        X = np.array([fund_curve[i - PRCT_LENGTH:i] for i in range(PRCT_LENGTH, len(fund_curve))])
-        y = np.array([fund_curve[i] for i in range(PRCT_LENGTH, len(fund_curve))])
-    if CLASSIFY:
-        y = np.array([1 if i > 0 else 0 for i in y])
+    # Initialize the MinMaxScaler
+    scaler = MinMaxScaler()
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=SHUFFLE)
+    # Fit the scaler to the features and transform
+    scaled_features = scaler.fit_transform(features)
+
+    # Split the dataset into training and testing sets
+    # Let's use 80% of the data for training and the rest for testing
+    X_train, X_test, y_train, y_test = train_test_split(scaled_features, targets, test_size=0.2, random_state=42)
 
     return X_train, y_train, X_test, y_test
 

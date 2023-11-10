@@ -1,6 +1,6 @@
 import numpy as np
 
-from deep_signal.pick_time_utils import *
+from strategy.pick_time.deep_signal.model_setup import *
 
 
 def predict_regress_model(curve_path, X_predict):
@@ -12,12 +12,8 @@ def predict_regress_model(curve_path, X_predict):
     # Define device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    if ATTENTION:
-        model = LSTMAttentionModel(input_size=1, hidden_size=HIDDEN_SIZE, num_layers=NUM_LAYER, output_size=1,
-                                   device=device).to(device)
-    else:
-        model = LSTMModel(input_size=1, hidden_size=HIDDEN_SIZE, num_layers=NUM_LAYER, output_size=1,
-                          dropout_rate=DROPOUT, device=device).to(device)
+    # Create the model
+    model = SimpleLSTM(input_dim=input_dim, hidden_dim=hidden_dim, num_layers=num_layers, output_dim=output_dim)
 
     # Load the trained model
     model.load_state_dict(torch.load('model\{}_predict_model.pt'.format(file_name)))
@@ -30,17 +26,5 @@ def predict_regress_model(curve_path, X_predict):
         outputs = model(inputs)
 
     outputs = outputs.cpu().numpy()
-    # outputs = outputs[1:]  # cheat
 
-    # calculate the accuracy rate of trend prediction
-    if DIFF:
-        outputs_trend = []
-        for i in range(len(outputs)):
-            if outputs[i] > 0:
-                outputs_trend.append(1)
-            else:
-                outputs_trend.append(0)
-    else:
-        outputs_trend = positive_differences(outputs)
-
-    return outputs_trend, outputs
+    return outputs

@@ -4,22 +4,6 @@ from deep_signal.pick_time_utils import *
 from deep_signal.model import *
 from deep_signal.data_loader import *
 
-"""
-备用参数
-PRCT_LENGTH = 5
-NUM_EPOCH = 1000
-BATCH_SIZE = 64
-LR = 0.001
-HIDDEN_SIZE = 64
-NUM_LAYER = 1
-BUY_STANDARD = 0
-DROPOUT = 0
-ATTENTION = False
-DIFF = False
-L2_REG_COEFFICIENT = 0.0001
-SHUFFLE = True
-"""
-
 
 def train_lstm_regress_model(curve_path, X_train, y_train, l2_reg=L2_REG_COEFFICIENT):
     # extract file name
@@ -86,74 +70,6 @@ def train_lstm_regress_model(curve_path, X_train, y_train, l2_reg=L2_REG_COEFFIC
         if np.isnan(train_loss):
             print(f"Training stopped at epoch {epoch + 1} due to NaN loss")
             break
-
-
-def test_regress_model(curve_path, X_test, y_test):
-    # extract file name
-    file_name = curve_path.split("\\")[-1].split(".")[0]
-
-    X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
-
-    # Define device
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-    if ATTENTION:
-        model = LSTMAttentionModel(input_size=1, hidden_size=HIDDEN_SIZE, num_layers=NUM_LAYER, output_size=1, device=device).to(device)
-    else:
-        model = LSTMModel(input_size=1, hidden_size=HIDDEN_SIZE, num_layers=NUM_LAYER, output_size=1, dropout_rate=DROPOUT, device=device).to(device)
-
-    # Load the trained model
-    model.load_state_dict(torch.load('model\{}_predict_model.pt'.format(file_name)))
-
-    # define loss function
-    criterion = nn.MSELoss()
-
-    # Test the model
-    model.eval()
-    test_loss = 0.0
-    with torch.no_grad():
-        inputs = torch.from_numpy(X_test).float().to(device)
-        targets = torch.from_numpy(y_test).float().to(device)
-
-        # Forward pass
-        outputs = model(inputs)
-        loss = criterion(outputs, targets)
-
-        test_loss += loss.item() * inputs.size(0)
-
-    test_loss /= len(X_test)
-    print(f'Test Loss: {test_loss:.14f}')
-
-    outputs = outputs.cpu().numpy()
-    # outputs = outputs[1:]  # cheat
-
-    # calculate the accuracy rate of trend prediction
-    if DIFF:
-        outputs_trend = []
-        for i in range(len(outputs)):
-            if outputs[i] > 0:
-                outputs_trend.append(1)
-            else:
-                outputs_trend.append(0)
-        y_trend = []
-        for i in range(len(y_test)):
-            if y_test[i] > 0:
-                y_trend.append(1)
-            else:
-                y_trend.append(0)
-    else:
-        outputs_trend = positive_differences(outputs)
-        y_trend = positive_differences(y_test)
-
-    # calculate the accuracy between outputs_trend and y_trend
-    trand_accuracy = sum([1 for i in range(len(outputs_trend)) if outputs_trend[i] == y_trend[i]]) / len(outputs_trend)
-    print("trend accuracy: {}".format(trand_accuracy))
-
-    # Draw a picture with plt of y and output
-    plt.plot(y_test, label='True')
-    plt.plot(outputs, label='Predicted')
-    plt.legend()
-    plt.show()
 
 
 if __name__ == "__main__":
