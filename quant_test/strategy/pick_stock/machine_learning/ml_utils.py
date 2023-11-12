@@ -8,24 +8,24 @@ def load_scaler(model_path, data_type, train_start_date, train_end_date):
 
     if "random_forest" in model_path:
         if "regress" in model_path:
-            with open('model/random_forest_regress_model-scaler-{}_{}-{}.pkl'.format(data_type, train_start_date, train_end_date), 'rb') as file:
+            with open('model_setup/random_forest_regress_model-scaler-{}_{}-{}.pkl'.format(data_type, train_start_date, train_end_date), 'rb') as file:
                 loaded_scaler = pickle.load(file)
         else:
-            with open('model/random_forest_classify_model-scaler-{}_{}-{}.pkl'.format(data_type, train_start_date, train_end_date), 'rb') as file:
+            with open('model_setup/random_forest_classify_model-scaler-{}_{}-{}.pkl'.format(data_type, train_start_date, train_end_date), 'rb') as file:
                 loaded_scaler = pickle.load(file)
     elif "SV" in model_path:
         if "regress" in model_path:
-            with open('model/SVR_regress_model-scaler-{}_{}-{}.pkl'.format(data_type, train_start_date, train_end_date), 'rb') as file:
+            with open('model_setup/SVR_regress_model-scaler-{}_{}-{}.pkl'.format(data_type, train_start_date, train_end_date), 'rb') as file:
                 loaded_scaler = pickle.load(file)
         else:
-            with open('model/SVC_classify_model-scaler-{}_{}-{}.pkl'.format(data_type, train_start_date, train_end_date), 'rb') as file:
+            with open('model_setup/SVC_classify_model-scaler-{}_{}-{}.pkl'.format(data_type, train_start_date, train_end_date), 'rb') as file:
                 loaded_scaler = pickle.load(file)
     else:
         if "regress" in model_path:
-            with open('model/FCN_regress_model-scaler-{}_{}-{}.pkl'.format(data_type, train_start_date, train_end_date), 'rb') as file:
+            with open('model_setup/FCN_regress_model-scaler-{}_{}-{}.pkl'.format(data_type, train_start_date, train_end_date), 'rb') as file:
                 loaded_scaler = pickle.load(file)
         else:
-            with open('model/FCN_classify_model-scaler-{}_{}-{}.pkl'.format(data_type, train_start_date, train_end_date), 'rb') as file:
+            with open('model_setup/FCN_classify_model-scaler-{}_{}-{}.pkl'.format(data_type, train_start_date, train_end_date), 'rb') as file:
                 loaded_scaler = pickle.load(file)
 
     return loaded_scaler
@@ -94,7 +94,7 @@ def get_interval_first_last_day(start_date_str, end_date_str, months):
     return result
 
 
-# Define a function to evaluate the model on the validation set
+# Define a function to evaluate the model_setup on the validation set
 def evaluate_regress_model(model, val_loader, criterion, device):
     model.eval()
     val_loss = 0.0
@@ -113,7 +113,7 @@ def evaluate_regress_model(model, val_loader, criterion, device):
     return val_loss
 
 
-# Define a function to evaluate the model on the validation set
+# Define a function to evaluate the model_setup on the validation set
 def evaluate_classify_model(model, val_loader, criterion, device):
     model.eval()
     val_loss = 0.0

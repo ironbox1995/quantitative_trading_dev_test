@@ -1,7 +1,9 @@
+import torch
 import numpy as np
 import pandas as pd
 
-from strategy.pick_time.deep_signal.model_setup import *
+from strategy.pick_time.deep_models.model_setup.LSTM_models import *
+from strategy.pick_time.deep_models.lstm_model_config import *
 
 
 def create_predict_data(lst):
@@ -18,12 +20,12 @@ def create_predict_data(lst):
 def predict_new_data(lst):
     # https://bigquant.com/wiki/doc/dapan-too347vaWU 中写的择时方法显然要更好，单变量择时的话可能还是会有一些问题
     # 对于净值曲线，虽然只有单变量，但是也许可以基于大盘择时
-    # Load the saved LSTM model
+    # Load the saved LSTM model_setup
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = LSTMModel(input_size=1, hidden_size=50, num_layers=1, output_size=1, dropout_rate=0, device=device).to(device)
+    model = SimpleLSTM(input_dim, hidden_dim, num_layers, output_dim).to(device)
     # 我觉得这里input_size是1其实有点奇怪，不过看起来就是这样的：https://developer.aliyun.com/article/1165191
-    # model = LSTMAttentionModel(input_size=1, hidden_size=200, num_layers=1, output_size=1).to(device)
-    model.load_state_dict(torch.load('model parameter file path here'))
+    # model_setup = LSTMAttentionModel(input_size=1, hidden_size=200, num_layers=1, output_size=1).to(device)
+    model.load_state_dict(torch.load('model_setup parameter file path here'))
 
     # Predict the target for new data
     new_data = create_predict_data(lst)

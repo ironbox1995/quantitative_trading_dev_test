@@ -14,7 +14,7 @@ def train_random_forest_classify_model(start_date, end_date, data_type, n_estima
     clf = RandomForestClassifier(n_estimators=n_estimators, random_state=0)
     clf.fit(X_train, y_train)
 
-    with open('model/random_forest_classify_model_{}_{}-{}.pkl'.format(data_type, start_date, end_date), 'wb') as f:
+    with open('model_setup/random_forest_classify_model_{}_{}-{}.pkl'.format(data_type, start_date, end_date), 'wb') as f:
         pickle.dump(clf, f)
 
 
@@ -24,7 +24,7 @@ def train_SVC_model(start_date, end_date, data_type):
     clf = SVC(kernel='rbf')
     clf.fit(X_train, y_train)
 
-    with open('model/SVC_classify_model_{}_{}-{}.pkl'.format(data_type, start_date, end_date), 'wb') as f:
+    with open('model_setup/SVC_classify_model_{}_{}-{}.pkl'.format(data_type, start_date, end_date), 'wb') as f:
         pickle.dump(clf, f)
 
 
@@ -35,7 +35,7 @@ def train_random_forest_regress_model(start_date, end_date, data_type, n_estimat
     clf = RandomForestRegressor(n_estimators=n_estimators, random_state=0)
     clf.fit(X_train, y_train)
 
-    with open('model/random_forest_regress_model_{}_{}-{}.pkl'.format(data_type, start_date, end_date), 'wb') as f:
+    with open('model_setup/random_forest_regress_model_{}_{}-{}.pkl'.format(data_type, start_date, end_date), 'wb') as f:
         pickle.dump(clf, f)
 
 
@@ -45,7 +45,7 @@ def train_SVR_model(start_date, end_date, data_type):
     clf = SVR()
     clf.fit(X_train, y_train)
 
-    with open('model/SVR_regress_model_{}_{}-{}.pkl'.format(data_type, start_date, end_date), 'wb') as f:
+    with open('model_setup/SVR_regress_model_{}_{}-{}.pkl'.format(data_type, start_date, end_date), 'wb') as f:
         pickle.dump(clf, f)
 
 
@@ -73,7 +73,7 @@ def train_FCN_classify_model(start_date, end_date, data_type, X_train, y_train, 
     # Create validation loader
     val_loader = create_clf_val_loader(X_val, y_val)
 
-    # Train the model
+    # Train the model_setup
     num_epochs = total_epoch
     best_loss = np.inf
     for epoch in range(num_epochs):
@@ -94,13 +94,13 @@ def train_FCN_classify_model(start_date, end_date, data_type, X_train, y_train, 
         train_loss /= len(train_loader.dataset)
 
         if (epoch+1) % 10 == 0:
-            val_loss = evaluate_classify_model(model, val_loader, criterion, device)  # evaluate the model on the validation set
+            val_loss = evaluate_classify_model(model, val_loader, criterion, device)  # evaluate the model_setup on the validation set
             print('Epoch [{}/{}], Train Loss: {:.14f}, Val Loss: {:.14f}'.format(epoch+1, num_epochs, train_loss, val_loss))
 
             if train_loss < best_loss:
                 best_loss = train_loss
-                # Save the model
-                torch.save(model.state_dict(), 'model/FCN_classify_model_{}_{}-{}.pt'.format(data_type, start_date, end_date))
+                # Save the model_setup
+                torch.save(model.state_dict(), 'model_setup/FCN_classify_model_{}_{}-{}.pt'.format(data_type, start_date, end_date))
                 print(f"Model saved successfully at epoch {epoch + 1} with train loss {best_loss}")
         #     else:
         #         patience -= 10
@@ -134,7 +134,7 @@ def train_FCN_regress_model(start_date, end_date, data_type, X_train, y_train, p
     # Create validation loader
     val_loader = create_rgs_val_loader(X_val, y_val)
 
-    # Train the model
+    # Train the model_setup
     num_epochs = total_epoch
     best_loss = np.inf
     for epoch in range(num_epochs):
@@ -155,13 +155,13 @@ def train_FCN_regress_model(start_date, end_date, data_type, X_train, y_train, p
         train_loss /= len(train_loader.dataset)
 
         if (epoch+1) % 10 == 0:
-            val_loss = evaluate_regress_model(model, val_loader, criterion, device)  # evaluate the model on the validation set
+            val_loss = evaluate_regress_model(model, val_loader, criterion, device)  # evaluate the model_setup on the validation set
             print('Epoch [{}/{}], Train Loss: {:.14f}, Val Loss: {:.14f}'.format(epoch+1, num_epochs, train_loss, val_loss))
 
             if train_loss < best_loss:
                 best_loss = train_loss
-                # Save the model
-                torch.save(model.state_dict(), 'model/FCN_regress_model_{}_{}-{}.pt'.format(data_type, start_date, end_date))
+                # Save the model_setup
+                torch.save(model.state_dict(), 'model_setup/FCN_regress_model_{}_{}-{}.pt'.format(data_type, start_date, end_date))
                 print(f"Model saved successfully at epoch {epoch + 1} with train loss {best_loss}")
         #     else:
         #         patience -= 10

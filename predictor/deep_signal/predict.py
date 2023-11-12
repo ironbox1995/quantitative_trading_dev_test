@@ -1,6 +1,6 @@
 import numpy as np
 
-from strategy.pick_time.deep_signal.model_setup import *
+from predictor.deep_signal.model_setup import *
 
 
 def predict_regress_model(curve_path, X_predict):
@@ -12,13 +12,13 @@ def predict_regress_model(curve_path, X_predict):
     # Define device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    # Create the model
+    # Create the model_setup
     model = SimpleLSTM(input_dim=input_dim, hidden_dim=hidden_dim, num_layers=num_layers, output_dim=output_dim)
 
-    # Load the trained model
-    model.load_state_dict(torch.load('model\{}_predict_model.pt'.format(file_name)))
+    # Load the trained model_setup
+    model.load_state_dict(torch.load('model_setup\{}_predict_model.pt'.format(file_name)))
 
-    # Test the model
+    # Test the model_setup
     model.eval()
     with torch.no_grad():
         inputs = torch.from_numpy(X_predict).float().to(device)

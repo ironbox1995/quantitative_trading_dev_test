@@ -50,7 +50,7 @@ def feature_for_SVC(df_train, df_data):
     X_train_selected = sfs.fit_transform(X_train_scaled, y_train)
     X_test_selected = sfs.transform(X_test_scaled)
 
-    # Train the SVC model on the transformed features
+    # Train the SVC model_setup on the transformed features
     svc_model = SVC(kernel=kernel)
     svc_model.fit(X_train_scaled, y_train)
 
@@ -59,7 +59,7 @@ def feature_for_SVC(df_train, df_data):
     accuracy = accuracy_score(y_test, y_pred)
     f1 = f1_score(y_test, y_pred)
 
-    # Train the SVC model on the transformed features
+    # Train the SVC model_setup on the transformed features
     svc_model_selected = SVC(kernel=kernel)
     svc_model_selected.fit(X_train_selected, y_train)
 

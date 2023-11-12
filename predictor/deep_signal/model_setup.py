@@ -1,9 +1,8 @@
 import torch
 import torch.nn as nn
-from strategy.pick_time.deep_signal.lstm_model_config import *
 
 
-# Define a simple LSTM model
+# Define a simple LSTM model_setup
 class SimpleLSTM(nn.Module):
     def __init__(self, input_dim, hidden_dim, num_layers, output_dim):
         super(SimpleLSTM, self).__init__()

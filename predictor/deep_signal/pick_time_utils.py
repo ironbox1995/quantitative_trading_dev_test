@@ -1,8 +1,6 @@
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
-from strategy.pick_time.deep_signal.lstm_model_config import *
-
 
 # Define a function to create the validation loader
 def create_val_loader(X_val, y_val):
@@ -11,7 +9,7 @@ def create_val_loader(X_val, y_val):
     return val_loader
 
 
-# Define a function to evaluate the model on the validation set
+# Define a function to evaluate the model_setup on the validation set
 def evaluate_regress_model(model, val_loader, criterion, device):
     model.eval()
     val_loss = 0.0

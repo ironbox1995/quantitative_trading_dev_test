@@ -46,24 +46,24 @@ def ML_model_predictor(pick_stock_df, period_type, model_type):
 #
 #         if "regress" == model_type:
 #             X_predict = build_regression_prediction_data_set(pick_stock_df_interval)
-#             model_path = "F:\quantitative_trading_dev_test\quant_test\strategy\pick_stock\machine_learning\model\FCN_regress_model_{}_{}-{}.pt".format(
+#             model_path = "F:\quantitative_trading_dev_test\quant_test\strategy\pick_stock\machine_learning\model_setup\FCN_regress_model_{}_{}-{}.pt".format(
 #                 data_type, time_pair[0], time_pair[1])
 #             output_size = 1
 #         else:
 #             X_predict = build_classify_prediction_data_set(pick_stock_df_interval)
-#             model_path = "F:\quantitative_trading_dev_test\quant_test\strategy\pick_stock\machine_learning\model\FCN_classify_model_{}_{}-{}.pt".format(
+#             model_path = "F:\quantitative_trading_dev_test\quant_test\strategy\pick_stock\machine_learning\model_setup\FCN_classify_model_{}_{}-{}.pt".format(
 #                 data_type, time_pair[0], time_pair[1])
 #             output_size = 2
 #
 #         input_size = X_predict.shape[1]
-#         model = FCN(input_size, hidden_size, output_size, num_hidden_layers)
-#         model.load_state_dict(torch.load(model_path))
+#         model_setup = FCN(input_size, hidden_size, output_size, num_hidden_layers)
+#         model_setup.load_state_dict(torch.load(model_path))
 #
 #         X_predict_tensor = torch.FloatTensor(X_predict)
 #         if "regress" == model_type:
-#             y_pred = model(X_predict_tensor).detach().numpy()
+#             y_pred = model_setup(X_predict_tensor).detach().numpy()
 #         else:
-#             outputs = model(X_predict_tensor)
+#             outputs = model_setup(X_predict_tensor)
 #             _, predicted = torch.max(outputs.data, 1)
 #             y_pred = predicted.numpy()
 #
