@@ -152,9 +152,9 @@ def run_strategy_buy(all_buy_stock):
     else:
         record_log('链接并订阅成功')
     record_log("连接时间：{}".format(datetime.datetime.now()))
-    account_res = xt_trader.query_stock_asset(user)
 
     # ========== 可用现金量计算 ==========
+    account_res = xt_trader.query_stock_asset(user)
     cash_amount_before = account_res.cash
     record_log("周一开单前现金量：{}".format(cash_amount_before))
     if total_position >= 0:
@@ -168,6 +168,7 @@ def run_strategy_buy(all_buy_stock):
 
     # 为确保资金使用率，使用昨收价买入
     # 重新计算可用现金量
+    account_res = xt_trader.query_stock_asset(user)
     cash_amount_to_use = account_res.cash
     if total_position >= 0:
         cash_amount = min(cash_amount_to_use, total_position)
