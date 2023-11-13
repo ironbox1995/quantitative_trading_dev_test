@@ -153,7 +153,9 @@ def run_strategy_buy(all_buy_stock):
         record_log('链接并订阅成功')
     record_log("连接时间：{}".format(datetime.datetime.now()))
 
-    # ========== 可用现金量计算 ==========
+    # ========== 开始买入股票 ==========
+    # 为确保成交率，使用涨停价买入
+    # 计算现金量
     account_res = xt_trader.query_stock_asset(user)
     cash_amount_before = account_res.cash
     record_log("周一开单前现金量：{}".format(cash_amount_before))
@@ -161,9 +163,7 @@ def run_strategy_buy(all_buy_stock):
         cash_amount = min(cash_amount_before, total_position)
     else:
         cash_amount = cash_amount_before
-
-    # ========== 开始买入股票 ==========
-    # 为确保成交率，使用涨停价买入
+    record_log("使用涨停价买入前的现金量：{}".format(cash_amount))
     place_stock_order(xt_trader, user, cash_amount, all_buy_stock, use_limit_up=True)
 
     # 为确保资金使用率，使用昨收价买入
@@ -174,6 +174,7 @@ def run_strategy_buy(all_buy_stock):
         cash_amount = min(cash_amount_to_use, total_position)
     else:
         cash_amount = cash_amount_to_use
+    record_log("使用昨收价买入前现金量：{}".format(cash_amount))
     place_stock_order(xt_trader, user, cash_amount, all_buy_stock, use_limit_up=False)
 
     # ========== 开始买入逆回购 ==========
