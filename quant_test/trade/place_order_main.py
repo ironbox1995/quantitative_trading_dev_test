@@ -166,17 +166,6 @@ def run_strategy_buy(all_buy_stock):
     record_log("使用涨停价买入前的现金量：{}".format(cash_amount))
     place_stock_order(xt_trader, user, cash_amount, all_buy_stock, use_limit_up=True)
 
-    # 为确保资金使用率，使用昨收价买入
-    # 重新计算可用现金量
-    account_res = xt_trader.query_stock_asset(user)
-    cash_amount_to_use = account_res.cash
-    if total_position >= 0:
-        cash_amount = min(cash_amount_to_use, total_position)
-    else:
-        cash_amount = cash_amount_to_use
-    record_log("使用昨收价买入前现金量：{}".format(cash_amount))
-    place_stock_order(xt_trader, user, cash_amount, all_buy_stock, use_limit_up=False)
-
     # ========== 开始买入逆回购 ==========
     place_repo_order(xt_trader, user)
 
