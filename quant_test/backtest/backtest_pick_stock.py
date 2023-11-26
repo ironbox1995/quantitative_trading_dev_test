@@ -26,15 +26,6 @@ def back_test_main(df, index_data, strategy_name, date_start, date_end, select_s
     # 策略选择
     pick_stock_strategy = get_pick_stock_strategy(strategy_name)
 
-    if not Second_Board_available:
-        strategy_name += "无创业"
-    if not STAR_Market_available:
-        strategy_name += "无科创"
-
-    print('策略名称:', strategy_name)
-    print('周期:', period_type)
-    print('再择时方法:', pick_time_mtd)
-
     # 常量设置
     c_rate = 1 / 10000  # 手续费 这里与之前不同
     t_rate = 1 / 2000  # 印花税
@@ -101,6 +92,27 @@ def back_test_main(df, index_data, strategy_name, date_start, date_end, select_s
     else:
         select_stock, latest_signal = curve_pick_time(select_stock, pick_time_mtd, index_data)
 
+    if strategy_name == "空仓策略":
+        # 将涨跌幅置为0
+        select_stock['选股下周期每天涨跌幅'] = select_stock.apply(lambda row: [0.0] * len(row['选股下周期每天涨跌幅']), axis=1)
+        select_stock['选股下周期涨跌幅'] = select_stock.apply(lambda row: 0.0, axis=1)
+        # 将股票数量置为0
+        select_stock['股票数量'] = select_stock.apply(lambda row: 0.0, axis=1)
+        # 将买入股票代码和买入股票名称置为空
+        select_stock['买入股票代码'] = 'empty'
+        select_stock['买入股票名称'] = 'empty'
+        # 将资金曲线置为1
+        select_stock['资金曲线'] = 1.0
+
+    # 输出部分
+    if not Second_Board_available:
+        strategy_name += "无创业"
+    if not STAR_Market_available:
+        strategy_name += "无科创"
+
+    print('策略名称:', strategy_name)
+    print('周期:', period_type)
+    print('再择时方法:', pick_time_mtd)
     select_stock.to_csv(
         r"{}\backtest\result_record\select_stock_{}_{}_选{}_{}-{}_{}.csv"
         .format(project_path, strategy_name, period_type, select_stock_num, date_start, date_end, pick_time_mtd), encoding='gbk')

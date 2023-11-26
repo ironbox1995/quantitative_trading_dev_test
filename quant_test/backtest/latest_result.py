@@ -15,18 +15,12 @@ warnings.filterwarnings('ignore')
 def back_test_latest_result(df, index_data, strategy_name, select_stock_num, period_type, alpha, pick_time_mtd=""):
     pick_stock_strategy = get_pick_stock_strategy(strategy_name)
 
-    if not Second_Board_available:
-        strategy_name += "无创业"
-    if not STAR_Market_available:
-        strategy_name += "无科创"
-
-    print('策略名称:', strategy_name)
-    print('周期:', period_type)
-    print('择时方法:', pick_time_mtd)
-
     # 常量设置
     c_rate = 1 / 10000  # 手续费 这里与之前不同
     t_rate = 1 / 2000  # 印花税
+
+    # 创造空的事件周期表，用于填充不选股的周期
+    empty_df = create_empty_data(index_data, period_type)
 
     # ===删除下个交易日不交易、开盘涨停的股票，因为这些股票在下个交易日开盘时不能买入。
     df = df[df['下日_是否交易'] == 1]
@@ -79,6 +73,15 @@ def back_test_latest_result(df, index_data, strategy_name, select_stock_num, per
     select_stock['资金曲线'] = (select_stock['选股下周期涨跌幅'] + 1).cumprod()
     select_stock.set_index('交易日期', inplace=True)
 
+    # 计算整体资金曲线
+    select_stock.reset_index(inplace=True)
+    select_stock['资金曲线'] = (select_stock['选股下周期涨跌幅'] + 1).cumprod()
+    select_stock.set_index('交易日期', inplace=True)
+    empty_df.update(select_stock)
+    empty_df['资金曲线'] = select_stock['资金曲线']
+    select_stock = empty_df
+    select_stock.reset_index(inplace=True, drop=False)
+
     # 根据资金曲线择时
     if pick_time_mtd == "" or pick_time_mtd == "无择时":
         pick_time_mtd = "无择时"
@@ -86,6 +89,32 @@ def back_test_latest_result(df, index_data, strategy_name, select_stock_num, per
     else:
         select_stock, latest_signal = curve_pick_time(select_stock, pick_time_mtd, index_data)
         latest_selection['最新择时信号'] = latest_signal
+
+    if strategy_name == "空仓策略":
+        # 将涨跌幅置为0
+        select_stock['选股下周期每天涨跌幅'] = select_stock.apply(lambda row: [0.0] * len(row['选股下周期每天涨跌幅']), axis=1)
+        select_stock['选股下周期涨跌幅'] = select_stock.apply(lambda row: 0.0, axis=1)
+        # 将股票数量置为0
+        select_stock['股票数量'] = select_stock.apply(lambda row: 0.0, axis=1)
+        latest_selection['股票数量'] = latest_selection.apply(lambda row: 0.0, axis=1)
+        # 将买入股票代码和买入股票名称置为空
+        select_stock['买入股票代码'] = 'empty'
+        select_stock['买入股票名称'] = 'empty'
+        latest_selection['买入股票代码'] = 'empty'
+        latest_selection['买入股票名称'] = 'empty'
+
+        # 将资金曲线置为1
+        select_stock['资金曲线'] = 1.0
+
+    # 输出部分
+    if not Second_Board_available:
+        strategy_name += "无创业"
+    if not STAR_Market_available:
+        strategy_name += "无科创"
+
+    print('策略名称:', strategy_name)
+    print('周期:', period_type)
+    print('再择时方法:', pick_time_mtd)
 
     # 计算Q列的值
     select_stock['Q'] = select_stock['选股下周期涨跌幅'].copy()

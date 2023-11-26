@@ -1,5 +1,7 @@
 # 思路：使用Q学习中的eps-greedy方法并联策略，尝试寻找最优解，为防止所有策略同时失效的可能性，应加入空仓策略
 import random
+import datetime
+from backtest.utils import generate_serial_number
 from data.processing.Functions import *
 from backtest.repick_time import *
 from backtest.latest_result import back_test_latest_result
@@ -7,68 +9,38 @@ from Config.back_test_config import *
 from backtest.Evaluate import *
 
 
-def create_empty_strategy(pick_time_switch):
-    # 导入指数数据
-    index_data = import_index_data(
-        r"{}\data\historical\tushare_index_data\000001.SH.csv".format(project_path)
-        , back_trader_start=date_start, back_trader_end=date_end)
-    # 创造空的事件周期表，用于填充不选股的周期
-    empty_df = create_empty_data(index_data, 'W')
-    empty_df['Q'] = 0
-    if pick_time_switch:
-        empty_df['signal'] = 1.0
-        empty_df = empty_df[['股票数量', '买入股票代码', '买入股票名称', '选股下周期涨跌幅', '选股下周期每天涨跌幅', 'signal', 'Q']]
-    else:
-        empty_df = empty_df[['股票数量', '买入股票代码', '买入股票名称', '选股下周期涨跌幅', '选股下周期每天涨跌幅', 'Q']]
-    return empty_df
-
-
-def combine_all_strategies(eps, alpha, pick_time_switch):
+def q_learning_strategy(eps, alpha):
     period_type = 'W'
     select_stock_num = 3
 
+    print("开始执行：Q学习并联策略")
+
     strategy_dct = {}
+    df = pd.read_pickle(r'{}\data\historical\processed_data\all_stock_data_{}.pkl'.format(project_path, period_type))
+    index_data = import_index_data(r"{}\data\historical\tushare_index_data\000001.SH.csv".format(project_path), back_trader_start=date_start, back_trader_end=date_end)
 
-    for strategy_name in strategy_li:
-        if pick_time_switch:
-            select_stock_single = back_test_latest_result(strategy_name, select_stock_num, period_type, alpha, pick_time_mtd=pick_time_mtd_dct[strategy_name])
-        else:
-            select_stock_single = back_test_latest_result(strategy_name, select_stock_num, period_type, alpha, pick_time_mtd="无择时")
-        strategy_dct[strategy_name] = select_stock_single
-
-    strategy_dct['空仓策略'] = create_empty_strategy(pick_time_switch)
-
-    for k, v in strategy_dct.items():
-        v = v[v.index > pd.to_datetime('20100201')]  # 不知道为什么数据参差不齐 TODO: 数据对齐
-        v.reset_index(inplace=True, drop=False)  # 还原index，作为一列
-        strategy_dct[k] = v
+    for sub_strategy_name in sub_strategy_li:
+        select_stock_single = back_test_latest_result(df, index_data, sub_strategy_name, select_stock_num, period_type, alpha,
+                                                      pick_time_mtd=pick_time_mtd_dct[sub_strategy_name])
+        strategy_dct[sub_strategy_name] = select_stock_single
 
     select_stock = pd.DataFrame(columns=['交易日期', '股票数量', '买入股票代码', '买入股票名称', '选股下周期涨跌幅', '选股下周期每天涨跌幅', 'Q'])
 
-    for i in range(len(strategy_dct['空仓策略'])):
-        max_q = 0
+    for i in range(len(strategy_dct['小市值策略'])):
+        max_q = float('-inf')
         max_dataframe = None
-        strategy_df_to_chose_from = []
         for strategy_df in strategy_dct.values():
             q_value = strategy_df.iloc[i]['Q']
-            if pick_time_switch:
-                signal = strategy_df.iloc[i]['signal']
-                if signal == 1.0:
-                    strategy_df_to_chose_from.append(strategy_df)
-                if q_value > max_q and signal == 1.0:
-                    max_q = q_value
-                    max_dataframe = strategy_df
-            else:
-                if q_value > max_q:
-                    max_q = q_value
-                    max_dataframe = strategy_df
+            if q_value > max_q:
+                max_q = q_value
+                max_dataframe = strategy_df
 
         if max_dataframe is None:
-            max_dataframe = strategy_dct['空仓策略']
+            max_dataframe = strategy_dct['小市值策略']
 
         random_float = random.uniform(0, 1)
         if random_float < eps:
-            chosen_dataframe = random.choice(strategy_df_to_chose_from)  # 从信号为1的策略中随机选择
+            chosen_dataframe = random.choice(list(strategy_dct.values()))  # 随机选择
         else:
             chosen_dataframe = max_dataframe
         selected_row = chosen_dataframe.iloc[i]
@@ -95,7 +67,13 @@ def combine_all_strategies(eps, alpha, pick_time_switch):
     select_stock = empty_df
     select_stock.reset_index(inplace=True, drop=False)
 
-    pick_time_mtd = "有择时" if pick_time_switch else "无择时"
+    # 根据资金曲线择时
+    pick_time_mtd = pick_time_mtd_dct[strategy_name]
+    if pick_time_mtd == "" or pick_time_mtd == "无择时":
+        pick_time_mtd = "无择时"
+    else:
+        select_stock, latest_signal = curve_pick_time(select_stock, pick_time_mtd, index_data)
+
     select_stock.to_csv(
         r"{}\backtest\result_record\select_stock_{}_{}_选{}_{}-{}_{}.csv"
         .format(project_path, strategy_name, period_type, select_stock_num, date_start, date_end, pick_time_mtd), encoding='gbk')
@@ -104,17 +82,13 @@ def combine_all_strategies(eps, alpha, pick_time_switch):
     # 计算每日资金曲线
     equity = pd.merge(left=index_data, right=select_stock[['交易日期', '买入股票代码']], on=['交易日期'],
                       how='left', sort=True)  # 将选股结果和大盘指数合并
-    # equity.to_csv("equity.csv", encoding='utf_8_sig')
     equity['持有股票代码'] = equity['买入股票代码'].shift()
     equity['持有股票代码'].fillna(method='ffill', inplace=True)
     equity.dropna(subset=['持有股票代码'], inplace=True)
-    # del equity['买入股票代码']
-
     equity['涨跌幅'] = select_stock['选股下周期每天涨跌幅'].sum()  # 累加是没错的
     equity['equity_curve'] = (equity['涨跌幅'] + 1).cumprod()
     equity['benchmark'] = (equity['指数涨跌幅'] + 1).cumprod()
 
-    # pick_time_mtd = "有择时" if pick_time_switch else "无择时"
     equity.to_csv(r"{}\backtest\result_record\equity_{}_{}_选{}_{}-{}_{}.csv"
                   .format(project_path, strategy_name, period_type, select_stock_num, date_start, date_end, pick_time_mtd),
                   encoding='gbk')
@@ -145,12 +119,10 @@ def combine_all_strategies(eps, alpha, pick_time_switch):
 
 
 if __name__ == "__main__":
-    # eps_li = [-1]
-    # alpha_li = [1, 0.95, 0.9, 0.85, 0.8, 0.75, 0.7]
-    # pick_time_switch = True
-    # for e in eps_li:
-    #     for a in alpha_li:
-    #         print('参数：eps = {}，alpha = {}'.format(e, a))
-    #         combine_all_strategies(eps=e, alpha=a, pick_time_switch)
-    pick_time_switch = False
-    combine_all_strategies(eps, ALPHA, pick_time_switch)
+    eps_li = [0, 0.05, 0.1]
+    alpha_li = [0.95, 0.9, 0.85]
+    for e in eps_li:
+        for a in alpha_li:
+            print('参数：eps = {}，alpha = {}'.format(e, a))
+            q_learning_strategy(e, a)
+    # q_learning_strategy(eps, ALPHA)

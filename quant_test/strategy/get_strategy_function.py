@@ -18,7 +18,11 @@ def get_pick_stock_strategy(strategy_name):
     # 市值类
     elif strategy_name == "小市值策略":
         pick_stock_strategy = small_cap_strategy
+    elif strategy_name == "大市值策略":
+        pick_stock_strategy = large_cap_strategy
     elif strategy_name == "小市值策略_分箱优化1":
+        pick_stock_strategy = small_cap_bin_optimized1
+    elif strategy_name == "小市值策略_分箱优化4":
         pick_stock_strategy = small_cap_bin_optimized1
     elif strategy_name == "小市值策略_量价优化1":
         pick_stock_strategy = small_cap_strategy_pv_opt_1
