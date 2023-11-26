@@ -119,8 +119,8 @@ def q_learning_strategy(eps, alpha):
 
 
 if __name__ == "__main__":
-    eps_li = [0, 0.05, 0.1]
-    alpha_li = [0.95, 0.9, 0.85]
+    eps_li = [0.1]
+    alpha_li = [0.9]
     for e in eps_li:
         for a in alpha_li:
             print('参数：eps = {}，alpha = {}'.format(e, a))
