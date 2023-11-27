@@ -7,6 +7,8 @@ author: 邢不行
 QMT自动交易案例
 需要打开极简版QMT
 """
+import time
+
 from xtquant import xtconstant  # qmt常量
 from xtquant.xttype import StockAccount  # 证券账户
 from xtquant.xttrader import XtQuantTrader  # 交易接口
@@ -166,6 +168,7 @@ def run_strategy_buy(all_buy_stock):
     record_log("使用涨停价买入前的现金量：{}".format(cash_amount))
     place_stock_order(xt_trader, user, cash_amount, all_buy_stock, use_limit_up=True)
 
+    time.sleep(5)
     # ========== 开始买入逆回购 ==========
     place_repo_order(xt_trader, user)
 
