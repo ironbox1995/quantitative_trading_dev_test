@@ -5,7 +5,7 @@ from torch.utils.data import TensorDataset, DataLoader
 import pandas as pd
 import numpy as np
 
-from strategy.pick_stock.machine_learning.model_config import *
+from predictor.backup.machine_learning.model_config import *
 from Config.global_config import *
 
 

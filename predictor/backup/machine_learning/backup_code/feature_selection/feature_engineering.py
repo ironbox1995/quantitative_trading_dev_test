@@ -16,8 +16,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, f1_score
 # from mlxtend.feature_selection import SequentialFeatureSelector
 
-from strategy.pick_stock.machine_learning.data_loader import status_calc
-from strategy.pick_stock.machine_learning.model_config import *
+from predictor.backup.machine_learning.data_loader import status_calc
+from predictor.backup.machine_learning.model_config import *
 
 from Config.global_config import *
 

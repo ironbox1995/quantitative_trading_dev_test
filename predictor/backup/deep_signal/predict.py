@@ -1,6 +1,6 @@
 import numpy as np
 
-from predictor.deep_signal.model_setup import *
+from predictor.backup.deep_signal.model_setup import *
 
 
 def predict_regress_model(curve_path, X_predict):

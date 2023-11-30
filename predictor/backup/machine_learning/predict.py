@@ -1,7 +1,7 @@
-from strategy.pick_stock.machine_learning.data_loader import *
-from strategy.pick_stock.machine_learning.nn_model import *
-from strategy.pick_stock.machine_learning.model_config import *
-from strategy.pick_stock.machine_learning.ml_utils import *
+from predictor.backup.machine_learning.data_loader import *
+from predictor.backup.machine_learning.nn_model import *
+from predictor.backup.machine_learning.model_config import *
+from predictor.backup.machine_learning.ml_utils import *
 
 
 def ML_model_predictor(pick_stock_df, period_type, model_type):
