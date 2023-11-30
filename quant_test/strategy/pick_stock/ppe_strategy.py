@@ -1,8 +1,8 @@
-from Config.global_config import *
+from strategy.strategy_utils import *
 
 
 # TODO: 没有申万二级行业名称数据
-def filter_and_rank(df, select_stock_num):
+def filter_and_rank(pick_from_df, select_stock_num):
     """
     通过财务因子设置过滤条件
     :param select_stock_num: 选股数量
@@ -10,13 +10,8 @@ def filter_and_rank(df, select_stock_num):
     :return: 返回 通过财务因子过滤并叠加量价因子的df
     """
 
-    if not Second_Board_available:
-        df = df[df['市场类型'] != '创业板']
-    if not STAR_Market_available:
-        df = df[df['市场类型'] != '科创板']
-    if use_black_list:
-        df = df[~df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
-
+    pick_from_df = rule_out_stocks_global(pick_from_df)
+    df = pick_from_df
 
     # ======根据各类条件对股票进行筛选
     # 计算归母PE(ttm) 在二级行业的分位数

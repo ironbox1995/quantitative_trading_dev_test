@@ -1,4 +1,4 @@
-from Config.global_config import *
+from strategy.strategy_utils import *
 
 
 def factor_iterated_strategy1(pick_from_df, select_stock_num):
@@ -13,12 +13,7 @@ def factor_iterated_strategy1(pick_from_df, select_stock_num):
 
     session_id = 100030
 
-    if not Second_Board_available:
-        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
-    if not STAR_Market_available:
-        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
-    if use_black_list:
-        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
+    pick_from_df = rule_out_stocks_global(pick_from_df)
 
     df = pick_from_df
     df = df[df['市盈率'] > 0]  # 此处有改动
@@ -56,12 +51,7 @@ def low_draw_down_factors_strategy(pick_from_df, select_stock_num):
 
     session_id = 100031
 
-    if not Second_Board_available:
-        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
-    if not STAR_Market_available:
-        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
-    if use_black_list:
-        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
+    pick_from_df = rule_out_stocks_global(pick_from_df)
 
     df = pick_from_df
 
@@ -89,12 +79,7 @@ def bias_and_circulating_value_strategy(pick_from_df, select_stock_num):
 
     session_id = 100032
 
-    if not Second_Board_available:
-        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
-    if not STAR_Market_available:
-        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
-    if use_black_list:
-        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
+    pick_from_df = rule_out_stocks_global(pick_from_df)
 
     df = pick_from_df
 
@@ -121,12 +106,7 @@ def turnover_filter_strategy(pick_from_df, select_stock_num):
 
     session_id = 100033
 
-    if not Second_Board_available:
-        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '创业板']
-    if not STAR_Market_available:
-        pick_from_df = pick_from_df[pick_from_df['市场类型'] != '科创板']
-    if use_black_list:
-        pick_from_df = pick_from_df[~pick_from_df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
+    pick_from_df = rule_out_stocks_global(pick_from_df)
 
     df = pick_from_df
 

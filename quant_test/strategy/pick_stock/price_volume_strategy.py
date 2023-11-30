@@ -1,4 +1,4 @@
-from Config.global_config import *
+from strategy.strategy_utils import *
 
 
 def price_volume_strategy(df, select_stock_num):
@@ -6,12 +6,7 @@ def price_volume_strategy(df, select_stock_num):
     ascending = True  # True，从小到大    False，从大到小
     df.dropna(subset=[factor], inplace=True)
 
-    if not Second_Board_available:
-        df = df[df['市场类型'] != '创业板']
-    if not STAR_Market_available:
-        df = df[df['市场类型'] != '科创板']
-    if use_black_list:
-        df = df[~df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
+    df = rule_out_stocks_global(df)
 
     df['排名'] = df.groupby('交易日期')[factor].rank(ascending=ascending, method='first')
     df['排名_百分比'] = df.groupby('交易日期')[factor].rank(ascending=ascending, pct=True, method='first')
@@ -40,12 +35,7 @@ def multi_factor_pv_strategy1(pick_from_df, select_stock_num):
 
     df = pick_from_df
 
-    if not Second_Board_available:
-        df = df[df['市场类型'] != '创业板']
-    if not STAR_Market_available:
-        df = df[df['市场类型'] != '科创板']
-    if use_black_list:
-        df = df[~df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
+    df = rule_out_stocks_global(df)
 
     # 筛选
     df['杠杆'] = df['流通市值（万元）'] / df['总市值 （万元）']
@@ -89,12 +79,7 @@ def multi_factor_pv_strategy2(pick_from_df, select_stock_num):
 
     df = pick_from_df
 
-    if not Second_Board_available:
-        df = df[df['市场类型'] != '创业板']
-    if not STAR_Market_available:
-        df = df[df['市场类型'] != '科创板']
-    if use_black_list:
-        df = df[~df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
+    df = rule_out_stocks_global(df)
 
     # 筛选
     df['量价相关性_20_排名'] = df.groupby('交易日期')['量价相关性_20'].rank(pct=True)
@@ -125,12 +110,7 @@ def non_high_price_strategy(pick_from_df, select_stock_num):
 
     df = pick_from_df
 
-    if not Second_Board_available:
-        df = df[df['市场类型'] != '创业板']
-    if not STAR_Market_available:
-        df = df[df['市场类型'] != '科创板']
-    if use_black_list:
-        df = df[~df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
+    df = rule_out_stocks_global(df)
 
     df = df[df['最高价'] < 45]
     df = df[df['最高价'] > 4]
@@ -157,12 +137,7 @@ def wr_bias_strategy(pick_from_df, select_stock_num):
 
     df = pick_from_df
 
-    if not Second_Board_available:
-        df = df[df['市场类型'] != '创业板']
-    if not STAR_Market_available:
-        df = df[df['市场类型'] != '科创板']
-    if use_black_list:
-        df = df[~df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
+    df = rule_out_stocks_global(df)
 
     # 筛选
     df = df[df['WR_5'] >= 15]
@@ -192,12 +167,7 @@ def volume_turnover_rate_strategy(pick_from_df, select_stock_num):
 
     df = pick_from_df
 
-    if not Second_Board_available:
-        df = df[df['市场类型'] != '创业板']
-    if not STAR_Market_available:
-        df = df[df['市场类型'] != '科创板']
-    if use_black_list:
-        df = df[~df['股票代码'].isin(black_list)]  # 使用isin()函数和~操作符来排除包含这些值的行
+    df = rule_out_stocks_global(df)
 
     # 排序
     df['总市值排名'] = df.groupby('交易日期')['总市值 （万元）'].rank()
