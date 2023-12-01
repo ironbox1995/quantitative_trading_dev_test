@@ -27,11 +27,11 @@ def predict(model, data_loader):
 
 if __name__ == "__main__":
     # Load the model
-    model_path = f'FCN_reg_{data_start_date}_{data_end_date}.pth'
+    model_path = f'FCN_reg_{predict_data_start_date}_{predict_data_end_date}-{period_type}.pth'
     model = load_model(model_path)
 
     # Prepare your data loader for the data you want to predict
-    prediction_loader = build_prediction_data_set(feature_li, data_start_date, data_end_date, period_type, 64)
+    prediction_loader = build_prediction_data_set(feature_li, predict_data_start_date, predict_data_end_date, period_type, 64)
 
     # Make predictions
     predictions = predict(model, prediction_loader)
