@@ -53,7 +53,7 @@ def predict(model, data_loader):
 
 
 def ML_model_predictor(pick_stock_df, period_type, feature_li):
-    # 根据实际情况选择训练时间，每个模型只能用来预测一年，因此模型的数量必须等于回测的年份，也可以考虑增加模型更新频率，说不定会更好
+    # 记录预测时间段与训练时间段
     model_time_pair_dct = {('2010-01-01', '2010-12-31'): ('2007-01-01', '2009-12-31')}
 
     for prd_time_pair in model_time_pair_dct.keys():
