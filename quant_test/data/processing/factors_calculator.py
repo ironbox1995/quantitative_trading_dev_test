@@ -24,6 +24,7 @@ def daily_factor_calculator(code, df, index_data):
     df = cal_fuquan_price(df, fuquan_type='后复权')
 
     df['开盘买入涨跌幅'] = df['收盘价'] / df['开盘价'] - 1  # 为之后开盘买入做好准备
+    df['开盘卖出涨跌幅'] = df['开盘价'] / df['前收盘价'] - 1
 
     # 计算交易天数
     df['上市至今交易天数'] = df.index + 1
@@ -93,6 +94,7 @@ def daily_factor_calculator(code, df, index_data):
     df['下日_是否S'] = df['股票名称'].str.contains('S').shift(-1)
     df['下日_是否退市'] = df['股票名称'].str.contains('退').shift(-1)
     df['下日_开盘买入涨跌幅'] = df['开盘买入涨跌幅'].shift(-1)
+    df['下日_开盘卖出涨跌幅'] = df['开盘卖出涨跌幅'].shift(-1)
 
     return extra_agg_dict, df
 

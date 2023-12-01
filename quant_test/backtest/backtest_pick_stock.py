@@ -48,6 +48,9 @@ def back_test_main(df, index_data, strategy_name, date_start, date_end, select_s
     df['下日_开盘买入涨跌幅'] = df['下日_开盘买入涨跌幅'].apply(lambda x: [x])
     df['下周期每天涨跌幅'] = df['下周期每天涨跌幅'].apply(lambda x: x[1:])
     df['下周期每天涨跌幅'] = df['下日_开盘买入涨跌幅'] + df['下周期每天涨跌幅']
+    if limit_up_take_profit or limit_down_stop_loss:
+        df['下周期每天涨跌幅'] = df.apply(
+            lambda x: process_limit_up_and_down(x['下周期每天涨跌幅'], x['下日_开盘卖出涨跌幅'], x['股票代码']), axis=1)
 
     # ===整理选中股票数据
     # 挑选出选中股票

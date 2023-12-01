@@ -11,6 +11,13 @@ select_stock_num_li = [3]
 date_start = '2010-01-01'
 date_end = get_current_date()
 
+
+# ==========止盈止损配置==========
+# 涨跌停止盈止损
+limit_up_take_profit = False
+limit_down_stop_loss = False
+
+
 # ==========择时配置==========
 # pick_time_li = ["双均线择时", "MICD择时", "SROC择时", "ENV择时", "MTM择时", "DPO择时", "T3择时", "BBI择时", "PMO择时",
 #                 "PO择时", "RSIH择时", "WMA择时", "TMA择时", "MACD择时", "KDJ择时", "ARRON择时", "无择时"]
