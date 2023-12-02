@@ -4,7 +4,7 @@
 from backtest.utils import get_current_date
 
 # ==========策略配置==========
-strategy_li = ["小市值策略", "小市值策略_分箱优化1", "小市值策略_量价优化1", "空仓策略"]
+strategy_li = ["小市值策略"]
 # strategy_li = ["空仓策略"]
 period_type_li = ['W']
 select_stock_num_li = [3]

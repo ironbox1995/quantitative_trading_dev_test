@@ -1,7 +1,7 @@
-from model_setup import *
-from data_loader import *
+from predictor.FCN.model_setup import *
+from predictor.FCN.data_loader import *
 import torch.optim as optim
-from config import *
+from predictor.FCN.config import *
 
 
 def train(feature_li, train_data_start_date, train_data_end_date, epochs):

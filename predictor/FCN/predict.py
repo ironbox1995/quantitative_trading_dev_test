@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
-from data_loader import *
-from config import *
+from predictor.FCN.data_loader import *
+from predictor.FCN.config import *
 
 
 def load_model(model_path):
