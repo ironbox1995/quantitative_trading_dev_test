@@ -4,12 +4,14 @@ from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
 
 from quant_test.Config.global_config import *
+from filter import *
 
 
-def build_stock_regression_data_set(feature_li, start_date, end_date, period_type, batch_size):
+def build_stock_regression_data_set(feature_li, start_date, end_date, period_type, batch_size, data_filter):
 
     data_path = r"{}\data\historical\processed_data\all_stock_data_{}.pkl".format(project_path, period_type)
     df = pd.read_pickle(data_path)
+    df = filters(df, data_filter)  # 过滤数据
     df = df[feature_li + ["下周期涨跌幅"]]  # 只选取我们需要的特征，避免排除数据时过度排除
     df = df[(df['交易日期'] >= pd.to_datetime(start_date)) & (df['交易日期'] <= pd.to_datetime(end_date))]
 
@@ -32,10 +34,11 @@ def build_stock_regression_data_set(feature_li, start_date, end_date, period_typ
     return train_loader, test_loader
 
 
-def build_prediction_data_set(feature_li, start_date, end_date, period_type, batch_size):
+def build_prediction_data_set(feature_li, start_date, end_date, period_type, batch_size, data_filter):
     # 加载数据
     data_path = r"{}\data\historical\processed_data\all_stock_data_{}.pkl".format(project_path, period_type)
     df = pd.read_pickle(data_path)
+    df = filters(df, data_filter)  # 过滤数据
     df = df[feature_li]  # 只选取我们需要的特征，避免排除数据时过度排除
 
     # 根据日期过滤数据

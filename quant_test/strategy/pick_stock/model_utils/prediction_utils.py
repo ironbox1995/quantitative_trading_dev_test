@@ -2,19 +2,28 @@ import torch
 import pandas as pd
 from torch.utils.data import DataLoader, TensorDataset
 from Config.global_config import *
+from Config.ml_strategy_config import *
 
 
-def build_prediction_data_set(feature_li, start_date, end_date, period_type, batch_size):
-    # 加载数据
-    data_path = r"{}\data\historical\processed_data\all_stock_data_{}.pkl".format(project_path, period_type)
-    df = pd.read_pickle(data_path)
-    df = df[feature_li]  # 只选取我们需要的特征，避免排除数据时过度排除
+def filters(df, filter_name):
 
-    # 根据日期过滤数据
-    df = df[(df['交易日期'] >= pd.to_datetime(start_date)) & (df['交易日期'] <= pd.to_datetime(end_date))]
+    if filter_name == "小市值":
+        df = df[df['总市值 （万元）'] < 300000]
+
+    else:
+        raise Exception("尚无此过滤方法。")
+
+    return df
+
+
+def build_prediction_data_set(pick_stock_df_interval, feature_li, batch_size, data_filter):
+    df = pick_stock_df_interval
 
     # 删除缺失值
     df.dropna(axis=0, how="any", inplace=True)
+
+    # 过滤数据
+    df = filters(df, data_filter)
 
     # 选择特征
     X = df[feature_li].values
@@ -52,29 +61,26 @@ def predict(model, data_loader):
     return predictions
 
 
-def ML_model_predictor(pick_stock_df, period_type, feature_li):
-    # 记录预测时间段与训练时间段
-    model_time_pair_dct = {('2010-01-01', '2010-12-31'): ('2007-01-01', '2009-12-31')}
+def ML_model_predictor(pick_stock_df, period_type, feature_li, data_filter):
 
-    for prd_time_pair in model_time_pair_dct.keys():
-        pick_stock_df_interval = pick_stock_df[(pick_stock_df['交易日期'] >= pd.to_datetime(prd_time_pair[0]))
-                                      & (pick_stock_df['交易日期'] <= pd.to_datetime(prd_time_pair[1]))]
+    for prd_interval in model_time_pair_dct.keys():
+        pick_stock_df_interval = pick_stock_df[(pick_stock_df['交易日期'] >= pd.to_datetime(prd_interval[0]))
+                                      & (pick_stock_df['交易日期'] <= pd.to_datetime(prd_interval[1]))]
         if len(pick_stock_df_interval) == 0:
             continue
 
-        # 用对应的训练时间构建路径
-        train_time_pair = model_time_pair_dct[prd_time_pair]
-        model_path = r'{}\strategy\pick_stock\model_utils\saved_model\FCN_reg_{}_{}-{}.pth'.format(project_path, train_time_pair[0], train_time_pair[1], period_type)
-
-        model = load_model(model_path)
-
         # Prepare your data loader for the data you want to predict
-        prediction_loader = build_prediction_data_set(feature_li, prd_time_pair[0], prd_time_pair[1], period_type, 64)
+        prediction_loader = build_prediction_data_set(pick_stock_df_interval, feature_li, 64, data_filter)
+
+        # 用对应的训练时间构建路径
+        train_interval = model_time_pair_dct[prd_interval]
+        model_path = r'{}\strategy\pick_stock\model_utils\saved_model\FCN_reg_{}_{}-{}.pth'.format(project_path, train_interval[0], train_interval[1], period_type)
+        model = load_model(model_path)
 
         # Make predictions
         predictions = predict(model, prediction_loader)
 
-        pick_stock_df.loc[(pick_stock_df['交易日期'] >= pd.to_datetime(prd_time_pair[0]))
-                          & (pick_stock_df['交易日期'] <= pd.to_datetime(prd_time_pair[1])), "机器学习预测值"] = predictions
+        pick_stock_df.loc[(pick_stock_df['交易日期'] >= pd.to_datetime(prd_interval[0]))
+                          & (pick_stock_df['交易日期'] <= pd.to_datetime(prd_interval[1])), "机器学习预测值"] = predictions
 
     return pick_stock_df

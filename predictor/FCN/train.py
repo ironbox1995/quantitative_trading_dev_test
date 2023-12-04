@@ -4,13 +4,13 @@ import torch.optim as optim
 from predictor.FCN.config import *
 
 
-def train(feature_li, train_data_start_date, train_data_end_date, epochs):
+def train_model(feature_li, train_data_start_date, train_data_end_date, epochs, data_filter):
     """
     train FCN regress model
     """
 
     # loader
-    train_loader, test_loader = build_stock_regression_data_set(feature_li, train_data_start_date, train_data_end_date, period_type, 64)
+    train_loader, test_loader = build_stock_regression_data_set(feature_li, train_data_start_date, train_data_end_date, period_type, 64, data_filter)
 
     # Create the model instance
     model = FullyConnectedRegressionNetwork(len(feature_li), hidden_sizes=[128, 64, 32], dropout_prob=0.5)
@@ -57,9 +57,10 @@ def train(feature_li, train_data_start_date, train_data_end_date, epochs):
             print(f"Epoch {epoch + 1}/{epochs}, Average Test Loss: {average_test_loss}")
             if average_test_loss < min_test_loss:
                 min_test_loss = average_test_loss
-                torch.save(model, f'FCN_reg_{train_data_start_date}_{train_data_end_date}-{period_type}.pth')  # save the entire model
+                torch.save(model, f'FCN_reg_{train_data_start_date}_{train_data_end_date}-{period_type}-{data_filter}.pth')  # save the entire model
 
 
 if __name__ == "__main__":
     epochs = 3000
-    train(feature_li, train_data_start_date, train_data_end_date, epochs)
+    data_filter = "小市值"
+    train_model(feature_li, train_data_start_date, train_data_end_date, epochs, data_filter)
