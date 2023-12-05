@@ -1,7 +1,7 @@
 import torch.nn as nn
 
 
-# Define the corrected regression neural network
+# Define a regression neural network
 class FullyConnectedRegressionNetwork(nn.Module):
     def __init__(self, input_size, hidden_sizes, dropout_prob):
         super(FullyConnectedRegressionNetwork, self).__init__()

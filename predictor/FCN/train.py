@@ -27,6 +27,7 @@ def train_model(feature_li, train_data_start_date, train_data_end_date, epochs, 
 
         # training
         for inputs, targets in train_loader:  # train on each mini-batch
+            inputs, targets = inputs.to(device), targets.to(device)
             optimizer.zero_grad()  # Clear the gradients
 
             # Forward pass
@@ -61,6 +62,6 @@ def train_model(feature_li, train_data_start_date, train_data_end_date, epochs, 
 
 
 if __name__ == "__main__":
-    epochs = 3000
+    epochs = 300
     data_filter = "小市值"
     train_model(feature_li, train_data_start_date, train_data_end_date, epochs, data_filter)

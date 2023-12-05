@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
-from predictor.FCN.data_loader import *
-from predictor.FCN.config import *
+from predictor.LSTM.data_loader import *
+from predictor.LSTM.config import *
 
 
 def load_model(model_path):
@@ -9,7 +9,7 @@ def load_model(model_path):
     Load the saved model from the given path.
     """
     model = torch.load(model_path)
-    model = model.to(device)  # 将模型移至指定的设备
+    model = model.to(device)
     model.eval()  # Set the model to evaluation mode
     return model
 
@@ -31,11 +31,11 @@ if __name__ == "__main__":
     data_filter = "小市值"
 
     # Load the model
-    model_path = f'FCN_reg_{predict_data_start_date}_{predict_data_end_date}-{period_type}-{data_filter}.pth'
+    model_path = f'LSTM_reg_{predict_data_start_date}_{predict_data_end_date}-{period_type}-{data_filter}.pth'
     model = load_model(model_path)
 
     # Prepare your data loader for the data you want to predict
-    prediction_loader = build_prediction_data_set(feature_li, predict_data_start_date, predict_data_end_date, period_type, 64, data_filter)
+    prediction_loader = build_lstm_prediction_data_set(feature_li, predict_data_start_date, predict_data_end_date, period_type, 64, data_filter, sequence_length=20)
 
     # Make predictions
     predictions = predict(model, prediction_loader)
