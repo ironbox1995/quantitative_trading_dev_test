@@ -17,14 +17,14 @@ def get_current_date():
 def cal_limit_threshold(code):
     # 对科创板进行特殊处理
     if code[:2] == '68' and code[-2:] == 'SH':
-        limit_up_threshold = 0.2
-        limit_down_threshold = -0.2
+        limit_up_threshold = 0.199
+        limit_down_threshold = -0.199
     elif code[:2] == '30' and code[-2:] == 'SZ':
-        limit_up_threshold = 0.2
-        limit_down_threshold = -0.2
+        limit_up_threshold = 0.199
+        limit_down_threshold = -0.199
     else:
-        limit_up_threshold = 0.1
-        limit_down_threshold = -0.1
+        limit_up_threshold = 0.099
+        limit_down_threshold = -0.099
 
     # 某一个不止损则设为100%
     if not limit_up_take_profit:
