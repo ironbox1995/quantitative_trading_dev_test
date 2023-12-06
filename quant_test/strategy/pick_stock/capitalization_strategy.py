@@ -1,3 +1,5 @@
+import pandas as pd
+
 from strategy.strategy_utils import *
 
 
@@ -16,6 +18,36 @@ def small_cap_strategy(pick_from_df, select_stock_num):
     pick_from_df = pick_from_df[pick_from_df['排名'] <= select_stock_num]
 
     return session_id, pick_from_df
+
+
+def monthly_cap_strategy(pick_from_df, select_stock_num):
+    """
+    根据月份应用大市值或小市值选股策略 by GPT4.0
+    :param pick_from_df: 用于选股的数据
+    :param select_stock_num: 选股数
+    :return: 经过筛选的股票数据
+    """
+    session_id = 100020
+
+    # 提取月份信息
+    pick_from_df['月份'] = pick_from_df['交易日期'].dt.month
+
+    # 筛选1月和4月的数据
+    large_cap_df = pick_from_df[pick_from_df['月份'].isin([1, 4])]
+
+    # 筛选除1月和4月外的其他月份的数据
+    small_cap_df = pick_from_df[~pick_from_df['月份'].isin([1, 4])]
+
+    # 应用大市值策略
+    _, large_cap_selected = large_cap_strategy(large_cap_df, select_stock_num)
+
+    # 应用小市值策略
+    _, small_cap_selected = small_cap_strategy(small_cap_df, select_stock_num)
+
+    # 合并结果并按照交易日期排序
+    combined_df = pd.concat([large_cap_selected, small_cap_selected]).sort_values(by='交易日期')
+
+    return session_id, combined_df
 
 
 def relative_small_cap_strategy(pick_from_df, select_stock_num):
