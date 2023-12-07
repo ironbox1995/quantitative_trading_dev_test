@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
 
 from quant_test.Config.global_config import *
-from filter import *
+from predictor.LSTM.filter import *
 
 
 def generate_sequences(df, feature_li, sequence_length):

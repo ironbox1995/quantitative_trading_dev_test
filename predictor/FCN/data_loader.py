@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
 
 from quant_test.Config.global_config import *
-from filter import *
+from predictor.FCN.filter import *
 
 
 def build_stock_regression_data_set(feature_li, start_date, end_date, period_type, batch_size, data_filter):
