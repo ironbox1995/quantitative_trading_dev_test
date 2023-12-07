@@ -11,9 +11,10 @@ def build_stock_regression_data_set(feature_li, start_date, end_date, period_typ
 
     data_path = r"{}\data\historical\processed_data\all_stock_data_{}.pkl".format(project_path, period_type)
     df = pd.read_pickle(data_path)
+    # 根据日期过滤数据
+    df = df[(df['交易日期'] >= pd.to_datetime(start_date)) & (df['交易日期'] <= pd.to_datetime(end_date))]
     df = filters(df, data_filter)  # 过滤数据
     df = df[feature_li + ["下周期涨跌幅"]]  # 只选取我们需要的特征，避免排除数据时过度排除
-    df = df[(df['交易日期'] >= pd.to_datetime(start_date)) & (df['交易日期'] <= pd.to_datetime(end_date))]
 
     df.dropna(axis=0, how="any", inplace=True)
     X = df[feature_li].values
@@ -38,11 +39,10 @@ def build_prediction_data_set(feature_li, start_date, end_date, period_type, bat
     # 加载数据
     data_path = r"{}\data\historical\processed_data\all_stock_data_{}.pkl".format(project_path, period_type)
     df = pd.read_pickle(data_path)
-    df = filters(df, data_filter)  # 过滤数据
-    df = df[feature_li]  # 只选取我们需要的特征，避免排除数据时过度排除
-
     # 根据日期过滤数据
     df = df[(df['交易日期'] >= pd.to_datetime(start_date)) & (df['交易日期'] <= pd.to_datetime(end_date))]
+    df = filters(df, data_filter)  # 过滤数据
+    df = df[feature_li]  # 只选取我们需要的特征，避免排除数据时过度排除
 
     # 删除缺失值
     df.dropna(axis=0, how="any", inplace=True)

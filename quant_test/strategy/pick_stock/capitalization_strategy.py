@@ -23,6 +23,7 @@ def small_cap_strategy(pick_from_df, select_stock_num):
 def monthly_cap_strategy(pick_from_df, select_stock_num):
     """
     根据月份应用大市值或小市值选股策略 by GPT4.0
+    我认为参与轮动的策略还是需要调整，使用简单粗暴的策略不见得好
     :param pick_from_df: 用于选股的数据
     :param select_stock_num: 选股数
     :return: 经过筛选的股票数据
@@ -30,7 +31,7 @@ def monthly_cap_strategy(pick_from_df, select_stock_num):
     session_id = 100020
 
     # 提取月份信息
-    pick_from_df['月份'] = pick_from_df['交易日期'].dt.month
+    pick_from_df['月份'] = pick_from_df['交易日期'].dt.month  # 按照最后一个交易日在哪个月计算
 
     # 筛选1月和4月的数据
     large_cap_df = pick_from_df[pick_from_df['月份'].isin([1, 4])]

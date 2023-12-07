@@ -20,9 +20,9 @@ def build_lstm_stock_regression_data_set(feature_li, start_date, end_date, perio
     # 加载数据
     data_path = r"{}\data\historical\processed_data\all_stock_data_{}.pkl".format(project_path, period_type)
     df = pd.read_pickle(data_path)
+    df = df[(df['交易日期'] >= pd.to_datetime(start_date)) & (df['交易日期'] <= pd.to_datetime(end_date))]
     df = filters(df, data_filter)  # 过滤数据
     df = df[feature_li + ["下周期涨跌幅"]]  # 选择特定特征和目标列
-    df = df[(df['交易日期'] >= pd.to_datetime(start_date)) & (df['交易日期'] <= pd.to_datetime(end_date))]
     df.dropna(axis=0, how="any", inplace=True)
 
     # 生成序列数据
@@ -47,9 +47,9 @@ def build_lstm_prediction_data_set(feature_li, start_date, end_date, period_type
     # 加载数据
     data_path = r"{}\data\historical\processed_data\all_stock_data_{}.pkl".format(project_path, period_type)
     df = pd.read_pickle(data_path)
+    df = df[(df['交易日期'] >= pd.to_datetime(start_date)) & (df['交易日期'] <= pd.to_datetime(end_date))]
     df = filters(df, data_filter)  # 过滤数据
     df = df[feature_li]  # 仅选择特定特征
-    df = df[(df['交易日期'] >= pd.to_datetime(start_date)) & (df['交易日期'] <= pd.to_datetime(end_date))]
     df.dropna(axis=0, how="any", inplace=True)
 
     # 生成序列数据
