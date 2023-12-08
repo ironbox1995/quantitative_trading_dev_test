@@ -17,7 +17,7 @@ from xtquant import xtdata
 from trade.query import *
 from trade.logger.logger import record_log
 from Config.trade_config import repo_code, buy_reverse_repo
-from Config.global_config import total_position
+from Config.trade_config import total_position
 import datetime
 
 """

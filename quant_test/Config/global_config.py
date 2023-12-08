@@ -13,9 +13,6 @@ dev_or_test = True
 use_financial_data = False
 force_run = True
 
-# ==========买入配置==========
-total_position = -1  # -1代表满仓
-
 # ==========黑名单配置==========
 use_black_list = True
 black_list = [
