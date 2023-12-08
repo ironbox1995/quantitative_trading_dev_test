@@ -23,7 +23,7 @@ limit_down_stop_loss = False
 #                 "PO择时", "RSIH择时", "WMA择时", "TMA择时", "MACD择时", "KDJ择时", "ARRON择时", "无择时"]
 # pick_time_li = ["WMA择时", "无择时"]
 # 无创业无科创前提下：
-pick_time_mtd_dct = {"小市值策略": "无择时",  # DPO择时
+pick_time_mtd_dct = {"小市值策略": "DPO择时",  # DPO择时
                      "小市值策略_分箱优化1": "无择时",  # WMA择时
                      "小市值策略_分箱优化4": "无择时",  # DPO择时
                      "小市值策略_量价优化1": "无择时",  # MTM择时

@@ -11,7 +11,7 @@ select_stock_num = 3  # 选股数量
 # ==========择时配置==========
 pick_time_switch = True  # 择时开关
 # 无创业无科创前提下：
-pick_time_mtd_dct = {"小市值策略": "无择时",  # DPO择时
+pick_time_mtd_dct = {"小市值策略": "DPO择时",  # DPO择时
                      "小市值策略_分箱优化1": "WMA择时",
                      "小市值策略_量价优化1": "MTM择时",
                      "香农短线量价策略": "DPO择时",
