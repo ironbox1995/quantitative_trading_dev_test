@@ -10,7 +10,7 @@ def consistent_strategy(pick_from_df, select_stock_num):
     """
     session_id = 100004
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     pick_from_df['排名'] = pick_from_df.groupby('交易日期')['涨跌幅'].rank(ascending=False)
     df = pick_from_df[pick_from_df['排名'] <= select_stock_num]

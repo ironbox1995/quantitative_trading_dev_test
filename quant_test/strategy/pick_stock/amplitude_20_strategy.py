@@ -10,7 +10,7 @@ def amplitude_20_day_strategy(pick_from_df, select_stock_num):
     """
     session_id = 100005
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     pick_from_df['排名'] = pick_from_df.groupby('交易日期')['20日振幅'].rank(ascending=True)  # 平均振幅小的好
     df = pick_from_df[pick_from_df['排名'] <= select_stock_num]
@@ -28,7 +28,7 @@ def one_day_amplitude_20_day_average_strategy(pick_from_df, select_stock_num):
     """
     session_id = 100006
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     pick_from_df['排名'] = pick_from_df.groupby('交易日期')['单日振幅20日均值'].rank(ascending=True)  # 平均振幅小的好
     df = pick_from_df[pick_from_df['排名'] <= select_stock_num]

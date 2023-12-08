@@ -12,7 +12,7 @@ def fcn_regress_strategy(pick_from_df, select_stock_num, period_type):
     """
     session_id = 200006
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     pick_from_df = DL_model_regress_predictor(pick_from_df, period_type, "FCN_regress")
     pick_from_df = pick_from_df[pick_from_df["机器学习预测值"] >= 0.002]  # 至少要能覆盖印花税和手续费

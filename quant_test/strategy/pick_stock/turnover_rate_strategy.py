@@ -10,7 +10,7 @@ def turnover_rate_strategy(pick_from_df, select_stock_num):
     """
     session_id = 100008
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     pick_from_df['排名'] = pick_from_df.groupby('交易日期')['换手率（%）'].rank(ascending=True)  # 选择换手率低的：ascending=True
     df = pick_from_df[pick_from_df['排名'] <= select_stock_num]
@@ -29,7 +29,7 @@ def volume_turnover_strategy1(pick_from_df, select_stock_num):
     """
     session_id = 100020
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     df = pick_from_df
 

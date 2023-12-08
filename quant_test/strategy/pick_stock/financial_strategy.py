@@ -11,7 +11,7 @@ from strategy.strategy_utils import *
 #     """
 #     session_id = 100004
 #
-#     pick_from_df = rule_out_stocks_global(pick_from_df)
+#     pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 #
 #     df = pick_from_df
 #     # 筛选
@@ -40,7 +40,7 @@ def financial_report_strategy1(pick_from_df, select_stock_num):
     """
     session_id = 100004
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     df = pick_from_df
     # 筛选
@@ -67,7 +67,7 @@ def small_capital_financial_strategy1(pick_from_df, select_stock_num):
     """
     session_id = 100004
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     df = pick_from_df
 
@@ -139,7 +139,7 @@ def reinforced_factors_strategy(pick_from_df, select_stock_num):
     """
     session_id = 100004
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     df = pick_from_df
 
@@ -177,7 +177,7 @@ def ROC_turnover_rate_strategy(pick_from_df, select_stock_num):
     """
     session_id = 100004
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     df = pick_from_df
 
@@ -244,7 +244,7 @@ def rnd_expense_strategy(pick_from_df, select_stock_num):
     """
     session_id = 100004
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     df = pick_from_df
 
@@ -269,7 +269,7 @@ def rnd_expense_strategy(pick_from_df, select_stock_num):
 #     """
 #     session_id = 100004
 #
-#     pick_from_df = rule_out_stocks_global(pick_from_df)
+#     pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 #
 #     df = pick_from_df
 #

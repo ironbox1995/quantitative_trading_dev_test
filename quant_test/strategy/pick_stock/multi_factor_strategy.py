@@ -13,7 +13,7 @@ def factor_iterated_strategy1(pick_from_df, select_stock_num):
 
     session_id = 100030
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     df = pick_from_df
     df = df[df['市盈率'] > 0]  # 此处有改动
@@ -51,7 +51,7 @@ def low_draw_down_factors_strategy(pick_from_df, select_stock_num):
 
     session_id = 100031
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     df = pick_from_df
 
@@ -79,7 +79,7 @@ def bias_and_circulating_value_strategy(pick_from_df, select_stock_num):
 
     session_id = 100032
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     df = pick_from_df
 
@@ -106,7 +106,7 @@ def turnover_filter_strategy(pick_from_df, select_stock_num):
 
     session_id = 100033
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     df = pick_from_df
 

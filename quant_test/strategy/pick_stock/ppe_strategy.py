@@ -10,7 +10,7 @@ def filter_and_rank(pick_from_df, select_stock_num):
     :return: 返回 通过财务因子过滤并叠加量价因子的df
     """
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
     df = pick_from_df
 
     # ======根据各类条件对股票进行筛选

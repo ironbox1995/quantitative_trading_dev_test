@@ -12,7 +12,7 @@ def small_cap_strategy(pick_from_df, select_stock_num):
     """
     session_id = 100003  # 代表选股策略中的第三个
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     pick_from_df['排名'] = pick_from_df.groupby('交易日期')['总市值 （万元）'].rank(ascending=True)
     pick_from_df = pick_from_df[pick_from_df['排名'] <= select_stock_num]
@@ -60,7 +60,7 @@ def relative_small_cap_strategy(pick_from_df, select_stock_num):
     """
     session_id = 100016
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     start_point = 1  # 取1时，和原来的小市值策略相同
 
@@ -79,7 +79,7 @@ def small_cap_bin_optimized1(pick_from_df, select_stock_num):
     """
     session_id = 100015
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
     df = pick_from_df
 
     # 筛选：过滤掉市值太大的，保留小市值这一范围
@@ -125,7 +125,7 @@ def small_cap_bin_optimized2(pick_from_df, select_stock_num):
     """
     session_id = 100015
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
     df = pick_from_df
 
     # 筛选：过滤掉市值太大的，保留小市值这一范围
@@ -166,7 +166,7 @@ def small_cap_bin_optimized3(pick_from_df, select_stock_num):
     """
     session_id = 100015
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
     df = pick_from_df
 
     # 筛选：过滤掉市值太大的，保留小市值这一范围
@@ -207,7 +207,7 @@ def small_cap_bin_optimized4(pick_from_df, select_stock_num):
     """
     session_id = 100015
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
     df = pick_from_df
 
     # 筛选：过滤掉市值太大的，保留小市值这一范围
@@ -253,7 +253,7 @@ def small_cap_bin_optimized5(pick_from_df, select_stock_num):
     """
     session_id = 100015
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
     df = pick_from_df
 
     # 筛选：过滤掉市值太大的，保留小市值这一范围
@@ -298,7 +298,7 @@ def small_cap_strategy_pv_opt_1(pick_from_df, select_stock_num):
     """
     session_id = 100003  # 代表选股策略中的第三个
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     # 计算总市值排名
     pick_from_df['总市值排名'] = pick_from_df.groupby('交易日期')['总市值 （万元）'].rank(ascending=True, method='min')
@@ -325,7 +325,7 @@ def large_cap_strategy(pick_from_df, select_stock_num):
     """
     session_id = 100007
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     pick_from_df['排名'] = pick_from_df.groupby('交易日期')['总市值 （万元）'].rank(ascending=False)
     df = pick_from_df[pick_from_df['排名'] <= select_stock_num]
@@ -343,7 +343,7 @@ def low_price_strategy(pick_from_df, select_stock_num=50):
 
     session_id = 100013
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     # 低价股选股：价格最低的50只(默认值为50)，且收盘价>=2
     pick_from_df['价格排名'] = pick_from_df.groupby('交易日期')['收盘价'].rank(ascending=True, pct=False, method='first')
@@ -362,7 +362,7 @@ def low_price_pct_strategy(pick_from_df, select_stock_num):
 
     session_id = 100014
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     # print("本策略不需要select_stock_num：{}".format(select_stock_num))
     # 低价股选股：价格最低的前20%只股票，且收盘价>=2
@@ -382,7 +382,7 @@ def junk_stock_strategy(pick_from_df, select_stock_num=200):
 
     session_id = 100015
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     # 低价股 + 小市值选股：价格和市值同时满足：最小的前200只股票，且收盘价>=2
     pick_from_df['价格排名'] = pick_from_df.groupby('交易日期')['收盘价'].rank(ascending=True, pct=False, method='first')
@@ -403,7 +403,7 @@ def low_price_small_cap_strategy(pick_from_df, select_stock_num):
     """
     session_id = 100015
 
-    pick_from_df = rule_out_stocks_global(pick_from_df)
+    pick_from_df = rule_out_stocks_global(pick_from_df, select_stock_num)
 
     pick_from_df = pick_from_df[pick_from_df['收盘价'] >= 2]
     # 低价股 + 小市值选股：混合排名
