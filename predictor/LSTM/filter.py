@@ -1,6 +1,3 @@
-import pandas as pd
-
-
 def filters(df, filter_name):
     if filter_name == "小市值":
         df = df[df['总市值 （万元）'] < 300000]
