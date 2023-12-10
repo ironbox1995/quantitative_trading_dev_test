@@ -1,18 +1,9 @@
 # 导入必要的库
 import torch.optim as optim
 
-from model_setup import *
-from data_loader import *
-from config import *
-
-# 定义一些超参数
-input_size = 10  # 示例，根据您的数据进行调整
-hidden_layer_size = 50
-output_size = 1
-num_layers = 2
-learning_rate = 0.001
-num_epochs = 300
-data_filter = "小市值"
+from predictor.LSTM.model_setup import *
+from predictor.LSTM.data_loader import *
+from predictor.LSTM.config import *
 
 # 创建模型实例
 model = LSTMModel(input_size, hidden_layer_size, output_size, num_layers)

@@ -1,5 +1,14 @@
 import torch
 
+# 定义一些超参数
+input_size = 10  # 示例，根据您的数据进行调整
+hidden_layer_size = 50
+output_size = 1
+num_layers = 2
+learning_rate = 0.001
+num_epochs = 300
+data_filter = "小市值"
+
 period_type = 'W'
 feature_li = []
 
