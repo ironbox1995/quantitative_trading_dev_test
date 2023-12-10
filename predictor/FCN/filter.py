@@ -7,7 +7,7 @@ def filters(df, filter_name):
 
     elif filter_name == "小市值_非财报月":
         df = df[df['总市值 （万元）'] < 300000]
-        df['月份'] = pd.to_datetime(df['交易日期']).dt.month  # 确保交易日期是日期类型
+        df['月份'] = df['交易日期'].dt.month  # 按照最后一个交易日在哪个月计算
         df = df[~df['月份'].isin([1, 4])]
         df.drop(columns='月份', inplace=True)  # 删除月份这一列
 
