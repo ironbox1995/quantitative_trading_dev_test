@@ -169,7 +169,7 @@ def save_financial_data(path, data_type, code, df_to_save):
 
 def get_basic_info_from_tushare():
     # 初始化 tushare
-    ts.set_token('30e6c0329269ab3e3ac6dfcc8737b274084e683ea121395597940bcc')  # 替换为您的 tushare token
+    ts.set_token(tushare_token)  # 替换为您的 tushare token
     pro = ts.pro_api()
 
     # 查询当前所有正常上市交易的股票列表

@@ -1,5 +1,9 @@
 # ====================全局配置====================
 
+# ==========token配置==========
+tushare_token = '30e6c0329269ab3e3ac6dfcc8737b274084e683ea121395597940bcc'
+dingding_robot_id = '83ec1c5e05a0cfdbd76e7b0bf53feb98dec83633274b971c080ebf7e18bdd9b3'
+
 # ==========策略配置==========
 Second_Board_available = False  # 创业板
 STAR_Market_available = False  # 科创板

@@ -72,7 +72,7 @@ def get_historical_index_data_main(index_path):
         latest_date = "20070101"
 
     # 设置tushare的token，可以在tushare官网（https://tushare.pro/）申请免费token
-    ts.set_token('30e6c0329269ab3e3ac6dfcc8737b274084e683ea121395597940bcc')
+    ts.set_token(tushare_token)
 
     # 初始化tushare pro接口
     pro = ts.pro_api()

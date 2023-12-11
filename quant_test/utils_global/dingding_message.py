@@ -3,9 +3,11 @@ import json
 from datetime import datetime
 import requests
 
+from Config.global_config import *
+
 
 # 函数：发送钉钉消息
-def send_dingding(message, robot_id='83ec1c5e05a0cfdbd76e7b0bf53feb98dec83633274b971c080ebf7e18bdd9b3', max_try_count=5):
+def send_dingding(message, robot_id=dingding_robot_id, max_try_count=5):
     """
     出错会自动重发发送钉钉消息
     :param message: 你要发送的消息内容
