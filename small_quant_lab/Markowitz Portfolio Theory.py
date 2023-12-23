@@ -1,76 +1,42 @@
 # coding=utf-8
-# import numpy as np
-# import matplotlib.pyplot as plt
-#
-# # 设定投资标的 A 和 B 的参数
-# R_A = 0.08  # A 的年预期收益率
-# sigma_A = 0.15  # A 的年标准差
-# R_B = 0.12  # B 的年预期收益率
-# sigma_B = 0.20  # B 的年标准差
-# rho_AB = 0.5  # A 和 B 之间的相关系数
-#
-# # 计算不同权重组合的预期收益率和风险
-# weights = np.linspace(0, 1, 100)  # A 的权重从 0 到 1
-# portfolio_returns = []
-# portfolio_risks = []
-#
-# for w in weights:
-#     # 计算组合预期收益率
-#     R_portfolio = w * R_A + (1 - w) * R_B
-#     portfolio_returns.append(R_portfolio)
-#
-#     # 计算组合风险
-#     sigma_portfolio = np.sqrt((w * sigma_A)**2 + ((1 - w) * sigma_B)**2 +
-#                               2 * w * (1 - w) * sigma_A * sigma_B * rho_AB)
-#     portfolio_risks.append(sigma_portfolio)
-#
-# # 绘制有效边界
-# plt.figure(figsize=(10, 6))
-# plt.plot(portfolio_risks, portfolio_returns, 'b-', lw=2)
-# plt.title('Efficient Frontier of Two Asset Portfolio')
-# plt.xlabel('Portfolio Risk (Standard Deviation)')
-# plt.ylabel('Portfolio Expected Return')
-# plt.grid(True)
-# plt.show()
-
-# =========================多资产==============================
-
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.optimize import minimize
 
-# 设置随机种子，以便结果可复现
-np.random.seed(42)
+# 示例数据：三个资产的预期收益率和标准差
+expected_returns = [0.12, 0.10, 0.07]  # 例如，12%, 10%, 7%
+std_devs = [0.20, 0.15, 0.10]  # 例如，20%, 15%, 10%
+num_assets = len(expected_returns)
 
-# 假设有三个投资标的
-num_assets = 3
+# 生成一个简化的协方差矩阵（通常应基于实际数据生成）
+cov_matrix = np.diag(std_devs) ** 2  # 为了简化，这里我们只使用对角矩阵
 
-# 假设预期收益率和标准差
-returns = np.random.normal(loc=0.1, scale=0.15, size=num_assets)
-std_devs = np.random.normal(loc=0.2, scale=0.05, size=num_assets)
+# 优化过程
+def portfolio_variance(weights, cov_matrix):
+    """ 计算组合方差 """
+    return weights.T @ cov_matrix @ weights
 
-# 生成随机协方差矩阵
-cov_matrix = np.random.rand(num_assets, num_assets)
-cov_matrix = cov_matrix @ cov_matrix.T  # 使其为对称正定矩阵
+def portfolio_return(weights, returns):
+    """ 计算组合预期收益 """
+    return np.sum(weights * returns)
 
-# 蒙特卡洛模拟
-num_portfolios = 10000
-portfolio_returns = []
-portfolio_risks = []
+# 确定有效边界
+target_returns = np.linspace(min(expected_returns), max(expected_returns), 100)
+target_risks = []
 
-for _ in range(num_portfolios):
-    weights = np.random.random(num_assets)
-    weights /= np.sum(weights)  # 确保权重之和为1
+constraints = ({'type': 'eq', 'fun': lambda x: np.sum(x) - 1},)  # 权重之和为 1 的约束
+bounds = tuple((0, 1) for _ in range(num_assets))  # 每个权重在 0 和 1 之间
 
-    # 计算组合预期收益率和风险
-    R_portfolio = np.sum(weights * returns)
-    sigma_portfolio = np.sqrt(weights.T @ cov_matrix @ weights)
-
-    portfolio_returns.append(R_portfolio)
-    portfolio_risks.append(sigma_portfolio)
+for target_return in target_returns:
+    # 为每个目标收益找到最小化风险的权重
+    constraints_with_return = constraints + ({'type': 'eq', 'fun': lambda x: portfolio_return(x, expected_returns) - target_return},)
+    result = minimize(portfolio_variance, num_assets * [1. / num_assets], args=(cov_matrix,), method='SLSQP', bounds=bounds, constraints=constraints_with_return)
+    if result.success:
+        target_risks.append(np.sqrt(result.fun))
 
 # 绘制有效边界
 plt.figure(figsize=(10, 6))
-plt.scatter(portfolio_risks, portfolio_returns, c='blue', marker='o')
+plt.plot(target_risks, target_returns, 'b-', lw=2)
 plt.title('Efficient Frontier of a Multi-Asset Portfolio')
 plt.xlabel('Portfolio Risk (Standard Deviation)')
 plt.ylabel('Portfolio Expected Return')
