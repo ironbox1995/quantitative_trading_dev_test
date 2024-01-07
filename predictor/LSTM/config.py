@@ -4,7 +4,7 @@ import torch
 input_size = 10  # 示例，根据您的数据进行调整
 hidden_layer_size = 50
 output_size = 1
-num_layers = 2
+num_layers = 5
 learning_rate = 0.001
 num_epochs = 300
 data_filter = "小市值"

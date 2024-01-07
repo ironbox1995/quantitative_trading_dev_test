@@ -8,7 +8,7 @@ from predictor.LSTM.config import *
 # 创建模型实例
 model = LSTMModel(input_size, hidden_layer_size, output_size, num_layers)
 criterion = nn.MSELoss()  # 例如，对于回归问题
-optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-5)
 
 train_loader, test_loader = build_lstm_stock_regression_data_set(feature_li, train_data_start_date, train_data_end_date,
                                                                  period_type, batch_size=64, data_filter=data_filter,

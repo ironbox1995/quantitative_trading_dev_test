@@ -6,17 +6,17 @@ from predictor.FCN.config import *
 
 def train_model(feature_li, train_data_start_date, train_data_end_date, epochs, data_filter):
     """
-    train FCN regress model
+    train FCN regress model with L2 regularization
     """
 
     # loader
     train_loader, test_loader = build_stock_regression_data_set(feature_li, train_data_start_date, train_data_end_date, period_type, 64, data_filter)
 
     # Create the model instance
-    model = FullyConnectedRegressionNetwork(len(feature_li), hidden_sizes=[128, 64, 32], dropout_prob=0.5)
-    # Loss function and optimizer
+    model = FullyConnectedRegressionNetwork(len(feature_li), hidden_sizes=[256, 128, 128, 64, 32], dropout_prob=0.5)
+    # Loss function and optimizer with L2 regularization
     criterion = nn.MSELoss()  # Mean Squared Error for regression
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)  # Added L2 regularization with weight decay
 
     # initialize min_test_loss
     min_test_loss = float("inf")
